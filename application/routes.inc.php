@@ -5,16 +5,16 @@
 
         // home
         '^/$' => array(
-            'controller' => 'Helper',
+            'controller' => 'Common',
             'action' => 'index',
-            'view' => 'helper/index.inc.php'
+            'view' => 'common/index.inc.php'
         ),
 
         // error handling
         '(.*)' => array(
-            'controller' => 'Helper',
+            'controller' => 'Common',
             'action' => 'error',
-            'view' => 'helper/404.inc.php'
+            'view' => 'common/404.inc.php'
         )
     );
 
