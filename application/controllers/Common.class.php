@@ -1,12 +1,12 @@
 <?php
 
     /**
-     * HelperController class.
+     * CommonController class.
      * 
      * @extends Controller
      * @final
      */
-    final class HelperController extends \Turtle\Controller
+    final class CommonController extends \Turtle\Controller
     {
         /**
          * error function.
