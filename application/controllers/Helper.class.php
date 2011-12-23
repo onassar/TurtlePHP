@@ -34,5 +34,6 @@
          */
         public function index()
         {
+            $this->_pass('message', 'Hello World!');
         }
     }
