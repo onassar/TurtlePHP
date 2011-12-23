@@ -1,0 +1,23 @@
+div#content div#wrapper div#projects ul#tags li {
+    -moz-transition: opacity 225ms linear;
+    -webkit-transition: opacity 225ms linear;
+    -o-transition: opacity 225ms linear;
+    transition: opacity 225ms linear;
+}
+div#content div#wrapper div#projects ul#tags li a span {
+    border-radius: 3px;
+}
+div#content div#wrapper div#projects ul#details li.active {
+    -moz-transition: opacity 500ms linear;
+    -webkit-transition: opacity 500ms linear;
+    -o-transition: opacity 500ms linear;
+    transition: opacity 500ms linear;
+}
+/*
+div#content div#wrapper div#projects ul#thumbs.expose li div {
+    -moz-transition: opacity 225ms linear;
+    -webkit-transition: opacity 225ms linear;
+    -o-transition: opacity 225ms linear;
+    transition: opacity 225ms linear;
+}
+*/

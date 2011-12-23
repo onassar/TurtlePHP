@@ -1,0 +1,195 @@
+body {
+    font-size: 14px;
+    font-family: Arial;
+    background-color: #2b2b2b;
+}
+a, img {
+    display: block;
+}
+div#content {
+    border: solid orange;
+    border-width: 8px 0 0;
+    background: url(/static/img/bg.png) repeat 0 0;
+}
+div#content div#wrapper {
+    margin: 0 auto;
+    width: 660px;
+    position: relative;
+}
+div#content div#wrapper div#intro {
+    position: absolute;
+    left: -280px;
+    top: 0;
+}
+div#content div#wrapper div#intro h1 {
+    font-family: Nunito;
+    font-size: 22px;
+    line-height: 28px;
+}
+div#content div#wrapper div#projects ul#tags {
+    margin: 24px 0 0;
+}
+div#content div#wrapper div#projects ul#tags li {
+    display: block;
+    float: left;
+}
+div#content div#wrapper div#projects ul#tags.expose li {
+    opacity: 0.2;
+}
+div#content div#wrapper div#projects ul#tags.expose.php li.php,
+div#content div#wrapper div#projects ul#tags.expose.rails li.rails,
+div#content div#wrapper div#projects ul#tags.expose.java li.java,
+div#content div#wrapper div#projects ul#tags.expose.js li.js,
+div#content div#wrapper div#projects ul#tags.expose.css li.css,
+div#content div#wrapper div#projects ul#tags.expose.html5 li.html5,
+div#content div#wrapper div#projects ul#tags.expose.mobile li.mobile,
+div#content div#wrapper div#projects ul#tags.expose.xhtml li.xhtml,
+div#content div#wrapper div#projects ul#tags.expose.apache li.apache,
+div#content div#wrapper div#projects ul#tags.expose.mysql li.mysql,
+div#content div#wrapper div#projects ul#tags.expose.memcached li.memcached,
+div#content div#wrapper div#projects ul#tags.expose.aws li.aws,
+div#content div#wrapper div#projects ul#tags.expose.linux li.linux,
+div#content div#wrapper div#projects ul#tags.expose.mongo li.mongo,
+div#content div#wrapper div#projects ul#tags.expose.node li.node,
+div#content div#wrapper div#projects ul#tags.expose.seo li.seo,
+div#content div#wrapper div#projects ul#tags.expose.facebook li.facebook,
+div#content div#wrapper div#projects ul#tags.expose.twitter li.twitter,
+div#content div#wrapper div#projects ul#tags.expose.scaling li.scaling {
+    opacity: 1;
+}
+div#content div#wrapper div#projects ul#tags li a {
+    padding: 0 6px 8px 0;
+    text-decoration: none;
+}
+div#content div#wrapper div#projects ul#tags li a span {
+    background: #2b2b2b;
+    color: #fff;
+    font-size: 11px;
+    padding: 0 8px;
+    height: 24px;
+    line-height: 24px;
+    display: block;
+}
+div#content div#wrapper div#projects ul#tags li a.active span,
+div#content div#wrapper div#projects ul#tags li a:hover span {
+    background-color: orange;
+    color: #2b2b2b;
+}
+div#content div#wrapper div#projects ul#thumbs {
+    margin: 32px 0 0;
+}
+div#content div#wrapper div#projects ul#thumbs li {
+    display: block;
+    float: left;
+/*
+    height: 132px;
+    width: 132px;
+*/
+}
+/*
+div#content div#wrapper div#projects ul#thumbs.expose li div {
+    opacity: 0.2;
+}
+div#content div#wrapper div#projects ul#thumbs.expose.php li.php div,
+div#content div#wrapper div#projects ul#thumbs.expose.rails li.rails div,
+div#content div#wrapper div#projects ul#thumbs.expose.java li.java div,
+div#content div#wrapper div#projects ul#thumbs.expose.js li.js div,
+div#content div#wrapper div#projects ul#thumbs.expose.css li.css div,
+div#content div#wrapper div#projects ul#thumbs.expose.html5 li.hml5 div,
+div#content div#wrapper div#projects ul#thumbs.expose.mobile li.mobile div,
+div#content div#wrapper div#projects ul#thumbs.expose.xhtml li.xhtml div,
+div#content div#wrapper div#projects ul#thumbs.expose.apache li.apache div,
+div#content div#wrapper div#projects ul#thumbs.expose.mysql li.mysql div,
+div#content div#wrapper div#projects ul#thumbs.expose.memcached li.memcached div,
+div#content div#wrapper div#projects ul#thumbs.expose.aws li.aws div,
+div#content div#wrapper div#projects ul#thumbs.expose.linux li.linux div,
+div#content div#wrapper div#projects ul#thumbs.expose.mongo li.mongo div,
+div#content div#wrapper div#projects ul#thumbs.expose.node li.node div,
+div#content div#wrapper div#projects ul#thumbs.expose.seo li.seo div,
+div#content div#wrapper div#projects ul#thumbs.expose.facebook li.facebook div,
+div#content div#wrapper div#projects ul#thumbs.expose.twitter li.twitter div,
+div#content div#wrapper div#projects ul#thumbs.expose.scaling li.scaling div {
+    opacity: 1;
+}
+*/
+div#content div#wrapper div#projects ul#thumbs li a {
+    padding: 0 16px 16px 0;
+}
+div#content div#wrapper div#projects ul#thumbs li a span {
+    background-color: #2b2b2b;
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 100px;
+    height: 100px;
+    display: block;
+    text-indent: -10000px;
+    padding: 8px;
+}
+
+div#content div#wrapper div#projects ul#details li {
+    position: absolute;
+    top: 97px;
+    left: 116px;
+    padding: 4px 0 0 16px;
+    opacity: 0;
+}
+div#content div#wrapper div#projects ul#details li.active {
+    opacity: 1;
+}
+
+div#body div#pane div#intro h1 {
+    font-family: Nunito;
+    font-size: 22px;
+    line-height: 32px;
+}
+div#body div#pane div#details {
+    border: solid #2b2b2b;
+    border-width: 3px 0 0;
+    margin: 2px 32px 0 0;
+    padding: 24px 24px 0;
+}
+div#body div#pane div#details div.thumb {
+    float: left;
+    margin: 0 16px 16px 0;
+}
+div#body div#pane div#details div.thumb img {
+    padding: 8px;
+    background-color: #2b2b2b;
+    width: 100px;
+    height: 100px;
+}
+div#body div#pane div#details h2 {
+    font-family: Nunito;
+    font-size: 18px;
+    line-height: 32px;
+}
+footer {
+    height: 100px;
+    width: 1200px;
+    margin: 0 auto;
+    text-align: right;
+}
+footer a {
+    text-shadow: 1px 1px 0 #000;
+    text-decoration: none;
+    padding: 12px 0 0;
+    color: #666;
+}
+
+/* .clear */
+.clear:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+.clear {
+    display: inline-block;
+}
+* html .clear {
+    height: 1%;
+}
+.clear {
+    display: block;
+}
