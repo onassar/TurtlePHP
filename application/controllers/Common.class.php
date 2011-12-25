@@ -21,7 +21,7 @@
             error_log(
                 "Invalid Request\n" .
                 "Path: *" . ($path) . "*\n" .
-                "Remote Address: *" . ($_SERVER['REMOTE_ADDR']) . "*\n" .
+                "Remote Address: *" . (IP) . "*\n" .
                 "Agent: *" . ($_SERVER['HTTP_USER_AGENT']) ."*\n"
             );
         }
