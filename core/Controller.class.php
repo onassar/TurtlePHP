@@ -14,17 +14,17 @@
          * 
          * (default value: array())
          * 
-         * @var array
+         * @var    array
          * @access protected
          */
         protected $_hash = array();
 
         /**
-         * _pass function.
+         * _pass
          * 
          * @access protected
-         * @param string $key
-         * @param mixed $value
+         * @param  string $key
+         * @param  mixed $value
          * @return void
          */
         protected function _pass($key, $value)
@@ -33,10 +33,10 @@
         }
 
         /**
-         * _setView function.
+         * _setView
          * 
          * @access protected
-         * @param string $path
+         * @param  string $path
          * @return void
          */
         protected function _setView($path)
@@ -47,8 +47,10 @@
         }
 
         /**
-         * getHash function. Returns a hash of all variables that ought to be
-         *     available to the view of a controller.
+         * getHash
+         * 
+         * Returns a hash of all variables that ought to be available to the
+         * view of a controller.
          * 
          * @access public
          * @return array
@@ -59,7 +61,7 @@
         }
 
         /**
-         * prepare function.
+         * prepare
          * 
          * @access public
          * @return void

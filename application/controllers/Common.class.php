@@ -1,7 +1,9 @@
 <?php
 
     /**
-     * CommonController class.
+     * CommonController
+     * 
+     * Common requests that most applications ought to contain.
      * 
      * @extends Controller
      * @final
@@ -9,10 +11,12 @@
     final class CommonController extends \Turtle\Controller
     {
         /**
-         * error function.
+         * error
+         *
+         * 404 requests that come in.
          * 
          * @access public
-         * @param string $path
+         * @param  string $path
          * @return void
          */
         public function error($path)
@@ -27,7 +31,7 @@
         }
 
         /**
-         * index function.
+         * index
          * 
          * @access public
          * @return void

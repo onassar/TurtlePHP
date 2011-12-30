@@ -15,7 +15,7 @@
         /**
          * _callbacks
          * 
-         * @var array
+         * @var    array
          * @access protected
          * @static
          */
@@ -24,7 +24,7 @@
         /**
          * _error
          * 
-         * @var string (default: 'includes/error.inc.php'
+         * @var    string (default: 'includes/error.inc.php'
          * @access protected
          * @static
          */
@@ -33,7 +33,7 @@
         /**
          * _models
          * 
-         * @var array
+         * @var    array
          * @access protected
          * @static
          */
@@ -42,7 +42,7 @@
         /**
          * _response
          * 
-         * @var string
+         * @var    string
          * @access protected
          * @static
          */
@@ -51,7 +51,7 @@
         /**
          * _route
          * 
-         * @var array
+         * @var    array
          * @access protected
          * @static
          */
@@ -60,18 +60,18 @@
         /**
          * _routes
          * 
-         * @var array
+         * @var    array
          * @access protected
          * @static
          */
         protected static $_routes;
 
         /**
-         * addCallback function.
+         * addCallback
          * 
          * @access public
          * @static
-         * @param Closure $callback
+         * @param  Closure $callback
          * @return void
          */
         public static function addCallback(\Closure $callback)
@@ -80,11 +80,11 @@
         }
 
         /**
-         * addRoute function.
+         * addRoute
          * 
          * @access public
          * @static
-         * @param array $route
+         * @param  array $route
          * @return void
          */
         public static function addRoute(array $route)
@@ -93,12 +93,14 @@
         }
 
         /**
-         * getCallbacks function. Returns a reference to the array of callbacks
-         *     set up by the application and/or plugins.
+         * getCallbacks
          * 
-         * @note a reference is returned rather than the native array to allow
-         *     for the possibility of a callback adding another response
-         *     callback. For an example, see the <Performance> plugin.
+         * Returns a reference to the array of callbacks set up by the
+         * application and/or plugins.
+         * 
+         * @notes  a reference is returned rather than the native array to allow
+         *         for the possibility of a callback adding another response
+         *         callback. For an example, see the <Performance> plugin.
          * @access public
          * @static
          * @return array
@@ -109,7 +111,7 @@
         }
 
         /**
-         * getErrorPath function.
+         * getErrorPath
          * 
          * @access public
          * @static
@@ -121,11 +123,11 @@
         }
 
         /**
-         * getModel function.
+         * getModel
          * 
          * @access public
          * @static
-         * @param string $name
+         * @param  string $name
          * @return Model
          */
         public static function getModel($name)
@@ -143,7 +145,7 @@
         }
 
         /**
-         * getResponse function.
+         * getResponse
          * 
          * @access public
          * @static
@@ -155,8 +157,9 @@
         }
 
         /**
-         * getRoute function. Returns the the route that the application has
-         *     matched for the request.
+         * getRoute
+         * 
+         * Returns the route that the application has matched for the request.
          * 
          * @access public
          * @static
@@ -168,12 +171,11 @@
         }
 
         /**
-         * setErrorPath function.
+         * setErrorPath
          * 
          * @access public
          * @static
-         * @static
-         * @param string $path
+         * @param  string $path
          * @return void
          */
         public static function setErrorPath($path)
@@ -182,8 +184,10 @@
         }
 
         /**
-         * getRoutes function. Returns the array of all routes the application
-         *     may accept for a request.
+         * getRoutes
+         * 
+         * Returns the array of all routes the application may accept for a
+         * request.
          * 
          * @access public
          * @static
@@ -195,11 +199,13 @@
         }
 
         /**
-         * setResponse function. Sets the rendered response for the request.
+         * setResponse
+         * 
+         * Sets the rendered response for the request.
          * 
          * @access public
          * @static
-         * @param string $response
+         * @param  string $response
          * @return void
          */
         public static function setResponse($response)
@@ -208,11 +214,13 @@
         }
 
         /**
-         * setRoute function. Sets the route that the request mathces.
+         * setRoute
+         * 
+         * Sets the route that the request matches.
          * 
          * @access public
          * @static
-         * @param array $route
+         * @param  array $route
          * @return void
          */
         public static function setRoute(array $route)
@@ -221,12 +229,13 @@
         }
 
         /**
-         * setRoutes function. Sets an array of all possible routes that the
-         *     request are allowed to match.
+         * setRoutes
+         * 
+         * Sets an array of all possible routes that the request are allowed to match.
          * 
          * @access public
          * @static
-         * @param array $routes
+         * @param  array $routes
          * @return void
          */
         public static function setRoutes(array $routes)

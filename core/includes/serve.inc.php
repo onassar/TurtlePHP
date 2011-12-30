@@ -25,11 +25,10 @@
     if (isset($route['view'])) {
 
         // grab view
-        $view = $route['view'];
+        $path = $route['view'];
 
         // controller-set variables
         $hash = $reference->getHash();
-        $path = APP . '/views/' . ($view);
     
         /**
          * process function.

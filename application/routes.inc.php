@@ -1,20 +1,20 @@
 <?php
 
-    // application routes (params is automated via key-pattern)
+    // application routes (parameters are passed directly to controller action)
     $routes = array(
 
         // home
         '^/$' => array(
             'controller' => 'Common',
             'action' => 'index',
-            'view' => 'common/index.inc.php'
+            'view' => APP . '/views/common/index.inc.php'
         ),
 
         // error handling
         '(.*)' => array(
             'controller' => 'Common',
             'action' => 'error',
-            'view' => 'common/404.inc.php'
+            'view' => APP . '/views/common/404.inc.php'
         )
     );
 

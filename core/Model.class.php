@@ -4,7 +4,7 @@
     namespace Turtle;
 
     /**
-     * Model class.
+     * Model
      * 
      */
     class Model

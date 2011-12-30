@@ -2,6 +2,7 @@
 
     /**
      * Constants
+     * 
      */
 
     // request start time
@@ -19,7 +20,9 @@
     define('IP', $ip);
 
     /**
-     * shutdown function. Handles buffer-flushing and error-handling.
+     * shutdown
+     * 
+     * Handles buffer-flushing and error-handling.
      * 
      * @access public
      * @return void
@@ -50,9 +53,10 @@
     require_once CORE . '/Request.class.php';
 
     /**
-     * closure function.
+     * closure
      * 
-     * @note purpose is to preserve the global namespace from becoming polluted
+     * Acts as a wrapper to prevent the global namespace from becoming polluted.
+     * 
      * @access public
      * @return void
      */
