@@ -18,8 +18,8 @@ manipulate output before it is sent to the client
 security headers/content)
 
 ### Error/exception handling
- - Non-framework errors are routed to an internal file which presents a friendly
-user interface.
+ - Programmatic  (eg. not 404&#039;) errors are routed to an internal file which
+presents a friendly user interface.
 
 ### Dynamic routing
  - Routes can be added to the application dynamically (eg. by a plugin)
