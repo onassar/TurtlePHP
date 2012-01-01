@@ -31,12 +31,13 @@
         $hash = $reference->getHash();
     
         /**
-         * process function.
+         * process
          * 
-         * @note prevents global namespace from being polluted
+         * Created as a wrapper to prevent global namespace from being polluted.
+         * 
          * @access public
-         * @param String $__path
-         * @param array $__variables
+         * @param  String $__path
+         * @param  array $__variables
          * @return string
          */
         $process = function($__path, array $__variables)
