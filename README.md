@@ -7,7 +7,7 @@ development within it easy and natural (for PHP developers, that is).
 
 ### MVC flow
  - Data access ought to be managed through a corresponding object&#039;s model
- - Output of a request out to contained within a view
+ - Output of a request ought to contained within a view
  - Business/middleware logic ought to be managed through a controller (and
 through a controller&#039;s action/method)
 
