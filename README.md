@@ -23,6 +23,7 @@ presents a friendly user interface
 
 ### Dynamic routing
  - Routes can be added to the application dynamically (eg. by a plugin)
+   - Useful in the creation of plugins that provide RESTful functionality
 
 ### Tiny footprint
  - TurltePHP&#039;s core directory contains just 8 files, and is cumulatively
