@@ -31,6 +31,8 @@ less than 35kb
  - While not having been benchmarked, it&#039;s simplicity and minimalism allows
 for unencumbered application development
 
+Implementation
+
 ### Get Started
 
 The following is what&#039;s required to get your application up and
