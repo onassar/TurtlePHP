@@ -30,3 +30,20 @@ presents a friendly user interface
 less than 35kb
  - While not having been benchmarked, it&#039;s simplicity and minimalism allows
 for unencumbered application development
+
+### Get Started
+
+The following is all that&#039;s required to get your application up and
+running. Add a virtual host for your site, as follows:
+
+    <VirtualHost *:80>
+        ServerName hostname.com
+        ServerAlias www.hostname.com
+        DocumentRoot /var/www/directory
+    
+        # turtle routing
+        RewriteEngine On
+        RewriteCond %{DOCUMENT_ROOT}/application/webroot%{REQUEST_URI} !-f
+        RewriteRule ^(.*)$ %{DOCUMENT_ROOT}/core/index.php [L,QSA]
+        RewriteRule (.*) %{DOCUMENT_ROOT}/application/webroot$1 [L,QSA]
+    </VirtualHost>
