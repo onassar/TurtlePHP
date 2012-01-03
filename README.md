@@ -44,7 +44,7 @@ Add a virtual host for your site, as follows:
         ServerName hostname.com
         ServerAlias www.hostname.com
         DocumentRoot /var/www/directory
-    
+
         # turtle routing
         RewriteEngine On
         RewriteCond %{DOCUMENT_ROOT}/application/webroot%{REQUEST_URI} !-f
