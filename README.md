@@ -33,7 +33,7 @@ for unencumbered application development
 
 ### Get Started
 
-The following is all what&#039;s required to get your application up and
+The following is what&#039;s required to get your application up and
 running with a Hello World example ready to go.  
 Add a virtual host for your site, as follows:
 
