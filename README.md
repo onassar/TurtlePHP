@@ -110,6 +110,7 @@ request flow, and allows you to include logic that should be processed
 application-wide.
 
 A sample implementation of this application-level controller:
+
 ``` php
 <?php
 
