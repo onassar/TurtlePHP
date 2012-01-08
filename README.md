@@ -101,9 +101,8 @@ sample of such a case would be as follows:
 
 ```
 
-The above `AppController` class extends the default Controller class
-(specified through the `Turtle` namespace), and defines one method:
-`prepare`.
+The above `AppController` class extends the default `Controller` class
+(specified through the `Turtle` namespace), and defines one method: `prepare`.
 
 This method is processed before a child controller&#039;s action during a
 request flow, and allows you to include logic that should be processed
