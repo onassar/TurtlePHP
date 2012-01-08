@@ -112,6 +112,7 @@ application-wide.
 A sample implementation of this application-level controller:
 
 ``` php
+
 <?php
 
     // dependency
