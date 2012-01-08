@@ -34,16 +34,16 @@ for unencumbered application development
 Plugins
 ===
  - [Logging](https://github.com/onassar/TurtlePHP-LoggingPlugin) Allows for
-the modification of PHP's default error logging.
+the modification of PHP&#039;s default error logging
  - [Roles](https://github.com/onassar/TurtlePHP-RolesPlugin) Provides a
 standardized way to differentiate between different codebase environments (eg.
-local, development, staging, production).
+local, development, staging, production)
  - [Config](https://github.com/onassar/TurtlePHP-ConfigPlugin) Provides a
-standardized approach for storing and retrieving an application's configuration
-settings.
+standardized approach for storing and retrieving an application&#039;s configuration
+settings
  - [Performance](https://github.com/onassar/TurtlePHP-PerformancePlugin)
-Analyzes a response that is ready for flushing, determines it's processing
-duration and memory usage, and returns them through custom response-headers.
+Analyzes a response that is ready for flushing, determines it&#039;s processing
+duration and memory usage, and returns them through custom response-headers
 
 Implementation
 ===
