@@ -3,7 +3,7 @@
     /**
      * CommonController
      * 
-     * Common requests that most applications ought to contain.
+     * Common requests that most applications ought to facilitate.
      * 
      * @extends Controller
      * @final

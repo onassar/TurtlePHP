@@ -102,7 +102,7 @@ A sample implementation of this application-level controller:
         /**
          * CommonController
          * 
-         * Common requests that most applications ought to contain.
+         * Common requests that most applications ought to facilitate.
          * 
          * @extends AppController
          * @final
