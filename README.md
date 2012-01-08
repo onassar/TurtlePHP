@@ -68,6 +68,7 @@ Add a virtual host for your site, as follows:
 ### Controller Extending
 You may find it useful to extend the default controller for your application. A
 sample of such a case would be as follows:
+
 ``` php
 <?php
 
