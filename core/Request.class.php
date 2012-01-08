@@ -82,6 +82,11 @@
         /**
          * addRoute
          * 
+         * Adds a route array to the routes storage. This method allows for
+         * flexibility when building plugins. It prepends the route to the
+         * routes array to prevent any overarching routes (eg. 404 catch-all
+         * redirects) from being matched.
+         * 
          * @access public
          * @static
          * @param  array $route
