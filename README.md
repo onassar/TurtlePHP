@@ -68,35 +68,37 @@ Add a virtual host for your site, as follows:
 ### Controller Extending
 You may find it useful to extend the default controller for your application. A
 sample of such a case would be as follows:
+``` php
+<?php
 
-    <?php
-    
+    /**
+     * AppController class.
+     * 
+     * @extends \Turtle\Controller
+     */
+    class AppController extends \Turtle\Controller
+    {
         /**
-         * AppController class.
+         * prepare
          * 
-         * @extends \Turtle\Controller
+         * @access public
+         * @return void
          */
-        class AppController extends \Turtle\Controller
+        public function prepare()
         {
-            /**
-             * prepare
-             * 
-             * @access public
-             * @return void
-             */
-            public function prepare()
-            {
-                $authenticated = false;
-                if (
-                    isset($_SESSION['authenticated'])
-                    && $_SESSION['authenticated'] === true
-                ) {
-                    $authenticated = true;
-                }
-                $this->_pass('authenticated', $authenticated);
-                parent::prepare();
+            $authenticated = false;
+            if (
+                isset($_SESSION['authenticated'])
+                && $_SESSION['authenticated'] === true
+            ) {
+                $authenticated = true;
             }
+            $this->_pass('authenticated', $authenticated);
+            parent::prepare();
         }
+    }
+
+```
 
 The above \<AppController\> class extends the default Controller class
 (specified through the \<Turtle\> namespace), and defines one method:
@@ -107,19 +109,22 @@ request flow, and allows you to include logic that should be processed
 application-wide.
 
 A sample implementation of this application-level controller:
-    <?php
-    
-        // dependency
-        require_once 'App.class.php';
-    
-        /**
-         * CommonController
-         * 
-         * Common requests that most applications ought to facilitate.
-         * 
-         * @extends AppController
-         * @final
-         */
-        final class CommonController extends AppController
-        {
-        }
+``` php
+<?php
+
+    // dependency
+    require_once 'App.class.php';
+
+    /**
+     * CommonController
+     * 
+     * Common requests that most applications ought to facilitate.
+     * 
+     * @extends AppController
+     * @final
+     */
+    final class CommonController extends AppController
+    {
+    }
+
+```
