@@ -51,3 +51,44 @@ Add a virtual host for your site, as follows:
         RewriteRule ^(.*)$ %{DOCUMENT_ROOT}/core/index.php [L,QSA]
         RewriteRule (.*) %{DOCUMENT_ROOT}/application/webroot$1 [L,QSA]
     </VirtualHost>
+
+### Controller Extending
+You may find it useful to extend the default controller for your application. A
+sample of such a case would be as follows:
+
+    <?php
+    
+        /**
+         * AppController class.
+         * 
+         * @extends \Turtle\Controller
+         */
+        class AppController extends \Turtle\Controller
+        {
+            /**
+             * prepare
+             * 
+             * @access public
+             * @return void
+             */
+            public function prepare()
+            {
+                $authenticated = false;
+                if (
+                    isset($_SESSION['authenticated'])
+                    && $_SESSION['authenticated'] === true
+                ) {
+                    $authenticated = true;
+                }
+                $this->_pass('authenticated', $authenticated);
+                parent::prepare();
+            }
+        }
+
+The above \<AppController\> class extends the default Controller class
+(specified through the \<Turtle\> namespace), and defines one method:
+\<prepare\>.
+
+This method is processed before a child controller&#039;s action during a
+request flow, and allows you to include logic that should be processed
+application-wide.
