@@ -92,3 +92,21 @@ The above \<AppController\> class extends the default Controller class
 This method is processed before a child controller&#039;s action during a
 request flow, and allows you to include logic that should be processed
 application-wide.
+
+A sample implementation of this application-level controller:
+    <?php
+    
+        // dependency
+        require_once 'App.class.php';
+    
+        /**
+         * CommonController
+         * 
+         * Common requests that most applications ought to contain.
+         * 
+         * @extends AppController
+         * @final
+         */
+        final class CommonController extends AppController
+        {
+        }
