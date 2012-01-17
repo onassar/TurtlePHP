@@ -21,13 +21,18 @@
          */
         public function error($path)
         {
+            // agent storage (check done with respect to spiders)
+            $agent = isset($_SERVER['HTTP_USER_AGENT'])
+                ? $_SERVER['HTTP_USER_AGENT']
+                : '(unknown)';
+
             // log
             error_log(
                 "\n" .
                 "**Invalid Request**\n" .
                 "Path: *" . ($path) . "*\n" .
                 "Remote Address: *" . (IP) . "*\n" .
-                "Agent: *" . ($_SERVER['HTTP_USER_AGENT']) ."*\n"
+                "Agent: *" . ($agent) ."*\n"
             );
         }
 
