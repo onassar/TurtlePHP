@@ -65,6 +65,15 @@ Add a virtual host for your site, as follows:
         RewriteRule (.*) %{DOCUMENT_ROOT}/application/webroot$1 [L,QSA]
     </VirtualHost>
 
+### Sessions
+While not a core requirement for setting up a TurtlePHP project, sessions are
+ubiquitous with web requests nowadays. I use my
+[PHP-SecureSessions](https://github.com/onassar/PHP-SecureSessions) library for
+this, and it works pretty well.
+
+If your infrastructure is distributed, the `SMSession` class ought to be used,
+but requires memcached to be installed.
+
 ### Controller Extending
 You may find it useful to extend the default controller for your application. A
 sample of such a case would be as follows:
