@@ -72,7 +72,7 @@ ubiquitous with web requests nowadays. I use my
 this, and it works pretty well.
 
 If your infrastructure is distributed, the `SMSession` class ought to be used,
-but requires memcached to be installed on all servers/instancs.
+but requires memcached to be installed on all servers/instances.
 
 ### Controller Extending
 You may find it useful to extend the default controller for your application. A
