@@ -9,9 +9,9 @@
 
     // route determination
     $matches = array();
-    foreach ($routes as $pattern => $details) {
-        $pattern = str_replace('/', '\/', $pattern);
-        if (preg_match('/' . ($pattern) . '/', $url, $matches)) {
+    foreach ($routes as $details) {
+        $path = str_replace('/', '\/', $details['path']);
+        if (preg_match('/' . ($path) . '/', $url, $matches)) {
             $route = $details;
             array_shift($matches);
             $route['params'] = $matches;

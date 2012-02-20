@@ -89,11 +89,15 @@
          * 
          * @access public
          * @static
+         * @param  String $path
          * @param  array $route
          * @return void
          */
-        public static function addRoute(array $route)
+        public static function addRoute($path, array $route)
         {
+            $route = array_merge($route, array(
+                'path' => $path
+            ));
             array_unshift(self::$_routes, $route);
         }
 
@@ -245,6 +249,13 @@
          */
         public static function setRoutes(array $routes)
         {
+            // reindex array with path (key) set as attribute
+            foreach ($routes as $path => &$route) {
+                $route['path'] = $path;
+            }
+            $routes = array_values($routes);
+
+            // store
             self::$_routes = $routes;
         }
     }
