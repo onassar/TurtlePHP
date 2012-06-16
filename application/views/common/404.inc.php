@@ -12,7 +12,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
-        <title>Woops.</title>
+        <title>Whoops.</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="description" content="Sorry, but we can&#039;t find the page you&#039;re looking for." />
         <link href="http://meyerweb.com/eric/tools/css/reset/reset.css" rel="stylesheet" type="text/css" />
@@ -69,7 +69,7 @@
         <div id="wrapper">
             <div id="message">
                 <div id="container">
-                    <h1>Woops!</h1>
+                    <h1>Whoops!</h1>
                     <p>
                         Sorry, but we can&#039;t find the page you&#039;re looking for.<br />
                         Try going <a href="Javascript: history.go(-1);" title="Go back one page">back</a>.
