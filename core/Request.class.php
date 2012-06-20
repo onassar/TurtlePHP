@@ -102,6 +102,20 @@
         }
 
         /**
+         * clearRoutes
+         * 
+         * Clears the array of possible routes for the application to match.
+         * 
+         * @access public
+         * @static
+         * @return void
+         */
+        public static function clearRoutes()
+        {
+            self::$_routes = array();
+        }
+
+        /**
          * getCallbacks
          * 
          * Returns a reference to the array of callbacks set up by the
