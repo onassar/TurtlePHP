@@ -144,3 +144,17 @@ A sample implementation of this application-level controller:
     }
 
 ```
+
+### Sub-Requests
+You are now able to make sub-requests from within a controller using the
+following format:
+
+``` php
+
+// grab new response
+$request = (new \Turtle\Request('/path/?include=params'));
+$request->route();
+$request->generate();
+$response = $request->getResponse();
+
+```
