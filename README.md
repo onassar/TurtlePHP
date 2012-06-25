@@ -151,10 +151,12 @@ following format:
 
 ``` php
 
-// grab new response
-$request = (new \Turtle\Request('/path/?include=params'));
-$request->route();
-$request->generate();
-$response = $request->getResponse();
+<?php
+
+    // grab new response
+    $request = (new \Turtle\Request('/path/?include=params'));
+    $request->route();
+    $request->generate();
+    $response = $request->getResponse();
 
 ```
