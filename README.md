@@ -43,6 +43,11 @@ settings
  - [Performance](https://github.com/onassar/TurtlePHP-PerformancePlugin)
 Analyzes a response that is ready for flushing, determines it&#039;s processing
 duration and memory usage, and returns them through custom response-headers
+ - [Template](https://github.com/onassar/TurtlePHP-TemplatePlugin)
+Passes buffer through a templating-engine to convert custom-tags
+programatically. Has the
+[PHP-Template](https://github.com/onassar/PHP-Template) library as a
+requirement
 
 Implementation
 ===
