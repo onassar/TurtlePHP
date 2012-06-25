@@ -7,7 +7,8 @@
      * Request
      * 
      * @notes in PHP 5.4.x, $this will be able to be passed into closures
-     *        (useful for the <addCallback> method)
+     *        (useful for the <addCallback> method). For now, setting a variable
+     *        such as <$self> to <$this> should work (JavaScript styles)
      */
     class Request
     {
