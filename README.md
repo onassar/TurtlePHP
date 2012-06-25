@@ -25,8 +25,8 @@ presents a friendly user interface
    - Useful in the creation of plugins that provide RESTful functionality
 
 ### Tiny footprint
- - TurltePHP&#039;s core directory contains just 8 files, and is cumulatively
-less than 35kb
+ - TurltePHP&#039;s core directory contains just 6 files, and is cumulatively
+less than 20kb
  - While not having been benchmarked, it&#039;s simplicity and minimalism allows
 for unencumbered application development
 
