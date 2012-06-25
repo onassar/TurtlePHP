@@ -19,4 +19,4 @@
     );
 
     // route storage
-    \Turtle\Request::setRoutes($routes);
+    \Turtle\Application::setRoutes($routes);

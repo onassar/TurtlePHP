@@ -29,18 +29,22 @@
      */
     function shutdown()
     {
+        // grab the request
+        $request = \Turtle\Application::getRequest();
+
         // error check
         $error = error_get_last();
 
         // clean request
         if (empty($error)) {
-            $response = \Turtle\Request::getResponse();
-            echo $response;
+
+            // dump the generated response
+            echo $request->getResponse();
             exit(0);
         }
 
         // error include
-        require_once \Turtle\Request::getErrorPath();
+        require_once $request->getErrorPath();
         exit(0);
     }
 
@@ -48,6 +52,7 @@
     register_shutdown_function('shutdown');
 
     // dependencies
+    require_once CORE . '/Application.class.php';
     require_once CORE . '/Controller.class.php';
     require_once CORE . '/Model.class.php';
     require_once CORE . '/Request.class.php';
@@ -62,17 +67,52 @@
      */
     $closure = function()
     {
-        // application checking
-        require_once CORE . '/includes/checks.inc.php';
+        /**
+         * checks
+         * 
+         * Acts as a wrapper to prevent the global namespace from becoming polluted.
+         * 
+         * @access public
+         * @return void
+         */
+        $checks = function()
+        {
+            // controllers/webroot directories exist
+            if (!is_dir(APP . '/controllers')) {
+                throw new Exception(APP . '/controllers doesn\'t exist.');
+            } elseif (!is_dir(APP . '/webroot')) {
+                throw new Exception(APP . '/webroot doesn\'t exist.');
+            }
+
+            // check application init
+            if (!file_exists(APP . '/init.inc.php')) {
+                throw new Exception(APP . '/init.inc.php doesn\'t exist.');
+            }
+
+            // check appliction routes
+            if (!file_exists(APP . '/routes.inc.php')) {
+                throw new Exception(APP . '/routes.inc.php doesn\'t exist.');
+            }
+        };
+
+        // call <checks> closure, cleanup
+        $checks();
+        unset($checks);
+
+        // create request; store as <Application> request
+        $request = (new \Turtle\Request($_SERVER['REQUEST_URI']));
+        \Turtle\Application::setRequest($request);
 
         // application setup
         require_once APP . '/routes.inc.php';
         require_once APP . '/init.inc.php';
 
-        // route and serve the request
-        require_once CORE . '/includes/route.inc.php';
-        require_once CORE . '/includes/serve.inc.php';
+        // route and generate markup
+        $request->route();
+        $request->generate();
     };
+
+    // call closure, cleanup, exit (triggering <shutdown> function
     $closure();
     unset($closure);
     exit(0);
