@@ -154,9 +154,27 @@ following format:
 <?php
 
     // grab new response
-    $request = (new \Turtle\Request('/path/?including=params'));
-    $request->route();
-    $request->generate();
-    $response = $request->getResponse();
+    $subrequest = (new \Turtle\Request('/path/?including=params'));
+    $subrequest->route();
+    $subrequest->generate();
+    $response = $subrequest->getResponse();
 
 ```
+
+Want to have this sub-request run through the
+[templating](https://github.com/onassar/TurtlePHP-TemplatePlugin) plugin?
+
+``` php
+
+<?php
+
+    // grab new response
+    $subrequest = (new \Turtle\Request('/path/?including=params'));
+    (new \Plugin\Template($subrequest));
+    $subrequest->route();
+    $subrequest->generate();
+    $response = $subrequest->getResponse();
+
+```
+
+    
