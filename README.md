@@ -154,7 +154,7 @@ following format:
 <?php
 
     // grab new response
-    $request = (new \Turtle\Request('/path/?include=params'));
+    $request = (new \Turtle\Request('/path/?including=params'));
     $request->route();
     $request->generate();
     $response = $request->getResponse();
