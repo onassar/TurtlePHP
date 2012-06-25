@@ -176,5 +176,3 @@ Want to have this sub-request run through the
     $response = $subrequest->getResponse();
 
 ```
-
-    
