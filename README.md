@@ -162,7 +162,7 @@ following format:
 ```
 
 Want to have this sub-request run through the
-[templating](https://github.com/onassar/TurtlePHP-TemplatePlugin) plugin?
+[templating plugin](https://github.com/onassar/TurtlePHP-TemplatePlugin)?
 
 ``` php
 
