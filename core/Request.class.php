@@ -169,7 +169,8 @@
             else {
 
                 // load controller
-                require_once APP . '/controllers/' . ($controller) . '.class.php';
+                require_once APP . '/controllers/' . ($controller) .
+                    '.class.php';
                 $name = $controller . 'Controller';
             }
 
@@ -195,7 +196,8 @@
                 /**
                  * process
                  * 
-                 * Created as a wrapper to prevent global namespace from being polluted.
+                 * Created as a wrapper to prevent global namespace from being
+                 * polluted.
                  * 
                  * @access public
                  * @param  String $__path

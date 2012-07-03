@@ -154,7 +154,8 @@
         /**
          * setRoutes
          * 
-         * Sets an array of all possible routes that the request are allowed to match.
+         * Sets an array of all possible routes that the request are allowed to
+         * match.
          * 
          * @access public
          * @static
