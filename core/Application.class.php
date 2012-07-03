@@ -60,6 +60,22 @@
         }
 
         /**
+         * addRoutes
+         * 
+         * @access public
+         * @static
+         * @param  array $routes
+         * @return void
+         */
+        public static function addRoutes(array $routes)
+        {
+            // add each route
+            foreach ($routes as $path => $route) {
+                self::addRoute($path, $route);
+            }
+        }
+
+        /**
          * clearRoutes
          * 
          * Clears the array of possible routes for the application to match.
