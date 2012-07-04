@@ -104,10 +104,16 @@
                 return self::$_models[$name];
             }
 
-            // boot model
-            require_once APP . '/models/' . ($name) . '.class.php';
-            $name .= 'Model';
-            self::$_models[$name] = (new $name);
+            // if the model hasn't already been loaded
+            $full = ($name) . 'Model';
+            if (!class_exists($full)) {
+
+                // boot model
+                require_once APP . '/models/' . ($name) . '.class.php';
+            }
+
+            // instantiate model; return
+            self::$_models[$name] = (new $full);
             return self::$_models[$name];
         }
 

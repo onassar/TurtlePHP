@@ -156,25 +156,18 @@
             $controller = $this->_route['controller'];
             $params = $this->_route['params'];
 
-            // if it's a plugin
+            // if it's *not* a module
             if (
-                isset($this->_route['plugin'])
-                && $this->_route['plugin'] === true
+                !isset($this->_route['module'])
+                || $this->_route['module'] === false
             ) {
-
-                // set plugin-controller name
-                $name = '\\Plugin\\' . ($controller) . 'Controller';
-            }
-            // otherwise, standard-flow
-            else {
-
                 // load controller
                 require_once APP . '/controllers/' . ($controller) .
                     '.class.php';
-                $name = $controller . 'Controller';
             }
 
             // new controller reference
+            $name = $controller . 'Controller';
             $reference = (new $name);
 
             // trigger action
