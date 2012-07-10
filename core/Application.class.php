@@ -48,7 +48,7 @@
          * @access public
          * @static
          * @param  String $path
-         * @param  array $route
+         * @param  Array $route
          * @return void
          */
         public static function addRoute($path, array $route)
@@ -62,17 +62,31 @@
         /**
          * addRoutes
          * 
+         * The logic here follows the same premise as <addRoute> above; namely
+         * to "prepend" the additional routes, collectively, to the beginning of
+         * the array of matchable/applicable routes.
+         * 
+         * <array_merge> rather than <array_unshift> needed to be used here,
+         * with the previously-set routes appended to the end, in order for the
+         * newly-added routes to have the precendence required of them.
+         * 
          * @access public
          * @static
-         * @param  array $routes
+         * @param  Array $routes
          * @return void
          */
         public static function addRoutes(array $routes)
         {
-            // add each route
-            foreach ($routes as $path => $route) {
-                self::addRoute($path, $route);
+            // normalize path-key
+            foreach ($routes as $path => &$route) {
+                $route['path'] = $path;
             }
+
+            // reindex it (to remove the <path> value as the route's key)
+            $routes = array_values($routes);
+
+            // prepend array of routes to possible ones
+            self::$_routes = array_merge($routes, self::$_routes);
         }
 
         /**
