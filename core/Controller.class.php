@@ -69,6 +69,28 @@
         }
 
         /**
+         * isSubRequest
+         * 
+         * Returns whether or not the request being made against this controller
+         * is a subrequest from a parent <Request> instance/object.
+         * 
+         * Useful for securing requests that should only be accessible from
+         * within the application logic.
+         * 
+         * @access public
+         * @return Boolean
+         */
+        public function isSubRequest()
+        {
+            // get both <Application> and <Controller> requests
+            $application = \Turtle\Application::getRequest();
+            $controller = $this->_request;
+
+            // return whether the controllers request matches the applications
+            return $application !== $controller;
+        }
+
+        /**
          * prepare
          * 
          * @access public
