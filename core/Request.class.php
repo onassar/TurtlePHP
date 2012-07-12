@@ -143,8 +143,8 @@
         /**
          * generate
          * 
-         * Generates the markup for the instance by routing it through the
-         * respective controller.
+         * Generates the markup for this <Request> instance by routing it
+         * through the respective controller.
          * 
          * @access public
          * @return void
@@ -169,23 +169,24 @@
             // new controller reference
             $name = $controller . 'Controller';
             $reference = (new $name);
+            $reference->setRequest($this);
 
             // trigger action
             call_user_func_array(array($reference, 'prepare'), array());
             call_user_func_array(array($reference, $action), $params);
-        
+
             /**
              * Grab view again (here, instead of above, incase view was changed
              * by controller action)
              */
             $view = $this->_route['view'];
-        
+
             // if a view was set by a route, or by the controller
             if (isset($view)) {
-        
+
                 // controller-set variables
                 $hash = $reference->getHash();
-            
+
                 /**
                  * process
                  * 
@@ -203,7 +204,7 @@
                     foreach ($__variables as $__name => $__value) {
                         $$__name = $__value;
                     }
-            
+
                     // buffer handling
                     ob_start();
                     include $__path;
@@ -211,12 +212,12 @@
                     ob_end_clean();
                     return $__response;
                 };
-            
+
                 // process request; remove closure (memory)
                 $response = $process($view, $hash, $reference);
                 unset($process);
             }
-            
+
             // run response through buffer callbacks
             $callbacks = &$this->getCallbacks();
             if (!empty($callbacks)) {

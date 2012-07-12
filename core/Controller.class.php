@@ -20,6 +20,14 @@
         protected $_hash = array();
 
         /**
+         * _request
+         * 
+         * @var    Request
+         * @access protected
+         */
+        protected $_request;
+
+        /**
          * _pass
          * 
          * @access protected
@@ -36,14 +44,14 @@
          * _setView
          * 
          * @access protected
-         * @param  string $path
+         * @param  String $path
          * @return void
          */
         protected function _setView($path)
         {
-            $route = \Turtle\Request::getRoute();
+            $route = $this->_request->getRoute();
             $route['view'] = $path;
-            \Turtle\Request::setRoute($route);
+            $this->_request->setRoute($route);
         }
 
         /**
@@ -53,7 +61,7 @@
          * view of a controller.
          * 
          * @access public
-         * @return array
+         * @return Array
          */
         public function getHash()
         {
@@ -72,5 +80,17 @@
             $class = strtolower($class);
             $class = str_replace('controller', '', $class);
             $this->_pass('controller', $class);
+        }
+
+        /**
+         * setRequest
+         * 
+         * @access public
+         * @param  Request $request
+         * @return void
+         */
+        public function setRequest(Request $request)
+        {
+            $this->_request = $request;
         }
     }
