@@ -21,6 +21,16 @@
         protected $_callbacks = array();
 
         /**
+         * _controller
+         * 
+         * Reference to the Controller that this Request has been routed to.
+         * 
+         * @var    Controller
+         * @access protected
+         */
+        protected $_controller;
+
+        /**
          * _error
          * 
          * @var    string (default: 'includes/error.inc.php'
@@ -106,6 +116,20 @@
         }
 
         /**
+         * getController
+         * 
+         * Returns a reference to the controller that this request has been
+         * routed to.
+         * 
+         * @access public
+         * @return Controller
+         */
+        public function getController()
+        {
+            return $this->_controller;
+        }
+
+        /**
          * getErrorPath
          * 
          * @access public
@@ -171,8 +195,35 @@
             $reference = (new $name);
             $reference->setRequest($this);
 
+            // set the controller in this request object
+            $this->_controller = $reference;
+
+            /**
+             * <prepare> method calling got a little tricky. Namely, if a
+             * subrequest was being made, it was naturally getting called twice.
+             * The problem with this is that it caused preparation-level code to
+             * be executed twice (eg. defining session details, make db calls,
+             * etc.). This caused not only flow-problems, but is also not ideal
+             * since this data should *already* be available to the controller
+             * (since it's already been calculated/retrieved, or what-have-you).
+             */
+
+            // if it's not a sub-request
+            if ($reference->isSubRequest() === false) {
+                call_user_func_array(array($reference, 'prepare'), array());
+            }
+            /**
+             * Otherwise if it is, ensure it has the hash made available through
+             * the application-request Controller
+             */
+            else {
+                $request = Application::getRequest();
+                $origin = $request->getController();
+                $hash = $origin->getHash();
+                $reference->setHash($hash);
+            }
+
             // trigger action
-            call_user_func_array(array($reference, 'prepare'), array());
             call_user_func_array(array($reference, $action), $params);
 
             /**

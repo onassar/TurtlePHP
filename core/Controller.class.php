@@ -105,6 +105,25 @@
         }
 
         /**
+         * setHash
+         * 
+         * Overwrites the <_hash> property of this Controller object with an
+         * array of data. Currently used by TurtlePHP with respect to
+         * sub-requests which need to have access to variables that were
+         * set/passed by the origin-controlller.
+         * 
+         * Probably shouldn't be used outside of TurtlePHP's core files.
+         * 
+         * @access public
+         * @param  Array $hash
+         * @return void
+         */
+        public function setHash(array $hash)
+        {
+            $this->_hash = $hash;
+        }
+
+        /**
          * setRequest
          * 
          * @access public

@@ -176,3 +176,17 @@ Want to have this sub-request run through the
     $response = $subrequest->getResponse();
 
 ```
+
+Note that sub-requests will have access to all data that are meant to be passed
+to a parent-request's view using the `_pass` method.
+
+That means, that if a variable is passed before the sub-request is initiated,
+the sub-request will have access to it.
+
+Additionally, any variables that the sub-request *itself* passes will be made
+available to the view that the originating-request/controller gets rendered
+under.
+
+It's curious (yet most of the time, irrelevant) functionality that is required
+to keep the flow for sub-requests clean, and prevent any unnecessary calls to
+the framework native <prepare> method.
