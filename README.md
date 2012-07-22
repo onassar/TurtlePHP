@@ -189,7 +189,7 @@ under.
 
 It's curious (yet most of the time, irrelevant) functionality that is required
 to keep the flow for sub-requests clean, and prevent any unnecessary calls to
-the framework native <prepare> method.
+the framework native `<prepare>` method.
 
 ### Controller/View Variable Passing
 From within a controller action/method, variables can be passed as follows:
