@@ -28,22 +28,38 @@
         protected $_request;
 
         /**
-         * __inject
+         * __cascade
+         * 
+         * Writes data, recursively, to child-array's in order to allow variable
+         * passing in the following syntax:
+         * 
+         * $this->_pass('name', 'value');
+         * $this->_pass('page.title', 'title');
+         * 
+         * Based on the above syntax, the following variables are available to
+         * the view:
+         * 
+         * $name = 'value';
+         * $page = array(
+         *     'title' => 'title'
+         * );
          * 
          * @access private
-         * @param  Array $hash
-         * @param  String $key
-         * @param  mixed $value
+         * @param  Array &$hash
+         * @param  Array $key array of keys which are used to make associative
+         *         references in <$hash>
+         * @param  mixed $value variable which is written to <$hash> reference,
+         *         based on $keys as associative indexes
          * @return void
          */
-        private function __inject(&$hash, $keys, $value)
+        private function __cascade(array &$hash, array $keys, $value)
         {
             $key = array_shift($keys);
             if (!isset($hash[$key]) || !is_array($hash[$key])) {
                 $hash[$key] = array();
             }
             if (!empty($keys)) {
-                $this->__inject($hash[$key], $keys, $value);
+                $this->__cascade($hash[$key], $keys, $value);
             } else {
                 $hash[$key] = $value;
             }
@@ -59,9 +75,10 @@
          */
         protected function _pass($key, $value)
         {
+            // if <$hash> should store <$value> in a child-array
             if (strstr($key, '.')) {
                 $keys = explode('.', $key);
-                $this->__inject($this->_hash, $keys, $value);
+                $this->__cascade($this->_hash, $keys, $value);
             
             } else {
                 $this->_hash[$key] = $value;
