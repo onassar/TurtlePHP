@@ -190,3 +190,21 @@ under.
 It's curious (yet most of the time, irrelevant) functionality that is required
 to keep the flow for sub-requests clean, and prevent any unnecessary calls to
 the framework native <prepare> method.
+
+### Controller/View Variable Passing
+From within a controller action/method, variables can be passed as follows:
+
+    $this->_pass('name', 'Oliver Nassar');
+    $this->_pass('page.title', 'Webpage Title');
+    $this->_pass('page.description', 'Sample description');
+
+Respectively, the following variables are made available in the view:
+
+    $name = 'Oliver Nassar';
+    $page = array(
+        'title' => 'Webpage Title',
+        'description' => 'Sample description'
+    );
+
+Note that the period prompts the storage-system to store the value in a
+child-array, if it hasn't yet been defined.

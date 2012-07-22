@@ -28,16 +28,44 @@
         protected $_request;
 
         /**
+         * __inject
+         * 
+         * @access private
+         * @param  Array $hash
+         * @param  String $key
+         * @param  mixed $value
+         * @return void
+         */
+        private function __inject(&$hash, $keys, $value)
+        {
+            $key = array_shift($keys);
+            if (!isset($hash[$key]) || !is_array($hash[$key])) {
+                $hash[$key] = array();
+            }
+            if (!empty($keys)) {
+                $this->__inject($hash[$key], $keys, $value);
+            } else {
+                $hash[$key] = $value;
+            }
+        }
+
+        /**
          * _pass
          * 
          * @access protected
-         * @param  string $key
+         * @param  String $key
          * @param  mixed $value
          * @return void
          */
         protected function _pass($key, $value)
         {
-            $this->_hash[$key] = $value;
+            if (strstr($key, '.')) {
+                $keys = explode('.', $key);
+                $this->__inject($this->_hash, $keys, $value);
+            
+            } else {
+                $this->_hash[$key] = $value;
+            }
         }
 
         /**
