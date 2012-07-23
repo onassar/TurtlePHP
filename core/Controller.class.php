@@ -10,6 +10,18 @@
      *      Idea here is to create an importing system so that plugins can be
      *      created that provide functionality like overriding the <_pass>
      *      method.
+     *      
+     *      This would give the flexibility to add a <partial> method, a'la Yii,
+     *      which could extend the <Request> class. This method could route
+     *      calls to include a file, creating closures so that only certain
+     *      variables are accessible.
+     *      
+     *      Since this is *added* behavior, I like the idea of creating an
+     *      importing system to allow this functionality be added through
+     *      plugins (or whatever mechanism/naming convention).
+     *      
+     *      Also, inspired by Yii, think about giving views access to <$this>,
+     *      which accesses the acting-controller, along with <$request>.
      */
     class Controller
     {
