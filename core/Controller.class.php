@@ -18,7 +18,7 @@
      *      
      *      Since this is *added* behavior, I like the idea of creating an
      *      importing system to allow this functionality be added through
-     *      plugins (or whatever mechanism/naming convention).
+     *      plugins (or whatever mechanism/naming convention [eg. extension]).
      *      
      *      Also, inspired by Yii, think about giving views access to <$this>,
      *      which accesses the acting-controller, along with <$request>.
