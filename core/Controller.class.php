@@ -7,6 +7,9 @@
      * Controller
      * 
      * @see <http://www.gen-x-design.com/archives/dynamically-add-functions-to-php-classes/>
+     *      Idea here is to create an importing system so that plugins can be
+     *      created that provide functionality like overriding the <_pass>
+     *      method.
      */
     class Controller
     {
