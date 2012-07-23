@@ -6,6 +6,7 @@
     /**
      * Controller
      * 
+     * @see <http://www.gen-x-design.com/archives/dynamically-add-functions-to-php-classes/>
      */
     class Controller
     {
