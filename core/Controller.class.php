@@ -19,9 +19,6 @@
      *      Since this is *added* behavior, I like the idea of creating an
      *      importing system to allow this functionality be added through
      *      plugins (or whatever mechanism/naming convention [eg. extension]).
-     *      
-     *      Also, inspired by Yii, think about giving views access to <$this>,
-     *      which accesses the acting-controller, along with <$request>.
      */
     class Controller
     {
@@ -159,10 +156,8 @@
          */
         public function prepare()
         {
-            $class = get_class($this);
-            $class = strtolower($class);
-            $class = str_replace('controller', '', $class);
-            $this->_pass('controller', $class);
+            $this->_pass('this', $this);
+            $this->_pass('request', $this->_request);
         }
 
         /**
