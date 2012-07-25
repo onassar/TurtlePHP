@@ -209,7 +209,7 @@
              */
 
             // if it's not a sub-request
-            if ($reference->isSubRequest() === false) {
+            if ($this->isSubRequest() === false) {
                 call_user_func_array(array($reference, 'prepare'), array());
             }
             /**
@@ -279,6 +279,25 @@
 
             // store response
             $this->setResponse($response);
+        }
+
+        /**
+         * isSubRequest
+         * 
+         * Returns whether or not this request is made against as a subrequest
+         * from a parent <Request> instance/object.
+         * 
+         * Useful for securing requests that should only be accessible from
+         * within the application logic.
+         * 
+         * @access public
+         * @return Boolean
+         */
+        public function isSubRequest()
+        {
+            // compare to application-request
+            $application = \Turtle\Application::getRequest();
+            return $application !== $this;
         }
 
         /**

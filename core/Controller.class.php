@@ -129,6 +129,17 @@
         }
 
         /**
+         * getRequest
+         * 
+         * @access public
+         * @return Array
+         */
+        public function getRequest()
+        {
+            return $this->_request;
+        }
+
+        /**
          * isSubRequest
          * 
          * Returns whether or not the request being made against this controller
