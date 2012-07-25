@@ -284,8 +284,8 @@
         /**
          * isSubRequest
          * 
-         * Returns whether or not this request is made against as a subrequest
-         * from a parent <Request> instance/object.
+         * Returns whether or not <$this> is a subrequest off of a parent
+         * <Request> instance/object.
          * 
          * Useful for securing requests that should only be accessible from
          * within the application logic.
