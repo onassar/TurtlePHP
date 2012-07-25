@@ -19,8 +19,6 @@
      *       Since this is *added* behavior, I like the idea of creating an
      *       importing system to allow this functionality be added through
      *       plugins (or whatever mechanism/naming convention [eg. extension]).
-     * 
-     * @todo switch <isSubRequest> to <Request> class; add <getRequest> method
      */
     class Controller
     {
