@@ -338,12 +338,13 @@
                     }
 
                     /**
-                     * Include matches parameters at the *end* of the parameters
-                     * array to allow for boolean pattern matches in the routes.
-                     * Specifically, the potential absence of a value from the
-                     * <get> request could introduce bugs if that matched value
-                     * was passed to the controller-action as the first
-                     * parameter.
+                     * Prepend the *route-defined* parameters to the params
+                     * array, to allow for boolean pattern matches in the
+                     * routes.
+                     * 
+                     * If the route pattern-matches were passed to the
+                     * controller-actions first, there could be issues with
+                     * routes such as */([a-z]?)/path/*.
                      */
                     $route['params'] = array_merge($params, $matches);
                     break;
