@@ -227,8 +227,8 @@
             call_user_func_array(array($reference, $action), $params);
 
             /**
-             * Grab view again (here, instead of above, incase view was changed
-             * by controller action)
+             * Grab view (here, instead of above, incase view was changed by
+             * controller action)
              */
             $view = $this->_route['view'];
 
@@ -265,7 +265,7 @@
                 };
 
                 // process request; remove closure (memory)
-                $response = $process($view, $hash, $reference);
+                $response = $process($view, $hash);
                 unset($process);
             }
 
@@ -320,7 +320,32 @@
                 if (preg_match('/' . ($path) . '/', $this->_path, $matches)) {
                     $route = $details;
                     array_shift($matches);
-                    $route['params'] = $matches;
+
+                    // route parameter query
+                    $params = array();
+                    if (isset($route['params'])) {
+
+                        // require params to be an array
+                        if (!is_array($route['params'])) {
+                            throw new Exception(
+                                'Route parameters are required to be an ' .
+                                'array of values.'
+                            );
+                        }
+
+                        // set them
+                        $params = $route['params'];
+                    }
+
+                    /**
+                     * Include matches parameters at the *end* of the parameters
+                     * array to allow for boolean pattern matches in the routes.
+                     * Specifically, the potential absence of a value from the
+                     * <get> request could introduce bugs if that matched value
+                     * was passed to the controller-action as the first
+                     * parameter.
+                     */
+                    $route['params'] = array_merge($params, $matches);
                     break;
                 }
             }
