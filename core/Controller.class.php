@@ -6,19 +6,21 @@
     /**
      * Controller
      * 
-     * @see <http://www.gen-x-design.com/archives/dynamically-add-functions-to-php-classes/>
-     *      Idea here is to create an importing system so that plugins can be
-     *      created that provide functionality like overriding the <_pass>
-     *      method.
+     * @see  <http://www.gen-x-design.com/archives/dynamically-add-functions-to-php-classes/>
+     *       Idea here is to create an importing system so that plugins can be
+     *       created that provide functionality like overriding the <_pass>
+     *       method.
      *      
-     *      This would give the flexibility to add a <partial> method, a'la Yii,
-     *      which could extend the <Request> class. This method could route
-     *      calls to include a file, creating closures so that only certain
-     *      variables are accessible.
+     *       This would give the flexibility to add a <partial> method, a'la
+     *       Yii, which could extend the <Request> class. This method could
+     *       route calls to include a file, creating closures so that only
+     *       certain variables are accessible.
      *      
-     *      Since this is *added* behavior, I like the idea of creating an
-     *      importing system to allow this functionality be added through
-     *      plugins (or whatever mechanism/naming convention [eg. extension]).
+     *       Since this is *added* behavior, I like the idea of creating an
+     *       importing system to allow this functionality be added through
+     *       plugins (or whatever mechanism/naming convention [eg. extension]).
+     * 
+     * @todo switch <isSubRequest> to <Request> class; add <getRequest> method
      */
     class Controller
     {
