@@ -213,14 +213,14 @@
                 call_user_func_array(array($reference, 'prepare'), array());
             }
             /**
-             * Otherwise if it is, ensure it has the hash made available through
-             * the application-request Controller
+             * Otherwise if it is, ensure it has the variables made available
+             * through the application-request Controller
              */
             else {
                 $request = Application::getRequest();
                 $origin = $request->getController();
-                $hash = $origin->getHash();
-                $reference->setHash($hash);
+                $variables = $origin->getVariables();
+                $reference->setVariables($variables);
             }
 
             // trigger action
@@ -236,7 +236,7 @@
             if (isset($view)) {
 
                 // controller-set variables
-                $hash = $reference->getHash();
+                $variables = $reference->getVariables();
 
                 /**
                  * process
@@ -265,7 +265,7 @@
                 };
 
                 // process request; remove closure (memory)
-                $response = $process($view, $hash);
+                $response = $process($view, $variables);
                 unset($process);
             }
 

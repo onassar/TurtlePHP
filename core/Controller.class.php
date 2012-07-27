@@ -23,14 +23,14 @@
     class Controller
     {
         /**
-         * _hash
+         * _variables
          * 
          * (default value: array())
          * 
          * @var    array
          * @access protected
          */
-        protected $_hash = array();
+        protected $_variables = array();
 
         /**
          * _request
@@ -58,23 +58,23 @@
          * );
          * 
          * @access private
-         * @param  Array &$hash
+         * @param  Array &$variables
          * @param  Array $key array of keys which are used to make associative
-         *         references in <$hash>
-         * @param  mixed $value variable which is written to <$hash> reference,
-         *         based on $keys as associative indexes
+         *         references in <$variables>
+         * @param  mixed $value variable which is written to <$variables>
+         *         reference, based on $keys as associative indexes
          * @return void
          */
-        private function __cascade(array &$hash, array $keys, $value)
+        private function __cascade(array &$variables, array $keys, $value)
         {
             $key = array_shift($keys);
-            if (!isset($hash[$key]) || !is_array($hash[$key])) {
-                $hash[$key] = array();
+            if (!isset($variables[$key]) || !is_array($variables[$key])) {
+                $variables[$key] = array();
             }
             if (!empty($keys)) {
-                $this->__cascade($hash[$key], $keys, $value);
+                $this->__cascade($variables[$key], $keys, $value);
             } else {
-                $hash[$key] = $value;
+                $variables[$key] = $value;
             }
         }
 
@@ -88,13 +88,13 @@
          */
         protected function _pass($key, $value)
         {
-            // if <$hash> should store <$value> in a child-array
+            // if <$_variables> should store <$value> in a child-array
             if (strstr($key, '.')) {
                 $keys = explode('.', $key);
-                $this->__cascade($this->_hash, $keys, $value);
+                $this->__cascade($this->_variables, $keys, $value);
             
             } else {
-                $this->_hash[$key] = $value;
+                $this->_variables[$key] = $value;
             }
         }
 
@@ -113,17 +113,17 @@
         }
 
         /**
-         * getHash
+         * getVariables
          * 
-         * Returns a hash of all variables that ought to be available to the
-         * view of a controller.
+         * Returns an array of variables that ought to be available to the view
+         * of a controller.
          * 
          * @access public
          * @return Array
          */
-        public function getHash()
+        public function getVariables()
         {
-            return $this->_hash;
+            return $this->_variables;
         }
 
         /**
@@ -150,22 +150,23 @@
         }
 
         /**
-         * setHash
+         * setVariables
          * 
-         * Overwrites the <_hash> property of this Controller object with an
-         * array of data. Currently used by TurtlePHP with respect to
+         * Overwrites the <_variables> property of this Controller-object with
+         * an array of data. Currently used by TurtlePHP with respect to
          * sub-requests which need to have access to variables that were
          * set/passed by the origin-controlller.
          * 
-         * Probably shouldn't be used outside of TurtlePHP's core files.
+         * Generally, but not always, shouldn be restricted to use within
+         * TurtlePHPs core-files.
          * 
          * @access public
-         * @param  Array $hash
+         * @param  Array $variables
          * @return void
          */
-        public function setHash(array $hash)
+        public function setVariables(array $variables)
         {
-            $this->_hash = $hash;
+            $this->_variables = $variables;
         }
 
         /**
