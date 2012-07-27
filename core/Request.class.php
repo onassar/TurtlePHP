@@ -344,7 +344,7 @@
                      * 
                      * If the route pattern-matches were passed to the
                      * controller-actions first, there could be issues with
-                     * routes such as */([a-z]?)/path/*.
+                     * routes such as ^/([a-z]?)/path/$
                      */
                     $route['params'] = array_merge($params, $matches);
                     break;
