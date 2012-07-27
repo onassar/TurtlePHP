@@ -88,7 +88,7 @@
          */
         protected function _pass($key, $value)
         {
-            // if <$_variables> should store <$value> in a child-array
+            // if <$value> should be stored in a child-array
             if (strstr($key, '.')) {
                 $keys = explode('.', $key);
                 $this->__cascade($this->_variables, $keys, $value);
@@ -113,6 +113,17 @@
         }
 
         /**
+         * getRequest
+         * 
+         * @access public
+         * @return Array
+         */
+        public function getRequest()
+        {
+            return $this->_request;
+        }
+
+        /**
          * getVariables
          * 
          * Returns an array of variables that ought to be available to the view
@@ -124,17 +135,6 @@
         public function getVariables()
         {
             return $this->_variables;
-        }
-
-        /**
-         * getRequest
-         * 
-         * @access public
-         * @return Array
-         */
-        public function getRequest()
-        {
-            return $this->_request;
         }
 
         /**
@@ -150,26 +150,6 @@
         }
 
         /**
-         * setVariables
-         * 
-         * Overwrites the <_variables> property of this Controller-object with
-         * an array of data. Currently used by TurtlePHP with respect to
-         * sub-requests which need to have access to variables that were
-         * set/passed by the origin-controlller.
-         * 
-         * Generally, but not always, shouldn be restricted to use within
-         * TurtlePHPs core-files.
-         * 
-         * @access public
-         * @param  Array $variables
-         * @return void
-         */
-        public function setVariables(array $variables)
-        {
-            $this->_variables = $variables;
-        }
-
-        /**
          * setRequest
          * 
          * @access public
@@ -179,5 +159,25 @@
         public function setRequest(Request $request)
         {
             $this->_request = $request;
+        }
+
+        /**
+         * setVariables
+         * 
+         * Overwrites the <_variables> property of this Controller-object with
+         * an array of data. Currently used by TurtlePHP with respect to
+         * sub-requests which need to have access to variables that were
+         * set/passed by the origin-controlller.
+         * 
+         * Generally, but not always, should be restricted to use within
+         * TurtlePHPs core-files.
+         * 
+         * @access public
+         * @param  Array $variables
+         * @return void
+         */
+        public function setVariables(array $variables)
+        {
+            $this->_variables = $variables;
         }
     }
