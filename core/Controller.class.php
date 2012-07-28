@@ -61,20 +61,20 @@
          * @param  Array &$variables
          * @param  Array $key array of keys which are used to make associative
          *         references in <$variables>
-         * @param  mixed $value variable which is written to <$variables>
+         * @param  mixed $mixed variable which is written to <$variables>
          *         reference, based on $keys as associative indexes
          * @return void
          */
-        private function __cascade(array &$variables, array $keys, $value)
+        private function __cascade(array &$variables, array $keys, $mixed)
         {
             $key = array_shift($keys);
             if (!isset($variables[$key]) || !is_array($variables[$key])) {
                 $variables[$key] = array();
             }
             if (!empty($keys)) {
-                $this->__cascade($variables[$key], $keys, $value);
+                $this->__cascade($variables[$key], $keys, $mixed);
             } else {
-                $variables[$key] = $value;
+                $variables[$key] = $mixed;
             }
         }
 
@@ -83,18 +83,18 @@
          * 
          * @access protected
          * @param  String $key
-         * @param  mixed $value
+         * @param  mixed $mixed
          * @return void
          */
-        protected function _pass($key, $value)
+        protected function _pass($key, $mixed)
         {
-            // if <$value> should be stored in a child-array
+            // if <$mixed> should be stored in a child-array
             if (strstr($key, '.')) {
                 $keys = explode('.', $key);
-                $this->__cascade($this->_variables, $keys, $value);
+                $this->__cascade($this->_variables, $keys, $mixed);
             
             } else {
-                $this->_variables[$key] = $value;
+                $this->_variables[$key] = $mixed;
             }
         }
 
