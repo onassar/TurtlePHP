@@ -99,6 +99,33 @@
         }
 
         /**
+         * boot
+         * 
+         * @access public
+         * @access String $path
+         * @access Array $data
+         * @return void
+         */
+        public function boot($path, $data = array())
+        {
+            // closure to clean it up after
+            $process = function($__path, array $__variables)
+            {
+                // bring variables forward
+                foreach ($__variables as $__name => $__value) {
+                    $$__name = $__value;
+                }
+    
+                // boot it in
+                include $__path;
+            };
+
+            // process request; remove closure (memory)
+            $response = $process($path, $data);
+            unset($process);
+        }
+
+        /**
          * getCallbacks
          * 
          * Returns a reference to the array of callbacks set up by the

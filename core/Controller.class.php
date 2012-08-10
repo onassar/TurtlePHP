@@ -145,7 +145,7 @@
          */
         public function prepare()
         {
-            $this->_pass('this', $this);
+            $this->_pass('self', $this);
             $this->_pass('request', $this->_request);
         }
 
