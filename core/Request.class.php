@@ -5,7 +5,7 @@
 
     /**
      * Request
-     * 
+     *
      * @notes in PHP 5.4.x, $this will be able to be passed into closures
      *        (useful for the <addCallback> method). For now, setting a variable
      *        such as <$self> to <$this> should work (JavaScript styles)
@@ -14,7 +14,7 @@
     {
         /**
          * _callbacks
-         * 
+         *
          * @var    array
          * @access protected
          */
@@ -22,9 +22,9 @@
 
         /**
          * _controller
-         * 
+         *
          * Reference to the Controller that this Request has been routed to.
-         * 
+         *
          * @var    Controller
          * @access protected
          */
@@ -32,7 +32,7 @@
 
         /**
          * _error
-         * 
+         *
          * @var    string (default: 'includes/error.inc.php'
          * @access protected
          */
@@ -40,7 +40,7 @@
 
         /**
          * _path
-         * 
+         *
          * @var    string
          * @access protected
          */
@@ -48,7 +48,7 @@
 
         /**
          * _response
-         * 
+         *
          * @var    string
          * @access protected
          */
@@ -56,7 +56,7 @@
 
         /**
          * _route
-         * 
+         *
          * @var    array
          * @access protected
          */
@@ -64,7 +64,7 @@
 
         /**
          * _uri
-         * 
+         *
          * @var    string
          * @access protected
          */
@@ -72,9 +72,9 @@
 
         /**
          * __construct
-         * 
-         * 
-         * 
+         *
+         *
+         *
          * @access public
          * @param  String $uri
          * @return void
@@ -88,7 +88,7 @@
 
         /**
          * addCallback
-         * 
+         *
          * @access public
          * @param  Closure $callback
          * @return void
@@ -100,7 +100,7 @@
 
         /**
          * boot
-         * 
+         *
          * @access public
          * @access String $path
          * @access Array $data
@@ -115,7 +115,7 @@
                 foreach ($__variables as $__name => $__value) {
                     $$__name = $__value;
                 }
-    
+
                 // boot it in
                 include $__path;
             };
@@ -127,10 +127,10 @@
 
         /**
          * getCallbacks
-         * 
+         *
          * Returns a reference to the array of callbacks set up by the
          * application and/or plugins.
-         * 
+         *
          * @notes  a reference is returned rather than the native array to allow
          *         for the possibility of a callback adding another response
          *         callback. For an example, see the <Performance> plugin.
@@ -144,10 +144,10 @@
 
         /**
          * getController
-         * 
+         *
          * Returns a reference to the controller that this request has been
          * routed to.
-         * 
+         *
          * @access public
          * @return Controller
          */
@@ -158,7 +158,7 @@
 
         /**
          * getErrorPath
-         * 
+         *
          * @access public
          * @return string
          */
@@ -169,7 +169,7 @@
 
         /**
          * getResponse
-         * 
+         *
          * @access public
          * @return string
          */
@@ -180,9 +180,9 @@
 
         /**
          * getRoute
-         * 
+         *
          * Returns the route that the application has matched for the request.
-         * 
+         *
          * @access public
          * @return array
          */
@@ -193,10 +193,10 @@
 
         /**
          * generate
-         * 
+         *
          * Generates the markup for this <Request> instance by routing it
          * through the respective controller.
-         * 
+         *
          * @access public
          * @return void
          */
@@ -267,10 +267,10 @@
 
                 /**
                  * process
-                 * 
+                 *
                  * Created as a wrapper to prevent global namespace from being
                  * polluted.
-                 * 
+                 *
                  * @access public
                  * @param  String $__path
                  * @param  array $__variables
@@ -310,13 +310,13 @@
 
         /**
          * isSubRequest
-         * 
+         *
          * Returns whether or not <$this> is a subrequest off of a parent
          * <Request> instance/object.
-         * 
+         *
          * Useful for securing requests that should only be accessible from
          * within the application logic.
-         * 
+         *
          * @access public
          * @return Boolean
          */
@@ -329,9 +329,9 @@
 
         /**
          * route
-         * 
+         *
          * Matches the instance to the appropraite route.
-         * 
+         *
          * @access public
          * @return void
          */
@@ -368,7 +368,7 @@
                      * Prepend the *route-defined* parameters to the params
                      * array, to allow for boolean pattern matches in the
                      * routes.
-                     * 
+                     *
                      * If the route pattern-matches were passed to the
                      * controller-actions first, there could be issues with
                      * routes such as ^/([a-z]?)/path/$
@@ -389,7 +389,7 @@
 
         /**
          * setErrorPath
-         * 
+         *
          * @access public
          * @param  string $path
          * @return void
@@ -401,9 +401,9 @@
 
         /**
          * setResponse
-         * 
+         *
          * Sets the rendered response for the request.
-         * 
+         *
          * @access public
          * @param  string $response
          * @return void
@@ -415,9 +415,9 @@
 
         /**
          * setRoute
-         * 
+         *
          * Sets the route that the request matches.
-         * 
+         *
          * @access public
          * @param  array $route
          * @return void

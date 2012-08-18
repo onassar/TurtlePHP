@@ -5,14 +5,23 @@
 
     /**
      * Application
-     * 
+     *
      * @abstract
      */
     abstract class Application
     {
         /**
+         * _hooks
+         *
+         * @var    array
+         * @access protected
+         * @static
+         */
+        protected static $_hooks = array();
+
+        /**
          * _models
-         * 
+         *
          * @var    array
          * @access protected
          * @static
@@ -21,7 +30,7 @@
 
         /**
          * _request
-         * 
+         *
          * @var    Request
          * @access protected
          * @static
@@ -30,7 +39,7 @@
 
         /**
          * _routes
-         * 
+         *
          * @var    array
          * @access protected
          * @static
@@ -38,13 +47,27 @@
         protected static $_routes;
 
         /**
+         * addHook
+         *
+         * @access public
+         * @static
+         * @param  String $hook
+         * @param  mixed $callback Callback array or closure
+         * @return void
+         */
+        public static function addHook($hook, $callback)
+        {
+            self::$_hooks[$hook] = $callback;
+        }
+
+        /**
          * addRoute
-         * 
+         *
          * Adds a route array to the routes storage. This method allows for
          * flexibility when building plugins. It prepends the route to the
          * routes array to prevent any overarching routes (eg. 404 catch-all
          * redirects) from being matched.
-         * 
+         *
          * @access public
          * @static
          * @param  String $path
@@ -61,15 +84,15 @@
 
         /**
          * addRoutes
-         * 
+         *
          * The logic here follows the same premise as <addRoute> above; namely
          * to "prepend" the additional routes, collectively, to the beginning of
          * the array of matchable/applicable routes.
-         * 
+         *
          * <array_merge> rather than <array_unshift> needed to be used here,
          * with the previously-set routes appended to the end, in order for the
          * newly-added routes to have the precendence required of them.
-         * 
+         *
          * @access public
          * @static
          * @param  Array $routes
@@ -91,9 +114,9 @@
 
         /**
          * clearRoutes
-         * 
+         *
          * Clears the array of possible routes for the application to match.
-         * 
+         *
          * @access public
          * @static
          * @return void
@@ -104,8 +127,28 @@
         }
 
         /**
+         * getHooks
+         *
+         * @access public
+         * @static
+         * @param  Boolean $hook (default: false)
+         * @return mixed array of all hooks if none specified; if speciifed,
+         *         hook array/closure, otherwise false
+         */
+        public static function getHooks($hook = false)
+        {
+            if ($hook === false) {
+                return self::$_hooks;
+            }
+            if (isset(self::$_hooks[$hook])) {
+                return self::$_hooks[$hook];
+            }
+            return false;
+        }
+
+        /**
          * getModel
-         * 
+         *
          * @access public
          * @static
          * @param  string $name
@@ -133,7 +176,7 @@
 
         /**
          * getRequest
-         * 
+         *
          * @access public
          * @static
          * @return Request
@@ -145,10 +188,10 @@
 
         /**
          * getRoutes
-         * 
+         *
          * Returns the array of all routes the application may accept for a
          * request.
-         * 
+         *
          * @access public
          * @static
          * @return array
@@ -160,7 +203,7 @@
 
         /**
          * setRequest
-         * 
+         *
          * @access public
          * @static
          * @param  Request $request
@@ -173,10 +216,10 @@
 
         /**
          * setRoutes
-         * 
+         *
          * Sets an array of all possible routes that the request are allowed to
          * match.
-         * 
+         *
          * @access public
          * @static
          * @param  array $routes

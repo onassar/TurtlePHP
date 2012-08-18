@@ -5,17 +5,17 @@
 
     /**
      * Controller
-     * 
+     *
      * @see  <http://www.gen-x-design.com/archives/dynamically-add-functions-to-php-classes/>
      *       Idea here is to create an importing system so that plugins can be
      *       created that provide functionality like overriding the <_pass>
      *       method.
-     *      
+     *
      *       This would give the flexibility to add a <partial> method, a'la
      *       Yii, which could extend the <Request> class. This method could
      *       route calls to include a file, creating closures so that only
      *       certain variables are accessible.
-     *      
+     *
      *       Since this is *added* behavior, I like the idea of creating an
      *       importing system to allow this functionality be added through
      *       plugins (or whatever mechanism/naming convention [eg. extension]).
@@ -24,9 +24,9 @@
     {
         /**
          * _variables
-         * 
+         *
          * (default value: array())
-         * 
+         *
          * @var    array
          * @access protected
          */
@@ -34,29 +34,29 @@
 
         /**
          * _request
-         * 
+         *
          * @var    Request
          * @access protected
          */
         protected $_request;
 
         /**
-         * __cascade
-         * 
+         * _cascade
+         *
          * Writes data, recursively, to child-array's in order to allow variable
          * passing in the following syntax:
-         * 
+         *
          * $this->_pass('name', 'value');
          * $this->_pass('page.title', 'title');
-         * 
+         *
          * Based on the above syntax, the following variables are available to
          * the view:
-         * 
+         *
          * $name = 'value';
          * $page = array(
          *     'title' => 'title'
          * );
-         * 
+         *
          * @access private
          * @param  Array &$variables
          * @param  Array $key array of keys which are used to make associative
@@ -65,14 +65,14 @@
          *         reference, based on $keys as associative indexes
          * @return void
          */
-        private function __cascade(array &$variables, array $keys, $mixed)
+        private function _cascade(array &$variables, array $keys, $mixed)
         {
             $key = array_shift($keys);
             if (!isset($variables[$key]) || !is_array($variables[$key])) {
                 $variables[$key] = array();
             }
             if (!empty($keys)) {
-                $this->__cascade($variables[$key], $keys, $mixed);
+                $this->_cascade($variables[$key], $keys, $mixed);
             } else {
                 $variables[$key] = $mixed;
             }
@@ -80,7 +80,7 @@
 
         /**
          * _pass
-         * 
+         *
          * @access protected
          * @param  String $key
          * @param  mixed $mixed
@@ -91,8 +91,8 @@
             // if <$mixed> should be stored in a child-array
             if (strstr($key, '.')) {
                 $keys = explode('.', $key);
-                $this->__cascade($this->_variables, $keys, $mixed);
-            
+                $this->_cascade($this->_variables, $keys, $mixed);
+
             } else {
                 $this->_variables[$key] = $mixed;
             }
@@ -100,7 +100,7 @@
 
         /**
          * _setView
-         * 
+         *
          * @access protected
          * @param  String $path
          * @return void
@@ -114,7 +114,7 @@
 
         /**
          * getRequest
-         * 
+         *
          * @access public
          * @return Array
          */
@@ -125,10 +125,10 @@
 
         /**
          * getVariables
-         * 
+         *
          * Returns an array of variables that ought to be available to the view
          * of a controller.
-         * 
+         *
          * @access public
          * @return Array
          */
@@ -139,7 +139,7 @@
 
         /**
          * prepare
-         * 
+         *
          * @access public
          * @return void
          */
@@ -151,7 +151,7 @@
 
         /**
          * setRequest
-         * 
+         *
          * @access public
          * @param  Request $request
          * @return void
@@ -163,15 +163,15 @@
 
         /**
          * setVariables
-         * 
+         *
          * Overwrites the <_variables> property of this Controller-object with
          * an array of data. Currently used by TurtlePHP with respect to
          * sub-requests which need to have access to variables that were
          * set/passed by the origin-controlller.
-         * 
+         *
          * Generally, but not always, should be restricted to use within
          * TurtlePHPs core-files.
-         * 
+         *
          * @access public
          * @param  Array $variables
          * @return void

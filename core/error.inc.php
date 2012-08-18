@@ -23,53 +23,54 @@
                 font-family: "Lucida Grande",verdana,arial,sans-serif;
                 color: #666;
                 background-color: #eee;
-                font-size: 0.9em;
+                font-size: 13px;
             }
             a {
                 color: #446CBC;
             }
-            div#wrapper {
+            div.wrapper {
                 width: 480px;
                 margin: 100px auto 0;
             }
-            div#message {
+            div.message {
                 -webkit-box-shadow: -3px -3px 2px #e9e9e9;
                 border-radius: 12px;
             }
-            div#message div#container {
+            div.message div.container {
                 padding: 32px;
                 border: 1px solid #d6d6d6;
                 border-radius: 12px;
                 -webkit-box-shadow: 3px 3px 2px #e9e9e9;
                 background-color: #fff;
             }
-            div#message div#container h1 {
-                font-size: 2em;
+            div.message div.container h1 {
+                font-size: 32px;
+                line-height: 31px;
                 font-family: Nunito;
                 border-bottom: 1px solid #ccc;
                 padding: 0 0 16px;
                 margin: 0 0 16px;
             }
-            div#message div#container p {
+            div.message div.container p {
                 display: block;
-                font-size: 0.9em;
-                line-height: 1.4em;
+                font-size: 13px;
+                line-height: 17px;
             }
-            div#details {
-                font-size: 0.6em;
+            div.details {
+                font-size: 9px;
                 padding: 6px 0 0 33px;
                 color: #888;
                 text-align: left;
             }
-            div#details span {
+            div.details span {
                 padding-right: 12px;
             }
         </style>
     </head>
     <body>
-        <div id="wrapper">
-            <div id="message">
-                <div id="container">
+        <div class="wrapper">
+            <div class="message">
+                <div class="container">
                     <h1>Whoops!</h1>
                     <p>
                         Sorry, but something went wrong.<br />
@@ -79,7 +80,7 @@
                     </p>
                 </div>
             </div>
-            <div id="details">
+            <div class="details">
                 <span><?= date('D, d M o G:i:s T') ?></span>
                 <span><?= (IP) ?></span>
                 <span><?= ($_SERVER['HTTP_HOST']) ?></span>

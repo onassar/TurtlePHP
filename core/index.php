@@ -2,7 +2,7 @@
 
     /**
      * Constants
-     * 
+     *
      */
 
     // request start time
@@ -21,9 +21,9 @@
 
     /**
      * shutdown
-     * 
+     *
      * Handles buffer-flushing and error-handling.
-     * 
+     *
      * @access public
      * @return void
      */
@@ -43,8 +43,9 @@
             exit(0);
         }
 
-        // error include
-        require_once $request->getErrorPath();
+        // if an error hook was defined
+        $hook = \Turtle\Application::getHooks('error');
+        call_user_func_array($hook, array($request, $error));
         exit(0);
     }
 
@@ -57,11 +58,30 @@
     require_once CORE . '/Model.class.php';
     require_once CORE . '/Request.class.php';
 
+    // setup error hook
+    \Turtle\Application::addHook(
+        'error',
+
+        /**
+         * (anonymous)
+         *
+         * @access private
+         * @param  Request $request
+         * @param  Array $error
+         * @return void
+         */
+        function(\Turtle\Request $request, array $error) {
+
+            // standard-error flow
+            require_once $request->getErrorPath();
+        }
+    );
+
     /**
      * closure
-     * 
+     *
      * Acts as a wrapper to prevent the global namespace from becoming polluted.
-     * 
+     *
      * @access public
      * @return void
      */
@@ -69,10 +89,10 @@
     {
         /**
          * checks
-         * 
+         *
          * Acts as a wrapper to prevent the global namespace from becoming polluted.
-         * 
-         * @access public
+         *
+         * @access protected
          * @return void
          */
         $checks = function()
