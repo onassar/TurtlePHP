@@ -127,23 +127,19 @@
         }
 
         /**
-         * getHooks
+         * getHook
          *
          * @access public
          * @static
-         * @param  Boolean $hook (default: false)
-         * @return mixed array of all hooks if none specified; if speciifed,
-         *         hook array/closure, otherwise false
+         * @param  String $name
+         * @return Array
          */
-        public static function getHooks($hook = false)
+        public static function getHook($name)
         {
-            if ($hook === false) {
-                return self::$_hooks;
+            if (isset(self::$_hooks[$name])) {
+                return self::$_hooks[$name];
             }
-            if (isset(self::$_hooks[$hook])) {
-                return self::$_hooks[$hook];
-            }
-            return false;
+            throw new Exception('Hook *' . ($name) . '* not defined.');
         }
 
         /**

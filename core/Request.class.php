@@ -101,6 +101,9 @@
         /**
          * boot
          *
+         * This helper is designed to accept specific data, to make including
+         * other content/partials a cleaner experience (from PHPs perspective).
+         *
          * @access public
          * @access String $path
          * @access Array $data

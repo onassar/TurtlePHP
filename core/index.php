@@ -22,8 +22,13 @@
     /**
      * shutdown
      *
-     * Handles buffer-flushing and error-handling.
+     * Handles buffer-flushing.
      *
+     * @note   when this function is called during an error-flow (eg. <proxy>
+     *         below has been called), it will not error itself; it will simply
+     *         echo out a <NULL> variable
+     * @note   <exit> is not required here (as it doesn't actually do
+     *         anything), but I include it for syntactical-sake.
      * @access public
      * @return void
      */
@@ -32,25 +37,39 @@
         // grab the request
         $request = \Turtle\Application::getRequest();
 
-        // error check
-        $error = error_get_last();
-
-        // clean request
-        if (empty($error)) {
-
-            // dump the generated response
-            echo $request->getResponse();
-            exit(0);
-        }
-
-        // if an error hook was defined
-        $hook = \Turtle\Application::getHooks('error');
-        call_user_func_array($hook, array($request, $error));
+        // dump the generated response
+        echo $request->getResponse();
         exit(0);
     }
 
     // buffer-flushing and error/exception handling
     register_shutdown_function('shutdown');
+
+    /**
+     * proxy
+     * 
+     * Proxies any errors through the error-hook.
+     * 
+     * @access public
+     * @param  Integer $errno
+     * @param  String $errostr
+     * @param  String $errfile
+     * @param  Integer $errline
+     * @param  Array $errcontext
+     * @return void
+     */
+    function proxy($errno, $errstr, $errfile, $errline, $errcontext)
+    {
+        // grab the request and error
+        $request = \Turtle\Application::getRequest();
+        $error = func_get_args();
+
+        // route through the error-hook
+        $hook = \Turtle\Application::getHook('error');
+        call_user_func_array($hook, array($request, $error));
+        exit(0);
+    }
+    set_error_handler('proxy');
 
     // dependencies
     require_once CORE . '/Application.class.php';
@@ -71,6 +90,13 @@
          * @return void
          */
         function(\Turtle\Request $request, array $error) {
+
+            // basic error-log
+            error_log(
+                $error[1] . ' in ' .
+                $error[2] . ': ' .
+                $error[3]
+            );
 
             // standard-error flow
             require_once $request->getErrorPath();
