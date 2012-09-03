@@ -257,6 +257,19 @@
             call_user_func_array(array($reference, $action), $params);
 
             /**
+             * Bail if no view is defined; if logic got here, one should be
+             * defined. The reason some routes can have just a controller and
+             * action defined and not cause an error, is because they redirect
+             * in about <call_user_func_array> call.
+             * 
+             * In the case where they don't, a view is naturally required.
+             * 
+             * A check could be done here, and a null case <$response> value of
+             * an empty string defined, but I don't think there's a point to
+             * that.
+             */
+
+            /**
              * Grab view (here, instead of above, incase view was changed by
              * controller action)
              */
