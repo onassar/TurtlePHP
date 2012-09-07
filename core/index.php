@@ -52,15 +52,30 @@
      * Clears out the buffer first; reasons are documented below.
      * 
      * @access public
-     * @param  Integer $errno
-     * @param  String $errostr
-     * @param  String $errfile
-     * @param  Integer $errline
-     * @param  Array $errcontext
+     * @param  Exception|Integer $errno
+     * @param  String $errostr (optional)
+     * @param  String $errfile (optional)
+     * @param  Integer $errline (optional)
+     * @param  Array $errcontext (optional)
      * @return void
      */
-    function proxy($errno, $errstr, $errfile, $errline, $errcontext)
+    function proxy()
     {
+        // determine if it was an exception that was trigger; set accordingly
+        $error = func_get_args();
+        if (is_object($error[0])) {
+
+            // breakdown the error arguments
+            $exception = $error[0];
+            $error = array(
+                $exception->getCode(),
+                $exception->getMessage(),
+                $exception->getFile(),
+                $exception->getLine(),
+                array()
+            );
+        }
+
         /**
          * Clear the buffer; this ensures that if an error happened in an
          * included file, the contents of the file up until the
@@ -68,9 +83,8 @@
          */
         ob_end_clean();
 
-        // grab the request and error
+        // grab the request
         $request = \Turtle\Application::getRequest();
-        $error = func_get_args();
 
         // route through the error-hook
         $hook = \Turtle\Application::getHook('error');
@@ -78,6 +92,7 @@
         exit(0);
     }
     set_error_handler('proxy');
+    set_exception_handler('proxy');
 
     // dependencies
     require_once CORE . '/Application.class.php';
