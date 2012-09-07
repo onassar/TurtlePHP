@@ -49,6 +49,7 @@
      * proxy
      * 
      * Proxies any errors through the error-hook.
+     * Clears out the buffer first; reasons are documented below.
      * 
      * @access public
      * @param  Integer $errno
@@ -60,6 +61,13 @@
      */
     function proxy($errno, $errstr, $errfile, $errline, $errcontext)
     {
+        /**
+         * Clear the buffer; this ensures that if an error happened in an
+         * included file, the contents of the file up until the
+         * erroring-line won't be output to the buffer
+         */
+        ob_end_clean();
+
         // grab the request and error
         $request = \Turtle\Application::getRequest();
         $error = func_get_args();
@@ -97,13 +105,6 @@
                 $error[2] . ': ' .
                 $error[3]
             );
-
-            /**
-             * Clear the buffer; this ensures that if an error happened in an
-             * included file, the contents of the file up until the
-             * erroring-line won't be output to the buffer
-             */
-            ob_end_clean();
 
             // standard-error flow
             require_once $request->getErrorPath();
