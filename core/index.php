@@ -79,7 +79,7 @@
         /**
          * Clear the buffer; this ensures that if an error happened in an
          * included file, the contents of the file up until the
-         * erroring-line won't be output to the buffer
+         * erroring-line won't be output to the buffer.
          */
         ob_end_clean();
 
