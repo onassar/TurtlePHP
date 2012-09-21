@@ -138,15 +138,35 @@
         }
 
         /**
+         * setDefaultControllerVariables
+         *
+         * Sets the default variables that should always be set for a view.
+         *
+         * @access public
+         * @return void
+         */
+        public function setDefaultControllerVariables()
+        {
+            $this->_pass('self', $this);
+            $this->_pass('request', $this->_request);
+        }
+
+        /**
          * prepare
+         *
+         * Called before a controller action is, sets up logic that may be
+         * needed by the time the action is triggered.
+         * 
+         * Can be useful if defined by an <AppController> child, to perform
+         * checks against authenticated users/sessions, load global data from
+         * a database and send it to the view, etc.
          *
          * @access public
          * @return void
          */
         public function prepare()
         {
-            $this->_pass('self', $this);
-            $this->_pass('request', $this->_request);
+            $this->setDefaultControllerVariables();
         }
 
         /**

@@ -251,6 +251,7 @@
                 $origin = $request->getController();
                 $variables = $origin->getVariables();
                 $reference->setVariables($variables);
+                $this->getController()->setDefaultControllerVariables();
             }
 
             // trigger action
@@ -260,7 +261,7 @@
              * Bail if no view is defined; if logic got here, one should be
              * defined. The reason some routes can have just a controller and
              * action defined and not cause an error, is because they redirect
-             * in about <call_user_func_array> call.
+             * in the <call_user_func_array> call.
              * 
              * In the case where they don't, a view is naturally required.
              * 
