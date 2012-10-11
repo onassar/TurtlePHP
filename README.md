@@ -48,6 +48,10 @@ Passes buffer through a templating-engine to convert custom-tags
 programatically. Has the
 [PHP-Template](https://github.com/onassar/PHP-Template) library as a
 requirement
+ - [Error](https://github.com/onassar/TurtlePHP-ErrorPlugin)
+Still under development, this plugin modifies the framework's default error handling behaviour (which is to render the output of the included `error.inc.php` file), by outputting a friendly UI which includes the error message, file, line number, and code snippet. Stack trace will be added soon as well.
+
+[[http://i.imgur.com/qaRZ6.png]]
 
 Implementation
 ===
