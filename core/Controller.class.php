@@ -138,20 +138,6 @@
         }
 
         /**
-         * setDefaultControllerVariables
-         *
-         * Sets the default variables that should always be set for a view.
-         *
-         * @access public
-         * @return void
-         */
-        public function setDefaultControllerVariables()
-        {
-            $this->_pass('self', $this);
-            $this->_pass('request', $this->_request);
-        }
-
-        /**
          * prepare
          *
          * Called before a controller action is, sets up logic that may be
@@ -167,6 +153,20 @@
         public function prepare()
         {
             $this->setDefaultControllerVariables();
+        }
+
+        /**
+         * setDefaultControllerVariables
+         *
+         * Sets the default variables that should always be set for a view.
+         *
+         * @access public
+         * @return void
+         */
+        public function setDefaultControllerVariables()
+        {
+            $this->_pass('self', $this);
+            $this->_pass('request', $this->_request);
         }
 
         /**
