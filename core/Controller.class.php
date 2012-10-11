@@ -23,6 +23,14 @@
     class Controller
     {
         /**
+         * _request
+         *
+         * @var    Request
+         * @access protected
+         */
+        protected $_request;
+
+        /**
          * _variables
          *
          * (default value: array())
@@ -31,14 +39,6 @@
          * @access protected
          */
         protected $_variables = array();
-
-        /**
-         * _request
-         *
-         * @var    Request
-         * @access protected
-         */
-        protected $_request;
 
         /**
          * _cascade
