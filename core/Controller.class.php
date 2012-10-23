@@ -142,7 +142,7 @@
                 : '(unknown)';
 
             // generate the stamp for the log
-            $stamped = '';
+            $stamped = '(none)';
             if (!is_null($stamp)) {
                 if (is_string($stamp)) {
                     $stamped = $stamp;
@@ -159,11 +159,7 @@
                 "\n" .
                 "**Invalid Request**\n" .
                 "Path: *" . ($path) . "*\n" .
-                (
-                    $stamped !== '' ?
-                    ("Stamp: *" . ($stamped) . "*\n") :
-                    ('')
-                ) .
+                "Stamp: *" . ($stamped) . "*\n" .
                 "Remote Address: *" . (IP) . "*\n" .
                 "Agent: *" . ($agent) ."*\n"
             );
