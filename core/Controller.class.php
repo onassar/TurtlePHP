@@ -79,6 +79,18 @@
         }
 
         /**
+         * _getView
+         *
+         * @access protected
+         * @return String
+         */
+        protected function _getView()
+        {
+            $route = $this->_request->getRoute();
+            return $route['view'];
+        }
+
+        /**
          * _pass
          *
          * @access protected
@@ -110,6 +122,51 @@
             $route = $this->_request->getRoute();
             $route['view'] = $path;
             $this->_request->setRoute($route);
+        }
+
+        /**
+         * error
+         *
+         * 404 requests that come in.
+         * 
+         * @note   An action that ought to be available to all controllers
+         * @param  mixed $stamp variable that is passed along to the error log
+         * @access public
+         * @return void
+         */
+        public function error($stamp = null)
+        {
+            // agent storage (check done with respect to spiders)
+            $agent = isset($_SERVER['HTTP_USER_AGENT'])
+                ? $_SERVER['HTTP_USER_AGENT']
+                : '(unknown)';
+
+            // generate the stamp for the log
+            $stamped = '';
+            if (!is_null($stamp)) {
+                if (is_string($stamp)) {
+                    $stamped = $stamp;
+                } elseif (is_array($stamp)) {
+                    $stamped = print_r($stamp, true);
+                }
+            }
+
+            // set the path that beget this error
+            $path = $_SERVER['REQUEST_URI'];
+
+            // log
+            error_log(
+                "\n" .
+                "**Invalid Request**\n" .
+                "Path: *" . ($path) . "*\n" .
+                (
+                    $stamped !== '' ?
+                    ("Stamp: *" . ($stamped) . "*\n") :
+                    ('')
+                ) .
+                "Remote Address: *" . (IP) . "*\n" .
+                "Agent: *" . ($agent) ."*\n"
+            );
         }
 
         /**
