@@ -8,78 +8,74 @@
     header('Content-Type: text/html; charset=utf-8');
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="en">
     <head>
+        <meta charset="utf-8" />
         <title>Whoops.</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta name="description" content="Sorry, but we can&#039;t find the page you&#039;re looking for." />
-        <link href="http://meyerweb.com/eric/tools/css/reset/reset.css" rel="stylesheet" type="text/css" />
-        <link href="http://fonts.googleapis.com/css?family=Nunito:light,regular,bold" rel="stylesheet" type="text/css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+
+
+        <!-- bootstrap -->
+        <link href="/static/vendors/bootstrap/css/bootstrap.css" rel="stylesheet" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <style type="text/css">
             body {
-                font-family: "Lucida Grande",verdana,arial,sans-serif;
-                color: #666;
-                background-color: #eee;
-                font-size: 0.9em;
+                background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAADkCAIAAAAAWwOKAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDpGNzdGMTE3NDA3MjA2ODExOEVENEVFQUJGQTZGRjEyQyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpDNzcyNDNEQTEwOUYxMUUxQkM3NThDOUVFM0ZCQ0EyMyIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpDNzcyNDNEOTEwOUYxMUUxQkM3NThDOUVFM0ZCQ0EyMyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkY4N0YxMTc0MDcyMDY4MTE4RUQ0RUVBQkZBNkZGMTJDIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkY3N0YxMTc0MDcyMDY4MTE4RUQ0RUVBQkZBNkZGMTJDIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+ff0lOAAAASFJREFUeNrs2EEKgzAQQNHq/e/rTmtBK0rUmExKFy8rIcNnVvqwG4bhlX3Gccwf7lt159Oom7t1QTcrXda9Txd3b9I13at0Zfc0Xd9Np0O6iXRU95gO7O7Ssd0tHd5d0i26n8lG3Wcv1UfdeeO+UTd364JuVrqse58u7t6ka7pX6cruabq+m06HdBPpqO4xHdjdpWO7Wzq8u6RbdJ+xj1RJlVRJlVRJlVRJlVRJlVRJlVRJlVRJlVRJlVRJlVRJlVRJlVRJlVRJlVRJlVRJlVRJlVRJlVRJlVRJlVRJlVRJlVRJlVRJlVRJlVRJlVRJlVRJlVT/QarT2p3Obr/PT6Xarft2ydvdJKmSKqmSKqmSKqmSKqmSavmX0z/V30n1LcAAOb20xXawIikAAAAASUVORK5CYII=);
+                padding-top: 40px;
+                padding-bottom: 40px;
+                background-color: #f5f5f5;
+            }
+            h1 {
+                font-weight: 300;
             }
             a {
-                color: #446CBC;
+                text-decoration: underline;
             }
-            div#wrapper {
-                width: 480px;
-                margin: 100px auto 0;
-            }
-            div#message {
-                -webkit-box-shadow: -3px -3px 2px #e9e9e9;
-                border-radius: 12px;
-            }
-            div#message div#container {
-                padding: 32px;
-                border: 1px solid #d6d6d6;
-                border-radius: 12px;
-                -webkit-box-shadow: 3px 3px 2px #e9e9e9;
+            #content {
+                max-width: 480px;
+                padding: 16px 32px 32px;
+                margin: 20px auto 0;
                 background-color: #fff;
+                border: 1px solid #e5e5e5;
+                /*border-color: #c6c6c6;*/
+                -webkit-border-radius: 8px;
+                -moz-border-radius: 8px;
+                border-radius: 8px;
+                -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
             }
-            div#message div#container h1 {
-                font-size: 2em;
-                font-family: Nunito;
-                border-bottom: 1px solid #ccc;
-                padding: 0 0 16px;
-                margin: 0 0 16px;
-            }
-            div#message div#container p {
-                display: block;
-                font-size: 0.9em;
-                line-height: 1.4em;
-            }
-            div#details {
-                font-size: 0.6em;
-                padding: 6px 0 0 33px;
+            #details {
+                max-width: 480px;
+                margin: 10px auto 20px;
+                font-size: 9px;
                 color: #888;
                 text-align: left;
             }
-            div#details span {
+            #details span {
                 padding-right: 12px;
             }
         </style>
+        <link href="/static/vendors/bootstrap/css/bootstrap-responsive.css" rel="stylesheet" />
+
+
+        <!-- shiv -->
+        <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
     </head>
     <body>
-        <div id="wrapper">
-            <div id="message">
-                <div id="container">
-                    <h1>Whoops!</h1>
-                    <p>
-                        Sorry, but we can&#039;t find the page you&#039;re looking for.<br />
-                        Try going <a href="Javascript: history.go(-1);" title="Go back one page">back</a>.
-                    </p>
-                </div>
-            </div>
-            <div id="details">
-                <span><?= date('D, d M o G:i:s T') ?></span>
-                <span><?= (IP) ?></span>
-                <span><?= ($_SERVER['HTTP_HOST']) ?></span>
+        <div class="container">
+            <div id="content">
+                <h1>Whoops!</h1>
+                <hr />
+                <p>
+                    Sorry, but we can&#039;t find the page you&#039;re looking for.<br />
+                    Try going <a href="Javascript: history.go(-1);" title="Go back one page">back</a>.
+                </p>
             </div>
         </div>
     </body>
