@@ -70,8 +70,8 @@
             </div>
         </div>
         <div class="container">
-            <h1>Bootstrap</h1>
-            <p>:-)</p>
+            <h1>Hello World!</h1>
+            <p>Hai :)</p>
         </div>
     </body>
 </html>
