@@ -55,7 +55,7 @@
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="navbar-inner">
                 <div class="container">
-                    <a class="brand" href="#">Application</a>
+                    <a class="brand" href="#">Crawler</a>
                     <ul class="nav">
                         <li class="active"><a href="#">Home</a></li>
                         <li><a href="#about">Element</a></li>
