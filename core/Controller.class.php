@@ -125,7 +125,7 @@
         }
 
         /**
-         * error
+         * four04
          *
          * 404 requests that come in.
          * 
@@ -134,7 +134,7 @@
          * @access public
          * @return void
          */
-        public function error($stamp = null)
+        public function four04($stamp = null)
         {
             // agent storage (check done with respect to spiders)
             $agent = isset($_SERVER['HTTP_USER_AGENT'])

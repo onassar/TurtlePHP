@@ -13,7 +13,7 @@
         // error handling
         '(.*)' => array(
             'controller' => 'Common',
-            'action' => 'error',
+            'action' => 'four04',
             'view' => APP . '/views/common/404.inc.php'
         )
     );
