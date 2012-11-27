@@ -60,12 +60,10 @@
             <div class="navbar-inner">
                 <div class="container">
                     <a class="brand" href="#">Application</a>
-                    <div class="nav-collapse collapse">
-                        <ul class="nav">
-                            <li class="active"><a href="#">Home</a></li>
-                            <li><a href="#about">Element</a></li>
-                        </ul>
-                    </div><!--/.nav-collapse -->
+                    <ul class="nav">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li><a href="#about">Element</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
