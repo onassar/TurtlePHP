@@ -38,6 +38,15 @@
         protected static $_request;
 
         /**
+         * _requests
+         *
+         * @var    array
+         * @access protected
+         * @static
+         */
+        protected static $_requests = array();
+
+        /**
          * _routes
          *
          * @var    array
@@ -58,6 +67,19 @@
         public static function addHook($hook, $callback)
         {
             self::$_hooks[$hook] = $callback;
+        }
+
+        /**
+         * addRequest
+         *
+         * @access public
+         * @static
+         * @param  Request $request
+         * @return void
+         */
+        public static function addRequest(Request $request)
+        {
+            array_push(self::$_requests, $request);
         }
 
         /**
@@ -180,6 +202,18 @@
         public static function getRequest()
         {
             return self::$_request;
+        }
+
+        /**
+         * getRequests
+         *
+         * @access public
+         * @static
+         * @return array
+         */
+        public static function getRequests()
+        {
+            return self::$_requests;
         }
 
         /**

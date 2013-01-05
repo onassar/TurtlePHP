@@ -84,6 +84,7 @@
             $this->_uri = $uri;
             $parsed = parse_url($this->_uri, PHP_URL_PATH);
             $this->_path = $parsed;
+            \Turtle\Application::addRequest($this);
         }
 
         /**

@@ -57,7 +57,7 @@
          *     'title' => 'title'
          * );
          *
-         * @access private
+         * @access protected
          * @param  Array &$variables
          * @param  Array $key array of keys which are used to make associative
          *         references in <$variables>
@@ -65,7 +65,7 @@
          *         reference, based on $keys as associative indexes
          * @return void
          */
-        private function _cascade(array &$variables, array $keys, $mixed)
+        protected function _cascade(array &$variables, array $keys, $mixed)
         {
             $key = array_shift($keys);
             if (!isset($variables[$key]) || !is_array($variables[$key])) {
