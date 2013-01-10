@@ -130,72 +130,6 @@
         }
 
         /**
-         * getCallbacks
-         *
-         * Returns a reference to the array of callbacks set up by the
-         * application and/or plugins.
-         *
-         * @notes  a reference is returned rather than the native array to allow
-         *         for the possibility of a callback adding another response
-         *         callback. For an example, see the <Performance> plugin.
-         * @access public
-         * @return array
-         */
-        public function &getCallbacks()
-        {
-            return $this->_callbacks;
-        }
-
-        /**
-         * getController
-         *
-         * Returns a reference to the controller that this request has been
-         * routed to.
-         *
-         * @access public
-         * @return Controller
-         */
-        public function getController()
-        {
-            return $this->_controller;
-        }
-
-        /**
-         * getErrorPath
-         *
-         * @access public
-         * @return string
-         */
-        public function getErrorPath()
-        {
-            return $this->_error;
-        }
-
-        /**
-         * getResponse
-         *
-         * @access public
-         * @return string
-         */
-        public function getResponse()
-        {
-            return $this->_response;
-        }
-
-        /**
-         * getRoute
-         *
-         * Returns the route that the application has matched for the request.
-         *
-         * @access public
-         * @return array
-         */
-        public function getRoute()
-        {
-            return $this->_route;
-        }
-
-        /**
          * generate
          *
          * Generates the markup for this <Request> instance by routing it
@@ -324,6 +258,83 @@
 
             // store response
             $this->setResponse($response);
+        }
+
+        /**
+         * getCallbacks
+         *
+         * Returns a reference to the array of callbacks set up by the
+         * application and/or plugins.
+         *
+         * @notes  a reference is returned rather than the native array to allow
+         *         for the possibility of a callback adding another response
+         *         callback. For an example, see the <Performance> plugin.
+         * @access public
+         * @return array
+         */
+        public function &getCallbacks()
+        {
+            return $this->_callbacks;
+        }
+
+        /**
+         * getController
+         *
+         * Returns a reference to the controller that this request has been
+         * routed to.
+         *
+         * @access public
+         * @return Controller
+         */
+        public function getController()
+        {
+            return $this->_controller;
+        }
+
+        /**
+         * getErrorPath
+         *
+         * @access public
+         * @return string
+         */
+        public function getErrorPath()
+        {
+            return $this->_error;
+        }
+
+        /**
+         * getResponse
+         *
+         * @access public
+         * @return string
+         */
+        public function getResponse()
+        {
+            return $this->_response;
+        }
+
+        /**
+         * getRoute
+         *
+         * Returns the route that the application has matched for the request.
+         *
+         * @access public
+         * @return array
+         */
+        public function getRoute()
+        {
+            return $this->_route;
+        }
+
+        /**
+         * getUri
+         *
+         * @access public
+         * @return string
+         */
+        public function getUri()
+        {
+            return $this->_uri;
         }
 
         /**

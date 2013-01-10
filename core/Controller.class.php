@@ -166,6 +166,31 @@
         }
 
         /**
+         * getGet
+         *
+         * Returns the _GET array if the request is *not* a subrequest. If it
+         * is a subrequest, the request URI is parsed and the query passed
+         * along is passed back as an array.
+         *
+         * @access public
+         * @return array
+         */
+        public function getGet()
+        {
+            $request = $this->getRequest();
+            if ($request->isSubRequest() === true) {
+                $uri = $request->getUri();
+                $parsed = parse_url($uri);
+                if (isset($parsed['query'])) {
+                    parse_str($parsed['query'], $params);
+                    return $params;
+                }
+                return array();
+            }
+            return $_GET;
+        }
+
+        /**
          * getRequest
          *
          * @access public
