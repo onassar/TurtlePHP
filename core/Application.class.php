@@ -66,7 +66,10 @@
          */
         public static function addHook($hook, $callback)
         {
-            self::$_hooks[$hook] = $callback;
+            if (!isset(self::$_hooks[$hook])) {
+                self::$_hooks[$hook] = array();
+            }
+            array_push(self::$_hooks[$hook], $callback);
         }
 
         /**
@@ -135,6 +138,19 @@
         }
 
         /**
+         * clearHooks
+         *
+         * @access public
+         * @static
+         * @param  string $name
+         * @return void
+         */
+        public static function clearHooks($name)
+        {
+            self::$_hooks[$name] = array();
+        }
+
+        /**
          * clearRoutes
          *
          * Clears the array of possible routes for the application to match.
@@ -149,19 +165,19 @@
         }
 
         /**
-         * getHook
+         * getHooks
          *
          * @access public
          * @static
          * @param  String $name
          * @return Array
          */
-        public static function getHook($name)
+        public static function getHooks($name)
         {
             if (isset(self::$_hooks[$name])) {
                 return self::$_hooks[$name];
             }
-            throw new Exception('Hook *' . ($name) . '* not defined.');
+            throw new Exception('Hooks for *' . ($name) . '* not defined.');
         }
 
         /**

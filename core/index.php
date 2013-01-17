@@ -61,7 +61,7 @@
      */
     function proxy()
     {
-        // determine if it was an exception that was trigger; set accordingly
+        // determine if it was an exception that was trigged; set accordingly
         $error = func_get_args();
         if (is_object($error[0])) {
 
@@ -86,9 +86,11 @@
         // grab the request
         $request = \Turtle\Application::getRequest();
 
-        // route through the error-hook
-        $hook = \Turtle\Application::getHook('error');
-        call_user_func_array($hook, array($request, $error));
+        // route through the error-hooks
+        $hooks = \Turtle\Application::getHooks('error');
+        foreach ($hooks as $hook) {
+            call_user_func_array($hook, array($request, $error));
+        }
         exit(0);
     }
     set_error_handler('proxy');
