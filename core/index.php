@@ -74,6 +74,13 @@
                 $exception->getLine(),
                 array()
             );
+            $trace = $exception->getTrace();
+            array_unshift($trace, array(
+                'file' => $exception->getFile(),
+                'line' => $exception->getline()
+            ));
+        } else {
+            $trace = debug_backtrace();
         }
 
         /**
@@ -89,7 +96,7 @@
         // route through the error-hooks
         $hooks = \Turtle\Application::getHooks('error');
         foreach ($hooks as $hook) {
-            call_user_func_array($hook, array($request, $error));
+            call_user_func_array($hook, array($request, $error, $trace));
         }
         exit(0);
     }
