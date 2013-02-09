@@ -73,8 +73,6 @@
         /**
          * __construct
          *
-         *
-         *
          * @access public
          * @param  String $uri
          * @return void
