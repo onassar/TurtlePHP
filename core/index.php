@@ -190,7 +190,7 @@
         $request->generate();
     };
 
-    // call closure, cleanup, exit (triggering <shutdown> function
+    // call closure, cleanup, exit (triggering <shutdown> function)
     $closure();
     unset($closure);
     exit(0);
