@@ -18,9 +18,9 @@
 
         <!-- bootstrap/core -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="/static/vendors/bootstrap/css/bootstrap.css" rel="stylesheet" />
+        <link href="/static/vendors/bootstrap/docs/assets/css/bootstrap.css" rel="stylesheet" />
         <link href="/static/css/core.css" rel="stylesheet" />
-        <link href="/static/vendors/bootstrap/css/bootstrap-responsive.css" rel="stylesheet" />
+        <link href="/static/vendors/bootstrap/docs/assets/css/bootstrap-responsive.css" rel="stylesheet" />
 
 
         <!-- shiv -->
