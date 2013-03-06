@@ -79,6 +79,17 @@
         }
 
         /**
+         * _getModel
+         *
+         * @access protected
+         * @return Model
+         */
+        protected function _getModel($name)
+        {
+            return Turtle\Application::getModel($name);
+        }
+
+        /**
          * _getView
          *
          * @access protected
