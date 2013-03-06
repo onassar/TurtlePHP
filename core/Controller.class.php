@@ -87,7 +87,7 @@
          */
         protected function _getModel($name)
         {
-            return Turtle\Application::getModel($name);
+            return \Turtle\Application::getModel($name);
         }
 
         /**
