@@ -82,6 +82,7 @@
          * _getModel
          *
          * @access protected
+         * @param  string $name
          * @return Model
          */
         protected function _getModel($name)
