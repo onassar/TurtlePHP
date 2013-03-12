@@ -138,6 +138,12 @@
          */
         public function generate()
         {
+            // if it's a redirection, then let's do it
+            if (isset($this->_route['redirect'])) {
+                header('Location: ' . ($this->_route['redirect']));
+                exit(0);
+            }
+
             // routing details (excluding the view)
             $action = $this->_route['action'];
             $controller = $this->_route['controller'];
