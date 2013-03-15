@@ -9,4 +9,15 @@
      */
     class Model
     {
+        /**
+         * _getModel
+         *
+         * @access protected
+         * @param  string $name
+         * @return Model
+         */
+        protected function _getModel($name)
+        {
+            return \Turtle\Application::getModel($name);
+        }
     }
