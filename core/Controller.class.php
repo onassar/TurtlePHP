@@ -112,6 +112,9 @@
          */
         protected function _pass($key, $mixed)
         {
+            if ($key === 'self' || $key === 'request') {
+                throw new \Exception('Invalid variable key');
+            }
             // if <$mixed> should be stored in a child-array
             if (strstr($key, '.')) {
                 $keys = explode('.', $key);
@@ -255,8 +258,8 @@
          */
         public function setDefaultControllerVariables()
         {
-            $this->_pass('self', $this);
-            $this->_pass('request', $this->_request);
+            $this->_variables['self'] = $this;
+            $this->_variables['request'] = $this->_request;
         }
 
         /**
