@@ -41,41 +41,27 @@
         protected $_variables = array();
 
         /**
-         * _cascade
+         * _deepMerge
          *
-         * Writes data, recursively, to child-array's in order to allow variable
-         * passing in the following syntax:
-         *
-         * $this->_pass('name', 'value');
-         * $this->_pass('page.title', 'title');
-         *
-         * Based on the above syntax, the following variables are available to
-         * the view:
-         *
-         * $name = 'value';
-         * $page = array(
-         *     'title' => 'title'
-         * );
-         *
+         * @see    http://www.php.net/manual/en/function.array-merge-recursive.php#92195
          * @access protected
-         * @param  Array &$variables
-         * @param  Array $key array of keys which are used to make associative
-         *         references in <$variables>
-         * @param  mixed $mixed variable which is written to <$variables>
-         *         reference, based on $keys as associative indexes
-         * @return void
+         * @return array
          */
-        protected function _cascade(array &$variables, array $keys, $mixed)
+        protected function _deepMerge(array &$array1, array &$array2)
         {
-            $key = array_shift($keys);
-            if (!isset($variables[$key]) || !is_array($variables[$key])) {
-                $variables[$key] = array();
+            $merged = $array1;
+            foreach ($array2 as $key => &$value) {
+                if (
+                    is_array($value)
+                    && isset($merged[$key])
+                    && is_array($merged[$key])
+                ) {
+                    $merged[$key] = $this->_deepMerge($merged[$key], $value);
+                } else {
+                    $merged[$key] = $value;
+                }
             }
-            if (!empty($keys)) {
-                $this->_cascade($variables[$key], $keys, $mixed);
-            } else {
-                $variables[$key] = $mixed;
-            }
+            return $merged;
         }
 
         /**
@@ -94,7 +80,7 @@
          * _getView
          *
          * @access protected
-         * @return String
+         * @return string
          */
         protected function _getView()
         {
@@ -105,23 +91,89 @@
         /**
          * _pass
          *
+         * Writes data, recursively if required, to allow variable passing in
+         * the following syntax:
+         *
+         * $this->_pass('title', 'Hello World!');
+         * $this->_pass('meta.description', 'Sample description');
+         * $this->_pass('meta', array('author' => 'Oliver Nassar'));
+         *
+         * Based on the above syntax, the following variables are available to
+         * the view:
+         *
+         * $title = 'Hello World!';
+         * $meta = array(
+         *     'description' => 'Sample description',
+         *     'author' => 'Oliver Nassar'
+         * );
+         *
+         * To overwrite an entire variable, pass in the third optional boolean:
+         *
+         * $this->_pass('title', 'Hello World!');
+         * $this->_pass('meta.description', 'Sample description');
+         * $this->_pass('meta', array('author' => 'Oliver Nassar'), true);
+         *
+         * Producing:
+         *
+         * $title = 'Hello World!';
+         * $meta = array(
+         *     'author' => 'Oliver Nassar'
+         * );
+         *
          * @access protected
-         * @param  String $key
+         * @param  string $key
          * @param  mixed $mixed
+         * @param  boolean $hardSet (default: false)
          * @return void
          */
-        protected function _pass($key, $mixed)
+        protected function _pass($key, $mixed, $hardSet = false)
         {
             if ($key === 'self' || $key === 'request') {
                 throw new \Exception('Invalid variable key');
             }
-            // if <$mixed> should be stored in a child-array
+
+            // value should cascade through to a sub-child
             if (strstr($key, '.')) {
                 $keys = explode('.', $key);
-                $this->_cascade($this->_variables, $keys, $mixed);
+                $numberOfKeys = count($keys);
+                $variablesDuplicate = $this->_variables;
+                $placeholder = &$variablesDuplicate;
+                foreach ($keys as $index => $key) {
+                    $isLastKey = $index === ($numberOfKeys - 1);
+                    if (!isset($placeholder[$key])) {
+                        if ($isLastKey === false) {
+                            $placeholder[$key] = array();
+                        }
+                    }
+                    if ($isLastKey === false) {
+                        $placeholder = &$placeholder[$key];
+                    }
+                }
+                $placeholder[$key] = $mixed;
+
+                // any subling values should be overwritten
+                if ($hardSet === true) {
+                    $this->_variables = $variablesDuplicate;
+                } else {
+                    $this->_variables = $this->_deepMerge(
+                        $this->_variables,
+                        $variablesDuplicate
+                    );
+                }
+                unset($variablesDuplicate);
 
             } else {
-                $this->_variables[$key] = $mixed;
+                if ($hardSet === true) {
+                    $this->_variables[$key] = $mixed;
+                } else {
+                    $variablesDuplicate = $this->_variables;
+                    $variablesDuplicate[$key] = $mixed;
+                    $this->_variables = $this->_deepMerge(
+                        $this->_variables,
+                        $variablesDuplicate
+                    );
+                    unset($variablesDuplicate);
+                }
             }
         }
 
@@ -129,7 +181,7 @@
          * _setView
          *
          * @access protected
-         * @param  String $path
+         * @param  string $path
          * @return void
          */
         protected function _setView($path)
@@ -209,7 +261,7 @@
          * getRequest
          *
          * @access public
-         * @return Array
+         * @return array
          */
         public function getRequest()
         {
@@ -223,7 +275,7 @@
          * of a controller.
          *
          * @access public
-         * @return Array
+         * @return array
          */
         public function getVariables()
         {
@@ -286,7 +338,7 @@
          * TurtlePHPs core-files.
          *
          * @access public
-         * @param  Array $variables
+         * @param  array $variables
          * @return void
          */
         public function setVariables(array $variables)
