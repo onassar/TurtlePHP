@@ -128,7 +128,7 @@
          */
         protected function _pass($key, $mixed, $hardSet = false)
         {
-            if ($key === 'self' || $key === 'request') {
+            if ($key === 'controller' || $key === 'request') {
                 throw new \Exception('Invalid variable key');
             }
 
@@ -310,7 +310,7 @@
          */
         public function setDefaultControllerVariables()
         {
-            $this->_variables['self'] = $this;
+            $this->_variables['controller'] = $this;
             $this->_variables['request'] = $this->_request;
         }
 
