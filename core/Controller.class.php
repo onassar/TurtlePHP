@@ -236,7 +236,7 @@
          * getGet
          *
          * Returns the _GET array if the request is *not* a subrequest. If it
-         * is a subrequest, the request URI is parsed and the query passed
+         * is a subrequest, the request url is parsed and the query passed
          * along is passed back as an array.
          *
          * @access public
