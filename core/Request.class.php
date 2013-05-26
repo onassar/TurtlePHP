@@ -74,7 +74,7 @@
          * __construct
          *
          * @access public
-         * @param  String $uri
+         * @param  string $uri
          * @return void
          */
         public function __construct($uri)
@@ -103,13 +103,21 @@
          * This helper is designed to accept specific data, to make including
          * other content/partials a cleaner experience (from PHPs perspective).
          *
+         * @note   This method does *not* receive any variables that were set
+         *         by the request-level controller. This was done to prevent
+         *         variable-collisions in booted files.
          * @access public
-         * @access String $path
-         * @access Array $data
+         * @param  string $path
+         * @param  array $data
          * @return void
          */
         public function boot($path, $data = array())
         {
+            /**
+             * Make call to $this->_controller->setDefaultControllerVariables()
+             * to have $controller and $request included by default?
+             */
+
             // closure to clean it up after
             $process = function($__path, array $__variables)
             {
@@ -228,7 +236,7 @@
                  * polluted.
                  *
                  * @access public
-                 * @param  String $__path
+                 * @param  string $__path
                  * @param  array $__variables
                  * @return string
                  */
