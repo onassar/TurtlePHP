@@ -111,7 +111,7 @@
          * @param  array $data
          * @return void
          */
-        public function boot($path, $data = array())
+        public function boot($path, array $data = array())
         {
             /**
              * Make call to $this->_controller->setDefaultControllerVariables()
