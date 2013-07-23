@@ -13,8 +13,8 @@
         // error handling
         '(.*)' => array(
             'controller' => 'Common',
-            'action' => 'four04',
-            'view' => APP . '/views/common/404.inc.php'
+            'action' => 'actionFour04',
+            'view' => APP . '/views/common/four04.inc.php'
         )
     );
 
