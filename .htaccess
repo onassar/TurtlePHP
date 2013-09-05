@@ -4,3 +4,8 @@ FileETag None
 <FilesMatch "\.(?i:css|flv|gif|ico|jpeg|jpg|js|pdf|png|swf|txt|eot|woff|ttf|svg)$">
     Header set Expires "Wed, 15 Apr 2020 20:00:00 GMT"
 </FilesMatch>
+<FilesMatch "\.(ttf|otf|eot)$">
+    <IfModule mod_headers.c>
+        Header set Access-Control-Allow-Origin "*"
+    </IfModule>
+</FilesMatch>
