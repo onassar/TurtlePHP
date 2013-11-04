@@ -19,6 +19,19 @@
     }
     define('IP', $ip);
 
+    // https check
+    $https = false;
+    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+        $https = true;
+    }
+    if (
+        isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
+        && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https'
+    ) {
+        $https = true;
+    }
+    define('HTTPS', $https);
+
     /**
      * shutdown
      *
