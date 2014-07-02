@@ -6,7 +6,7 @@
         // home
         '^/$' => array(
             'controller' => 'Common',
-            'action' => 'index',
+            'action' => 'actionIndex',
             'view' => APP . '/views/common/index.inc.php'
         ),
 
