@@ -11,12 +11,12 @@
     final class CommonController extends \Turtle\Controller
     {
         /**
-         * index
+         * actionIndex
          * 
          * @access public
          * @return void
          */
-        public function index()
+        public function actionIndex()
         {
             $this->_pass('message', 'Hello World!');
         }
