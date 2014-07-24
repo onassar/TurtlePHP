@@ -210,3 +210,15 @@ Respectively, the following variables are made available in the view:
 
 Note that the period prompts the storage-system to store the value in a
 child-array, if it hasn't yet been defined.
+
+Hooks
+===
+
+Hooks can be added to the `Application`  
+By adding a hook (by passing a `name` and valid callback array to `addHook`), you are registering it with the application to be used application-wide
+
+One example that is in use immediately is an error hook  
+Any error hooks added will be run after an error has occured through the fundamental `proxy` function that is part of this framework
+
+The goal with hooks is to give framework-level access to non-core pieces of code (eg. controllers, plugins, modules, etc.)
+
