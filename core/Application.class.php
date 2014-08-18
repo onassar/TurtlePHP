@@ -60,7 +60,7 @@
          *
          * @access public
          * @static
-         * @param  String $hook
+         * @param  string $hook
          * @param  mixed $callback Callback array or closure
          * @return void
          */
@@ -95,8 +95,8 @@
          *
          * @access public
          * @static
-         * @param  String $path
-         * @param  Array $route
+         * @param  string $path
+         * @param  array $route
          * @return void
          */
         public static function addRoute($path, array $route)
@@ -120,7 +120,7 @@
          *
          * @access public
          * @static
-         * @param  Array $routes
+         * @param  array $routes
          * @return void
          */
         public static function addRoutes(array $routes)
@@ -169,7 +169,7 @@
          *
          * @access public
          * @static
-         * @param  String $name
+         * @param  string $name
          * @return Array
          */
         public static function getHooks($name)
