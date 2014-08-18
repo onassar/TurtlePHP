@@ -60,7 +60,7 @@
          *
          * @access public
          * @static
-         * @param  string $hook
+         * @param  String $hook
          * @param  mixed $callback Callback array or closure
          * @return void
          */
@@ -95,8 +95,8 @@
          *
          * @access public
          * @static
-         * @param  string $path
-         * @param  array $route
+         * @param  String $path
+         * @param  Array $route
          * @return void
          */
         public static function addRoute($path, array $route)
@@ -120,7 +120,7 @@
          *
          * @access public
          * @static
-         * @param  array $routes
+         * @param  Array $routes
          * @return void
          */
         public static function addRoutes(array $routes)
@@ -169,8 +169,8 @@
          *
          * @access public
          * @static
-         * @param  string $name
-         * @return array
+         * @param  String $name
+         * @return Array
          */
         public static function getHooks($name)
         {
@@ -206,6 +206,22 @@
             // instantiate model; return
             self::$_models[$name] = (new $full);
             return self::$_models[$name];
+        }
+
+        /**
+         * getPath
+         *
+         * @access public
+         * @static
+         * @param  string $path
+         * @return string
+         */
+        public static function getPath($path)
+        {
+            $request = (new \Turtle\Request($path));
+            $request->route();
+            $request->generate();
+            return $request->getResponse();
         }
 
         /**
