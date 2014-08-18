@@ -170,7 +170,7 @@
          * @access public
          * @static
          * @param  string $name
-         * @return Array
+         * @return array
          */
         public static function getHooks($name)
         {
