@@ -68,6 +68,7 @@ Add a virtual host for your site, as follows:
         # turtle routing
         RewriteEngine On
         RewriteCond %{DOCUMENT_ROOT}/application/webroot%{REQUEST_URI} !-f
+        RewriteCond %{DOCUMENT_ROOT}/application/webroot%{REQUEST_URI} !-d
         RewriteRule ^(.*)$ %{DOCUMENT_ROOT}/core/index.php [L,QSA]
         RewriteRule (.*) %{DOCUMENT_ROOT}/application/webroot$1 [L,QSA]
     </VirtualHost>
