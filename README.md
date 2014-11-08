@@ -223,3 +223,19 @@ Any error hooks added will be run after an error has occured through the fundame
 
 The goal with hooks is to give framework-level access to non-core pieces of code (eg. controllers, plugins, modules, etc.)
 
+
+WordPress Integration
+===
+
+To have a WordPress install live at eg. `/blog/`, here's what's needed:
+
+1) `wget` the zip to `.../webroot/blog/`
+2) Add a `.htaccess` file to `.../webroot/blog` with `DirectoryIndex index.php`
+3) Add the following to the `VirtualHost` entry for the site, before the Turtle routing (eg. http://i.imgur.com/pUlnjzU.png):
+
+    # blog
+    RewriteCond %{DOCUMENT_ROOT}/application/webroot%{REQUEST_URI} !-f
+    RewriteCond %{DOCUMENT_ROOT}/application/webroot%{REQUEST_URI} !-d
+    RewriteRule ^/blog/.* %{DOCUMENT_ROOT}/application/webroot/blog/index.php [L]
+
+That should do it!
