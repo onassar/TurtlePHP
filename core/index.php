@@ -67,10 +67,10 @@
      * 
      * @access public
      * @param  Exception|Integer $errno
-     * @param  String $errostr (optional)
-     * @param  String $errfile (optional)
-     * @param  Integer $errline (optional)
-     * @param  Array $errcontext (optional)
+     * @param  string $errostr (optional)
+     * @param  string $errfile (optional)
+     * @param  integer $errline (optional)
+     * @param  array $errcontext (optional)
      * @return void
      */
     function proxy()
@@ -132,7 +132,7 @@
          *
          * @access private
          * @param  Request $request
-         * @param  Array $error
+         * @param  array $error
          * @return void
          */
         function(\Turtle\Request $request, array $error) {
