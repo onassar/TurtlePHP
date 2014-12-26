@@ -163,7 +163,7 @@
                 || $this->_route['module'] === false
             ) {
                 // load controller (if not yet loaded)
-                if (class_exists($controller . 'Controller') === false) {
+                if (class_exists(($controller) . 'Controller') === false) {
                     require_once APP . '/controllers/' . ($controller) .
                         '.class.php';
                 }
@@ -397,7 +397,7 @@
 
                         // require params to be an array
                         if (!is_array($route['params'])) {
-                            throw new Exception(
+                            throw new \Exception(
                                 'Route parameters are required to be an ' .
                                 'array of values.'
                             );
@@ -423,7 +423,7 @@
 
             // if no matching route found
             if (!isset($route)) {
-                throw new Exception('Matching route could not be found.');
+                throw new \Exception('Matching route could not be found.');
             }
 
             // set matching route
