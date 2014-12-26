@@ -170,7 +170,7 @@
             }
 
             // new controller reference
-            $name = $controller . 'Controller';
+            $name = ($controller) . 'Controller';
             $reference = (new $name);
             $reference->setRequest($this);
 
