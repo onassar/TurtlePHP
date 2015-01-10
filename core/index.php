@@ -145,7 +145,10 @@
             );
 
             // standard-error flow
-            require_once $request->getErrorPath();
+            $closure = function() use ($request) {
+                require_once $request->getErrorPath();
+            };
+            $closure();
         }
     );
 
