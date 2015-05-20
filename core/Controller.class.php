@@ -258,6 +258,26 @@
         }
 
         /**
+         * getPost
+         *
+         * Returns the _POST array if the request is *not* a subrequest. If it
+         * is a subrequest
+         *
+         * @todo   Update so that data can be posted through a Request object,
+         *         and returned from here
+         * @access public
+         * @return array
+         */
+        public function getPost()
+        {
+            $request = $this->getRequest();
+            if ($request->isSubRequest() === true) {
+                return array();
+            }
+            return $_POST;
+        }
+
+        /**
          * getRequest
          *
          * @access public
