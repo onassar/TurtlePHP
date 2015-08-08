@@ -247,7 +247,7 @@ To have a WordPress install live at eg. `/blog/`, here's what's needed:
         $_SERVER['HTTPS'] = 'on';
     }
 
-5) If being served via https, ensure WordPress General Settings have protocol set to https: https://i.imgur.com/5RkCRAo.png
+5) If being served via https, ensure WordPress General Settings have protocol set to https: https://i.imgur.com/5RkCRAo.png  
 6) If being served via https, ensure ssl traffic is forwarded (eg. https://i.imgur.com/euahgGo.png)
 
     # ssl force
