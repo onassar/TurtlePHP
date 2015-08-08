@@ -238,4 +238,14 @@ To have a WordPress install live at eg. `/blog/`, here's what's needed:
     RewriteCond %{DOCUMENT_ROOT}/application/webroot%{REQUEST_URI} !-d
     RewriteRule ^/blog/.* %{DOCUMENT_ROOT}/application/webroot/blog/index.php [L]
 
+4) Add the following to `wp-config.php` before the `require_once` call against `wp-settings.php`
+
+    # ssl
+    define('FORCE_SSL_ADMIN', true);
+    define('FORCE_SSL_LOGIN', true);
+    if ($_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+        $_SERVER['HTTPS'] = 'on';
+    }
+
+
 That should do it!
