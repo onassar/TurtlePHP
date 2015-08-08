@@ -269,7 +269,7 @@ To have a WordPress install live at eg. `/blog/`, here's what's needed:
 
     cd ./webroot/blog
     sudo chown -R www-data wp-content
-    sudo chown -R 755 wp-content
+    sudo chmod -R 755 wp-content
 
 8) If updates ought to be done via ssh, install [SSH SFTP Updater Support](https://wordpress.org/plugins/ssh-sftp-updater-support/) with:
 
