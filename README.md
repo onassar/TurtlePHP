@@ -255,5 +255,18 @@ To have a WordPress install live at eg. `/blog/`, here's what's needed:
     RewriteRule ^.*$ https://%{SERVER_NAME}%{REQUEST_URI} [L]
 
 7) Ensure `wp-content` directory has proper permissions: https://i.imgur.com/BBdiZ8P.png
+8) If updates ought to be done via ssh, install [SSH SFTP Updater Support]() with:
+
+    cd ../webroot/blog/wp-content/plugins/
+    wget https://downloads.wordpress.org/plugin/ssh-sftp-updater-support.0.7.1.zip
+    unzip ssh-sftp-updater-support.0.7.1.zip
+    rm ssh-sftp-updater-support.0.7.1.zip
+
+Then header over to `domain.com/blog/wp-admin/plugins.php` and activate the plugin  
+9) To ensure plugins can be properly updated and step-8 happened, add the following to `wp-config.php` (before the `require_once` call at the end):
+
+    # fix to ensure plugin updates work
+    define('FS_METHOD', 'direct');
+
 
 That should do it!
