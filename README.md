@@ -241,6 +241,7 @@ To have a WordPress install live at eg. `/blog/`, here's what's needed:
     bash -c "cat >> .htaccess" <<EOF
     DirectoryIndex index.php
     EOF
+
 3) Add the following to the `VirtualHost` entry for the site, before the Turtle routing (eg. http://i.imgur.com/pUlnjzU.png):
 
     # blog
@@ -264,19 +265,23 @@ To have a WordPress install live at eg. `/blog/`, here's what's needed:
     RewriteCond %{HTTP:X-Forwarded-Proto} !https
     RewriteRule ^.*$ https://%{SERVER_NAME}%{REQUEST_URI} [L]
 
-7) Ensure `wp-content` directory has proper permissions: https://i.imgur.com/BBdiZ8P.png  
+7) Ensure proper `wp-content` permissions:
+
+    cd ./webroot/blog
+    sudo chown -R www-data wp-content
+    sudo chown -R 755 wp-content
+
 8) If updates ought to be done via ssh, install [SSH SFTP Updater Support](https://wordpress.org/plugins/ssh-sftp-updater-support/) with:
 
-    cd ../webroot/blog/wp-content/plugins/
+    cd ./webroot/blog/wp-content/plugins/
     wget https://downloads.wordpress.org/plugin/ssh-sftp-updater-support.0.7.1.zip
     unzip ssh-sftp-updater-support.0.7.1.zip
     rm ssh-sftp-updater-support.0.7.1.zip
 
 Then header over to `domain.com/blog/wp-admin/plugins.php` and activate the plugin  
-9) To ensure plugins can be properly updated and step-8 happened, add the following to `wp-config.php` (before the `require_once` call at the end):
+9) If previous step happened, ensure plugins can be properly updated by adding the following to `wp-config.php` (before the `require_once` call at the end):
 
     # fix to ensure plugin updates work
     define('FS_METHOD', 'direct');
 
-
-That should do it!
+Done
