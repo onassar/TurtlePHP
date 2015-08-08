@@ -229,7 +229,7 @@ WordPress Integration
 
 To have a WordPress install live at eg. `/blog/`, here's what's needed:
 
-1) `wget` the zip to `.../webroot/blog/`  
+1) `wget` the zip to `.../webroot/blog/` (see [here](https://codex.wordpress.org/Installing_WordPress))  
 2) Add a `.htaccess` file to `.../webroot/blog` with `DirectoryIndex index.php`  
 3) Add the following to the `VirtualHost` entry for the site, before the Turtle routing (eg. http://i.imgur.com/pUlnjzU.png):
 
