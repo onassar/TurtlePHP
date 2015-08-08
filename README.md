@@ -238,7 +238,7 @@ To have a WordPress install live at eg. `/blog/`, here's what's needed:
 
 2) Create .htaccess file:
 
-    bash -c "cat >> .htaccess" <<EOF
+    bash -c "cat >> blog/.htaccess" <<EOF
     DirectoryIndex index.php
     EOF
 
