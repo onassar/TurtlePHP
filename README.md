@@ -285,3 +285,6 @@ Then header over to `domain.com/blog/wp-admin/plugins.php` and activate the plug
     define('FS_METHOD', 'direct');
 
 Done
+
+1. 
+2. s
