@@ -275,15 +275,9 @@ To have a WordPress install live at eg. `/blog/`, here's what's needed:
     rm ssh-sftp-updater-support.0.7.1.zip
 
 Then header over to `domain.com/blog/wp-admin/plugins.php` and activate the plugin  
-9) Ensure proper `wp-content` permissions:
+9) Ensure proper global `wp-content` permissions (only do if you own the server):
 
     cd ./webroot/blog
-    sudo chown -R www-data wp-content
-    sudo chmod -R 755 wp-content
-
-10) If step-7 happened, ensure plugins can be properly updated by adding the following to `wp-config.php` (before the `require_once` call at the end):
-
-    # fix to ensure plugin updates work
-    define('FS_METHOD', 'direct');
+    sudo chmod -R 777 wp-content/
 
 Done
