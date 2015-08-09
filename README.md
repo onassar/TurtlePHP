@@ -229,7 +229,7 @@ WordPress Integration
 
 To have a WordPress install live at eg. `/blog/`, here's what's needed:
 
-1) From within `webroot` direction, install it from source ([instructions](https://codex.wordpress.org/Installing_WordPress)):
+1) From within `webroot` directory, install it from source ([instructions](https://codex.wordpress.org/Installing_WordPress)):
 
     wget http://wordpress.org/latest.tar.gz
     tar -xzvf latest.tar.gz
@@ -249,7 +249,9 @@ To have a WordPress install live at eg. `/blog/`, here's what's needed:
     RewriteCond %{DOCUMENT_ROOT}/application/webroot%{REQUEST_URI} !-d
     RewriteRule ^/blog/.* %{DOCUMENT_ROOT}/application/webroot/blog/index.php [L]
 
-4) If being served via https, add the following to `wp-config.php` before the `require_once` call against `wp-settings.php`
+4) Head over to domain.com/blog/ and go through install process. This will include copy/pasting config file
+
+5) If being served via https, add the following to `wp-config.php` before the `require_once` call against `wp-settings.php`
 
     # ssl
     define('FORCE_SSL_ADMIN', true);
@@ -258,33 +260,30 @@ To have a WordPress install live at eg. `/blog/`, here's what's needed:
         $_SERVER['HTTPS'] = 'on';
     }
 
-5) If being served via https, ensure WordPress General Settings have protocol set to https: https://i.imgur.com/5RkCRAo.png  
-6) If being served via https, ensure ssl traffic is forwarded (eg. https://i.imgur.com/euahgGo.png)
+6) If being served via https, ensure WordPress General Settings have protocol set to https: https://i.imgur.com/5RkCRAo.png  
+7) If being served via https, ensure ssl traffic is forwarded (eg. https://i.imgur.com/euahgGo.png)
 
     # ssl force
     RewriteCond %{HTTP:X-Forwarded-Proto} !https
     RewriteRule ^.*$ https://%{SERVER_NAME}%{REQUEST_URI} [L]
 
-7) If updates ought to be done via ssh, install [SSH SFTP Updater Support](https://wordpress.org/plugins/ssh-sftp-updater-support/) with:
+8) If updates ought to be done via ssh, install [SSH SFTP Updater Support](https://wordpress.org/plugins/ssh-sftp-updater-support/) with:
 
     cd ./webroot/blog/wp-content/plugins/
     wget https://downloads.wordpress.org/plugin/ssh-sftp-updater-support.0.7.1.zip
     unzip ssh-sftp-updater-support.0.7.1.zip
     rm ssh-sftp-updater-support.0.7.1.zip
 
-8) Ensure proper `wp-content` permissions:
+9) Ensure proper `wp-content` permissions:
 
     cd ./webroot/blog
     sudo chown -R www-data wp-content
     sudo chmod -R 755 wp-content
 
 Then header over to `domain.com/blog/wp-admin/plugins.php` and activate the plugin  
-9) If step-7 happened, ensure plugins can be properly updated by adding the following to `wp-config.php` (before the `require_once` call at the end):
+10) If step-7 happened, ensure plugins can be properly updated by adding the following to `wp-config.php` (before the `require_once` call at the end):
 
     # fix to ensure plugin updates work
     define('FS_METHOD', 'direct');
 
 Done
-
-1. oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa 
-2. soliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa 
