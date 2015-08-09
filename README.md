@@ -286,5 +286,5 @@ Then header over to `domain.com/blog/wp-admin/plugins.php` and activate the plug
 
 Done
 
-1. 
-2. s
+1. oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa 
+2. soliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa oliver nassa 
