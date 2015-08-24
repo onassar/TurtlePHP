@@ -154,6 +154,11 @@
 
             // routing details (excluding the view)
             $action = $this->_route['action'];
+            if (is_array($action)) {
+                $method = $_SERVER['REQUEST_METHOD'];
+                $method = strtolower($method);
+                $action = $action[$method];
+            }
             $controller = $this->_route['controller'];
             $params = $this->_route['params'];
 
