@@ -73,6 +73,8 @@
         /**
          * __construct
          *
+         * @note   <false> check below done since some urls with :12345 can
+         *         fail. For example https://i.imgur.com/kPsgsmE.png
          * @access public
          * @param  string $uri
          * @return void
@@ -81,6 +83,9 @@
         {
             $this->_uri = $uri;
             $parsed = parse_url($this->_uri, PHP_URL_PATH);
+            if ($parsed === false) {
+                $parsed = preg_replace('/\?.*/', '', $uri);
+            }
             $this->_path = $parsed;
             \Turtle\Application::addRequest($this);
         }
