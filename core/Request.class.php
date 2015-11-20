@@ -153,6 +153,10 @@
         {
             // if it's a redirection, then let's do it
             if (isset($this->_route['redirect'])) {
+                if (isset($this->_route['code'])) {
+                    $code = $this->_route['code'];
+                    header('HTTP/1.1 ' . ($code) . ' Moved Permanently');
+                }
                 header('Location: ' . ($this->_route['redirect']));
                 exit(0);
             }
