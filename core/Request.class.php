@@ -153,11 +153,22 @@
         {
             // if it's a redirection, then let's do it
             if (isset($this->_route['redirect'])) {
+
+                // Insert variables, if any
+                $destination = $this->_route['redirect'];
+                if (strstr($destination, '$') !== false) {
+                    $params = $this->_route['params'];
+                    $destination = preg_replace_callback('/\$([0-9]+)/', function($matches) use ($params) {
+                        return $params[$matches[1] - 1];
+                    }, $destination);
+                }
+
+                // Pass along any relevant headers (eg. satus code)
                 if (isset($this->_route['code'])) {
                     $code = $this->_route['code'];
                     header('HTTP/1.1 ' . ($code) . ' Moved Permanently');
                 }
-                header('Location: ' . ($this->_route['redirect']));
+                header('Location: ' . ($destination));
                 exit(0);
             }
 
@@ -401,7 +412,8 @@
             $matches = array();
             foreach ($routes as $details) {
                 $path = str_replace('/', '\/', $details['path']);
-                if (preg_match('/' . ($path) . '/', $this->_path, $matches)) {
+                // if (preg_match('/' . ($path) . '/', $this->_path, $matches)) {
+                if (preg_match('/' . ($path) . '/i', $this->_path, $matches)) {
                     $route = $details;
                     array_shift($matches);
 
