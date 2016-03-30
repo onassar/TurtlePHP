@@ -8,27 +8,47 @@
     // Start time
     define('START', microtime(true));
 
+    /**
+     * getArv
+     * 
+     * @access public
+     * @param  string $key
+     * @return mixed|false
+     */
+    function getArgv($key) {
+        $hash = array();
+        foreach ($_SERVER['argv'] as $value) {
+            if (strstr($value, '=') !== false) {
+                $pieces = explode('=', $value);
+                $hash[$pieces[0]] = $pieces[1];
+            }
+        }
+        if (isset($hash[$key]) === true) {
+            return $hash[$key];
+        }
+        return false;
+    }
+
     // CLI
     $cli = false;
-    if (isset($_SERVER['argv']) === true && count($_SERVER['argv']) > 2) {
-        $argv = $_SERVER['argv'];
-        array_shift($argv);
-        array_shift($argv);
-        $param = $argv[0];
-        $pieces = explode('=', $param);
-        $cli = $pieces[1] === '1';
+    if (getArgv('CLI') !== false) {
+        $cli = true;
     }
     define('CLI', $cli);
 
-    // Paths
+    // Document root
     $root = $_SERVER['DOCUMENT_ROOT'];
     if ($root === '') {
         $root = str_replace('/application/includes', '', getcwd());
     }
-    $uri = $_SERVER['SCRIPT_NAME'];
+
+    // URI
     if (isset($_SERVER['REQUEST_URI']) === true) {
         $uri = $_SERVER['REQUEST_URI'];
+    } else {
+        $uri = getArgv('uri');
     }
+
     define('APP', ($root) . '/application');
     define('WEBROOT', (APP) . '/webroot');
     define('CORE', ($root) . '/core');
