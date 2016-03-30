@@ -5,18 +5,41 @@
      *
      */
 
-    // request start time
+    // Start time
     define('START', microtime(true));
 
-    // path constants
-    define('APP', ($_SERVER['DOCUMENT_ROOT']) . '/application');
+    // CLI
+    $cli = false;
+    if (isset($_SERVER['argv']) === true && count($_SERVER['argv']) > 2) {
+        $argv = $_SERVER['argv'];
+        array_shift($argv);
+        array_shift($argv);
+        $param = $argv[0];
+        $pieces = explode('=', $param);
+        $cli = $pieces[1] === '1';
+    }
+    define('CLI', $cli);
+
+    // Paths
+    $root = $_SERVER['DOCUMENT_ROOT'];
+    if ($root === '') {
+        $root = str_replace('/application/includes', '', getcwd());
+    }
+    $uri = $_SERVER['SCRIPT_NAME'];
+    if (isset($_SERVER['REQUEST_URI']) === true) {
+        $uri = $_SERVER['REQUEST_URI'];
+    }
+    define('APP', ($root) . '/application');
     define('WEBROOT', (APP) . '/webroot');
-    define('CORE', ($_SERVER['DOCUMENT_ROOT']) . '/core');
+    define('CORE', ($root) . '/core');
 
     // ip
-    $ip = $_SERVER['REMOTE_ADDR'];
-    if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    $ip = false;
+    if (isset($_SERVER['REMOTE_ADDR']) === true) {
+        $ip = $_SERVER['REMOTE_ADDR'];
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }
     }
     define('IP', $ip);
 
@@ -48,6 +71,11 @@
      */
     function shutdown()
     {
+        // Error check (incase fatal, such as max execution time exceeded)
+        $error = error_get_last();
+        if (is_null($error) === false) {
+        }
+
         // grab the request
         $request = \Turtle\Application::getRequest();
 
@@ -160,7 +188,7 @@
      * @access public
      * @return void
      */
-    $closure = function()
+    $closure = function() use ($uri)
     {
         /**
          * checks
@@ -195,7 +223,7 @@
         unset($checks);
 
         // create request; store as <Application> request
-        $request = (new \Turtle\Request($_SERVER['REQUEST_URI']));
+        $request = (new \Turtle\Request($uri));
         \Turtle\Application::setRequest($request);
 
         // application setup
