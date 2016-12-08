@@ -177,6 +177,10 @@
             if (is_array($action)) {
                 $method = $_SERVER['REQUEST_METHOD'];
                 $method = strtolower($method);
+                if (isset($action[$method]) === false) {
+                    echo 'Invalid request method';
+                    exit(0);
+                }
                 $action = $action[$method];
             }
             $controller = $this->_route['controller'];
@@ -411,9 +415,38 @@
             // route determination
             $matches = array();
             foreach ($routes as $details) {
+
+                // Set the default path to look for
                 $path = str_replace('/', '\/', $details['path']);
-                // if (preg_match('/' . ($path) . '/', $this->_path, $matches)) {
-                if (preg_match('/' . ($path) . '/i', $this->_path, $matches)) {
+                $resource = $this->_path;
+
+
+                // If URI matching is to be used
+                if (
+                    isset($details['resource']) === true
+                    && $details['resource'] === 'uri'
+                ) {
+                    // Ensure it exists (it won't in CLI requests)
+                    if (isset($_SERVER['REQUEST_URI']) === true) {
+                        $resource = $_SERVER['REQUEST_URI'];
+                    } else {
+
+                        // Presumably CLI, so grab uri frmo there
+                        $resource = getArgv('uri');
+                        if ($resource === false) {
+                            $resource = $this->_path;
+                        }
+                    }
+                }
+
+                // Case insensitive matching
+                $pattern = '/' . ($path) . '/';
+                if (true) {
+                    $pattern .= 'i';
+                }
+
+                // Let's do this!
+                if (preg_match($pattern, $resource, $matches)) {
                     $route = $details;
                     array_shift($matches);
 
