@@ -420,7 +420,6 @@
                 $path = str_replace('/', '\/', $details['path']);
                 $resource = $this->_path;
 
-
                 // If URI matching is to be used
                 if (
                     isset($details['resource']) === true
