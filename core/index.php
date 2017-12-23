@@ -208,7 +208,8 @@
     /**
      * closure
      *
-     * Acts as a wrapper to prevent the global namespace from becoming polluted.
+     * Acts as a wrapper to prevent the global namespace from becoming
+     * polluted.
      *
      * @access  public
      * @return  void
