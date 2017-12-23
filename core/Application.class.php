@@ -13,8 +13,8 @@
         /**
          * _hooks
          *
-         * @var    array
-         * @access protected
+         * @var     array
+         * @access  protected
          * @static
          */
         protected static $_hooks = array();
@@ -22,8 +22,8 @@
         /**
          * _models
          *
-         * @var    array
-         * @access protected
+         * @var     array
+         * @access  protected
          * @static
          */
         protected static $_models = array();
@@ -31,8 +31,8 @@
         /**
          * _request
          *
-         * @var    Request
-         * @access protected
+         * @var     Request
+         * @access  protected
          * @static
          */
         protected static $_request;
@@ -40,8 +40,8 @@
         /**
          * _requests
          *
-         * @var    array
-         * @access protected
+         * @var     array
+         * @access  protected
          * @static
          */
         protected static $_requests = array();
@@ -49,8 +49,8 @@
         /**
          * _routes
          *
-         * @var    array
-         * @access protected
+         * @var     array
+         * @access  protected
          * @static
          */
         protected static $_routes;
@@ -58,15 +58,15 @@
         /**
          * addHook
          *
-         * @access public
+         * @access  public
          * @static
-         * @param  string $hook
-         * @param  mixed $callback Callback array or closure
-         * @return void
+         * @param   string $hook
+         * @param   mixed $callback Callback array or closure
+         * @return  void
          */
         public static function addHook($hook, $callback)
         {
-            if (!isset(self::$_hooks[$hook])) {
+            if (isset(self::$_hooks[$hook]) === false) {
                 self::$_hooks[$hook] = array();
             }
             array_push(self::$_hooks[$hook], $callback);
@@ -75,10 +75,10 @@
         /**
          * addRequest
          *
-         * @access public
+         * @access  public
          * @static
-         * @param  Request $request
-         * @return void
+         * @param   Request $request
+         * @return  void
          */
         public static function addRequest(Request $request)
         {
@@ -93,11 +93,11 @@
          * routes array to prevent any overarching routes (eg. 404 catch-all
          * redirects) from being matched.
          *
-         * @access public
+         * @access  public
          * @static
-         * @param  string $path
-         * @param  array $route
-         * @return void
+         * @param   string $path
+         * @param   array $route
+         * @return  void
          */
         public static function addRoute($path, array $route)
         {
@@ -118,10 +118,10 @@
          * with the previously-set routes appended to the end, in order for the
          * newly-added routes to have the precendence required of them.
          *
-         * @access public
+         * @access  public
          * @static
-         * @param  array $routes
-         * @return void
+         * @param   array $routes
+         * @return  void
          */
         public static function addRoutes(array $routes)
         {
@@ -140,10 +140,10 @@
         /**
          * clearHooks
          *
-         * @access public
+         * @access  public
          * @static
-         * @param  string $name
-         * @return void
+         * @param   string $name
+         * @return  void
          */
         public static function clearHooks($name)
         {
@@ -155,9 +155,9 @@
          *
          * Clears the array of possible routes for the application to match.
          *
-         * @access public
+         * @access  public
          * @static
-         * @return void
+         * @return  void
          */
         public static function clearRoutes()
         {
@@ -167,14 +167,15 @@
         /**
          * getHooks
          *
-         * @access public
+         * @throws  Exception
+         * @access  public
          * @static
-         * @param  string $name
-         * @return array
+         * @param   string $name
+         * @return  array
          */
         public static function getHooks($name)
         {
-            if (isset(self::$_hooks[$name])) {
+            if (isset(self::$_hooks[$name]) === true) {
                 return self::$_hooks[$name];
             }
             throw new Exception('Hooks for *' . ($name) . '* not defined.');
@@ -183,21 +184,21 @@
         /**
          * getModel
          *
-         * @access public
+         * @access  public
          * @static
-         * @param  string $name
-         * @return Model
+         * @param   string $name
+         * @return  Model
          */
         public static function getModel($name)
         {
             // model check
-            if (isset(self::$_models[$name])) {
+            if (isset(self::$_models[$name]) === true) {
                 return self::$_models[$name];
             }
 
             // if the model hasn't already been loaded
             $full = ($name) . 'Model';
-            if (!class_exists($full)) {
+            if (class_exists($full) === false) {
 
                 // boot model
                 require_once APP . '/models/' . ($name) . '.class.php';
@@ -211,14 +212,14 @@
         /**
          * getPath
          *
-         * @access public
+         * @access  public
          * @static
-         * @param  string $path
-         * @return string
+         * @param   string $path
+         * @return  string
          */
         public static function getPath($path)
         {
-            $request = (new \Turtle\Request($path));
+            $request = new Request($path);
             $request->route();
             $request->generate();
             return $request->getResponse();
@@ -227,9 +228,9 @@
         /**
          * getRequest
          *
-         * @access public
+         * @access  public
          * @static
-         * @return Request
+         * @return  Request
          */
         public static function getRequest()
         {
@@ -239,9 +240,9 @@
         /**
          * getRequests
          *
-         * @access public
+         * @access  public
          * @static
-         * @return array
+         * @return  array
          */
         public static function getRequests()
         {
@@ -254,9 +255,9 @@
          * Returns the array of all routes the application may accept for a
          * request.
          *
-         * @access public
+         * @access  public
          * @static
-         * @return array
+         * @return  array
          */
         public static function getRoutes()
         {
@@ -266,10 +267,10 @@
         /**
          * setRequest
          *
-         * @access public
+         * @access  public
          * @static
-         * @param  Request $request
-         * @return void
+         * @param   Request $request
+         * @return  void
          */
         public static function setRequest(Request $request)
         {
@@ -282,10 +283,10 @@
          * Sets an array of all possible routes that the request are allowed to
          * match.
          *
-         * @access public
+         * @access  public
          * @static
-         * @param  array $routes
-         * @return void
+         * @param   array $routes
+         * @return  void
          */
         public static function setRoutes(array $routes)
         {
