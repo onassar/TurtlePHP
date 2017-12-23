@@ -12,12 +12,12 @@
         /**
          * _getModel
          *
-         * @access protected
-         * @param  string $name
-         * @return Model
+         * @access  protected
+         * @param   string $name
+         * @return  Model
          */
         protected function _getModel($name)
         {
-            return \Turtle\Application::getModel($name);
+            return Application::getModel($name);
         }
     }
