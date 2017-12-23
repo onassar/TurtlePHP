@@ -6,27 +6,28 @@
     /**
      * Controller
      *
-     * @see  <http://www.gen-x-design.com/archives/dynamically-add-functions-to-php-classes/>
-     *       Idea here is to create an importing system so that plugins can be
-     *       created that provide functionality like overriding the <_pass>
-     *       method.
+     * @see     <http://www.gen-x-design.com/archives/dynamically-add-functions-to-php-classes/>
+     *          Idea here is to create an importing system so that plugins can
+     *          be created that provide functionality like overriding the
+     *          <_pass> method.
      *
-     *       This would give the flexibility to add a <partial> method, a'la
-     *       Yii, which could extend the <Request> class. This method could
-     *       route calls to include a file, creating closures so that only
-     *       certain variables are accessible.
+     *          This would give the flexibility to add a <partial> method, a'la
+     *          Yii, which could extend the <Request> class. This method could
+     *          route calls to include a file, creating closures so that only
+     *          certain variables are accessible.
      *
-     *       Since this is *added* behavior, I like the idea of creating an
-     *       importing system to allow this functionality be added through
-     *       plugins (or whatever mechanism/naming convention [eg. extension]).
+     *          Since this is *added* behavior, I like the idea of creating an
+     *          importing system to allow this functionality be added through
+     *          plugins (or whatever mechanism/naming convention [eg.
+     *          extension]).
      */
     class Controller
     {
         /**
          * _request
          *
-         * @var    Request
-         * @access protected
+         * @var     Request
+         * @access  protected
          */
         protected $_request;
 
@@ -35,17 +36,17 @@
          *
          * (default value: array())
          *
-         * @var    array
-         * @access protected
+         * @var     array
+         * @access  protected
          */
         protected $_variables = array();
 
         /**
          * _deepMerge
          *
-         * @see    http://www.php.net/manual/en/function.array-merge-recursive.php#92195
-         * @access protected
-         * @return array
+         * @see     http://www.php.net/manual/en/function.array-merge-recursive.php#92195
+         * @access  protected
+         * @return  array
          */
         protected function _deepMerge(array &$array1, array &$array2)
         {
@@ -67,20 +68,20 @@
         /**
          * _getModel
          *
-         * @access protected
-         * @param  string $name
-         * @return Model
+         * @access  protected
+         * @param   string $name
+         * @return  Model
          */
         protected function _getModel($name)
         {
-            return \Turtle\Application::getModel($name);
+            return Application::getModel($name);
         }
 
         /**
          * _getView
          *
-         * @access protected
-         * @return string
+         * @access  protected
+         * @return  string
          */
         protected function _getView()
         {
@@ -120,11 +121,11 @@
          *     'author' => 'Oliver Nassar'
          * );
          *
-         * @access protected
-         * @param  string $key
-         * @param  mixed $mixed
-         * @param  boolean $hardSet (default: false)
-         * @return void
+         * @access  protected
+         * @param   string $key
+         * @param   mixed $mixed
+         * @param   boolean $hardSet (default: false)
+         * @return  void
          */
         protected function _pass($key, $mixed, $hardSet = false)
         {
@@ -133,14 +134,14 @@
             }
 
             // value should cascade through to a sub-child
-            if (strstr($key, '.')) {
+            if (strstr($key, '.') !== false) {
                 $keys = explode('.', $key);
                 $numberOfKeys = count($keys);
                 $variablesDuplicate = $this->_variables;
                 $placeholder = &$variablesDuplicate;
                 foreach ($keys as $index => $key) {
                     $isLastKey = $index === ($numberOfKeys - 1);
-                    if (!isset($placeholder[$key])) {
+                    if (isset($placeholder[$key]) === false) {
                         if ($isLastKey === false) {
                             $placeholder[$key] = array();
                         }
@@ -180,9 +181,9 @@
         /**
          * _setView
          *
-         * @access protected
-         * @param  string $path
-         * @return void
+         * @access  protected
+         * @param   string $path
+         * @return  void
          */
         protected function _setView($path)
         {
@@ -196,40 +197,80 @@
          *
          * 404 requests that come in.
          * 
-         * @note   An action that ought to be available to all controllers
-         * @param  mixed $stamp variable that is passed along to the error log
-         * @access public
-         * @return void
+         * @note    An action that ought to be available to all controllers
+         * @param   mixed $stamp variable that is passed along to the error log
+         * @param   array $lines (default: array())
+         * @access  public
+         * @return  void
          */
-        public function actionFour04($stamp = null)
+        public function actionFour04($stamp = null, array $lines = array())
         {
-            // agent storage (check done with respect to spiders)
-            $agent = isset($_SERVER['HTTP_USER_AGENT'])
-                ? $_SERVER['HTTP_USER_AGENT']
-                : '(unknown)';
+            // User agent
+            $agent = '(undefined)';
+            if (isset($_SERVER['HTTP_USER_AGENT']) === true) {
+                $agent = $_SERVER['HTTP_USER_AGENT'];
+            }
+            $line = array('Agent', $agent);
+            array_unshift($lines, $line);
 
-            // generate the stamp for the log
-            $stamped = '(none)';
-            if (!is_null($stamp)) {
-                if (is_string($stamp)) {
-                    $stamped = $stamp;
-                } elseif (is_array($stamp)) {
-                    $stamped = print_r($stamp, true);
+            // Actual (single) IP
+            $ip = IP;
+            if (strstr($ip, ',') !== false) {
+                $ip = strstr($ip, ',', true);
+            }
+            $line = array('IP', $ip);
+            array_unshift($lines, $line);
+
+            // IP
+            $ip = IP;
+            $line = array('IP Set', $ip);
+            array_unshift($lines, $line);
+
+            // Referer
+            $referer = '(unknown)';
+            if (isset($_SERVER['HTTP_REFERER']) === true) {
+                $referer = $_SERVER['HTTP_REFERER'];
+            }
+            $line = array('Referer', $referer);
+            array_unshift($lines, $line);
+
+            // Stamp
+            $stampValue = '(none)';
+            if (is_null($stamp) === false) {
+                if (is_string($stamp) === true) {
+                    $stampValue = $stamp;
+                } elseif (is_array($stamp) === true) {
+                    $stampValue = print_r($stamp, true);
                 }
             }
+            $line = array('Stamp', $stampValue);
+            array_unshift($lines, $line);
 
-            // set the path that beget this error
+            // Path
             $path = $_SERVER['REQUEST_URI'];
+            $line = array('Path', $path);
+            array_unshift($lines, $line);
 
-            // log
-            error_log(
-                "\n" .
-                "**Invalid Request**\n" .
-                "Path: *" . ($path) . "*\n" .
-                "Stamp: *" . ($stamped) . "*\n" .
-                "Remote Address: *" . (IP) . "*\n" .
-                "Agent: *" . ($agent) ."*\n"
-            );
+            // Header
+            $header = 'Invalid Request';
+            $line = array($header);
+            array_unshift($lines, $line);
+
+            // Logging
+            $message = "\n";
+            $keyMinLength = 20;
+            foreach ($lines as $line) {
+                if (isset($line[1]) === false) {
+                    $message .= '*' . ($line[0]) . '*';
+                    $message .= "\n";
+                    continue;
+                }
+                $message .= str_pad('*' . ($line[0]) . '*', $keyMinLength);
+                $message .= str_pad(':', 2);
+                $message .= $line[1];
+                $message .= "\n";
+            }
+            error_log($message);
         }
 
         /**
@@ -239,8 +280,8 @@
          * is a subrequest, the request url is parsed and the query passed
          * along is passed back as an array.
          *
-         * @access public
-         * @return array
+         * @access  public
+         * @return  array
          */
         public function getGet()
         {
@@ -263,10 +304,10 @@
          * Returns the _POST array if the request is *not* a subrequest. If it
          * is a subrequest
          *
-         * @todo   Update so that data can be posted through a Request object,
-         *         and returned from here
-         * @access public
-         * @return array
+         * @todo    Update so that data can be posted through a Request object,
+         *          and returned from here
+         * @access  public
+         * @return  array
          */
         public function getPost()
         {
@@ -280,8 +321,8 @@
         /**
          * getRequest
          *
-         * @access public
-         * @return array
+         * @access  public
+         * @return  array
          */
         public function getRequest()
         {
@@ -294,8 +335,8 @@
          * Returns an array of variables that ought to be available to the view
          * of a controller.
          *
-         * @access public
-         * @return array
+         * @access  public
+         * @return  array
          */
         public function getVariables()
         {
@@ -312,8 +353,8 @@
          * checks against authenticated users/sessions, load global data from
          * a database and send it to the view, etc.
          *
-         * @access public
-         * @return void
+         * @access  public
+         * @return  void
          */
         public function prepare()
         {
@@ -325,8 +366,8 @@
          *
          * Sets the default variables that should always be set for a view.
          *
-         * @access public
-         * @return void
+         * @access  public
+         * @return  void
          */
         public function setDefaultControllerVariables()
         {
@@ -337,9 +378,9 @@
         /**
          * setRequest
          *
-         * @access public
-         * @param  Request $request
-         * @return void
+         * @access  public
+         * @param   Request $request
+         * @return  void
          */
         public function setRequest(Request $request)
         {
@@ -357,9 +398,9 @@
          * Generally, but not always, should be restricted to use within
          * TurtlePHPs core-files.
          *
-         * @access public
-         * @param  array $variables
-         * @return void
+         * @access  public
+         * @param   array $variables
+         * @return  void
          */
         public function setVariables(array $variables)
         {
