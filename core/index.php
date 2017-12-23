@@ -11,16 +11,18 @@
     /**
      * getArv
      * 
-     * @access public
-     * @param  string $key
-     * @return mixed|false
+     * @access  public
+     * @param   string $key
+     * @return  mixed|false
      */
     function getArgv($key) {
         $hash = array();
-        foreach ($_SERVER['argv'] as $value) {
-            if (strstr($value, '=') !== false) {
-                $pieces = explode('=', $value);
-                $hash[$pieces[0]] = $pieces[1];
+        if (isset($_SERVER['argv']) === true) {
+            foreach ($_SERVER['argv'] as $value) {
+                if (strstr($value, '=') !== false) {
+                    $pieces = explode('=', $value);
+                    $hash[$pieces[0]] = $pieces[1];
+                }
             }
         }
         if (isset($hash[$key]) === true) {
@@ -57,7 +59,7 @@
     $ip = false;
     if (isset($_SERVER['REMOTE_ADDR']) === true) {
         $ip = $_SERVER['REMOTE_ADDR'];
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) === true) {
             $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
         }
     }
@@ -65,11 +67,14 @@
 
     // https check
     $https = false;
-    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+    if (
+        isset($_SERVER['HTTPS']) === true
+        && $_SERVER['HTTPS'] === 'on'
+    ) {
         $https = true;
     }
     if (
-        isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
+        isset($_SERVER['HTTP_X_FORWARDED_PROTO']) === true
         && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https'
     ) {
         $https = true;
@@ -81,13 +86,13 @@
      *
      * Handles buffer-flushing.
      *
-     * @note   when this function is called during an error-flow (eg. <proxy>
-     *         below has been called), it will not error itself; it will simply
-     *         echo out a <NULL> variable
-     * @note   <exit> is not required here (as it doesn't actually do
-     *         anything), but I include it for syntactical-sake.
-     * @access public
-     * @return void
+     * @note    when this function is called during an error-flow (eg. <proxy>
+     *          below has been called), it will not error itself; it will simply
+     *          echo out a <NULL> variable
+     * @note    <exit> is not required here (as it doesn't actually do
+     *          anything), but I include it for syntactical-sake.
+     * @access  public
+     * @return  void
      */
     function shutdown()
     {
@@ -113,19 +118,19 @@
      * Proxies any errors through the error-hook.
      * Clears out the buffer first; reasons are documented below.
      * 
-     * @access public
-     * @param  Exception|Integer $errno
-     * @param  string $errostr (optional)
-     * @param  string $errfile (optional)
-     * @param  integer $errline (optional)
-     * @param  array $errcontext (optional)
-     * @return void
+     * @access  public
+     * @param   Exception|Integer $errno
+     * @param   string $errostr (optional)
+     * @param   string $errfile (optional)
+     * @param   integer $errline (optional)
+     * @param   array $errcontext (optional)
+     * @return  void
      */
     function proxy()
     {
         // determine if it was an exception that was trigged; set accordingly
         $error = func_get_args();
-        if (is_object($error[0])) {
+        if (is_object($error[0]) === true) {
 
             // breakdown the error arguments
             $exception = $error[0];
@@ -172,16 +177,16 @@
     require_once CORE . '/Request.class.php';
 
     // setup error hook
-    \Turtle\Application::addHook(
+    Turtle\Application::addHook(
         'error',
 
         /**
          * (anonymous)
          *
-         * @access private
-         * @param  Request $request
-         * @param  array $error
-         * @return void
+         * @access  private
+         * @param   Request $request
+         * @param   array $error
+         * @return  void
          */
         function(\Turtle\Request $request, array $error) {
 
@@ -205,8 +210,8 @@
      *
      * Acts as a wrapper to prevent the global namespace from becoming polluted.
      *
-     * @access public
-     * @return void
+     * @access  public
+     * @return  void
      */
     $closure = function() use ($uri)
     {
@@ -215,25 +220,26 @@
          *
          * Acts as a wrapper to prevent the global namespace from becoming polluted.
          *
-         * @access protected
-         * @return void
+         * @throws  Exception
+         * @access  protected
+         * @return  void
          */
         $checks = function()
         {
             // controllers/webroot directories exist
-            if (!is_dir(APP . '/controllers')) {
+            if (is_dir(APP . '/controllers') === false) {
                 throw new Exception(APP . '/controllers doesn\'t exist.');
-            } elseif (!is_dir(APP . '/webroot')) {
+            } elseif (is_dir(APP . '/webroot') === false) {
                 throw new Exception(APP . '/webroot doesn\'t exist.');
             }
 
             // check application init
-            if (!file_exists(APP . '/init.inc.php')) {
+            if (file_exists(APP . '/init.inc.php') === false) {
                 throw new Exception(APP . '/init.inc.php doesn\'t exist.');
             }
 
             // check appliction routes
-            if (!file_exists(APP . '/routes.inc.php')) {
+            if (file_exists(APP . '/routes.inc.php') === false) {
                 throw new Exception(APP . '/routes.inc.php doesn\'t exist.');
             }
         };
@@ -243,8 +249,8 @@
         unset($checks);
 
         // create request; store as <Application> request
-        $request = (new \Turtle\Request($uri));
-        \Turtle\Application::setRequest($request);
+        $request = new Turtle\Request($uri);
+        Turtle\Application::setRequest($request);
 
         // application setup
         require_once APP . '/routes.inc.php';
