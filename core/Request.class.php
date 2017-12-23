@@ -159,9 +159,13 @@
                 $destination = $this->_route['redirect'];
                 if (strstr($destination, '$') !== false) {
                     $params = $this->_route['params'];
-                    $destination = preg_replace_callback('/\$([0-9]+)/', function($matches) use ($params) {
-                        return $params[$matches[1] - 1];
-                    }, $destination);
+                    $destination = preg_replace_callback(
+                        '/\$([0-9]+)/',
+                        function($matches) use ($params) {
+                            return $params[$matches[1] - 1];
+                        },
+                        $destination
+                    );
                 }
 
                 // Pass along any relevant headers (eg. satus code)
