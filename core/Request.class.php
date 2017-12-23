@@ -6,17 +6,18 @@
     /**
      * Request
      *
-     * @notes in PHP 5.4.x, $this will be able to be passed into closures
-     *        (useful for the <addCallback> method). For now, setting a variable
-     *        such as <$self> to <$this> should work (JavaScript styles)
+     * @note    in PHP 5.4.x, $this will be able to be passed into closures
+     *          (useful for the <addCallback> method). For now, setting a
+     *          variable such as <$self> to <$this> should work (JavaScript
+     *          styles)
      */
     class Request
     {
         /**
          * _callbacks
          *
-         * @var    array
-         * @access protected
+         * @var     array
+         * @access  protected
          */
         protected $_callbacks = array();
 
@@ -25,59 +26,59 @@
          *
          * Reference to the Controller that this Request has been routed to.
          *
-         * @var    Controller
-         * @access protected
+         * @var     Controller
+         * @access  protected
          */
         protected $_controller;
 
         /**
          * _error
          *
-         * @var    string (default: 'includes/error.inc.php'
-         * @access protected
+         * @var     string (default: 'error.inc.php')
+         * @access  protected
          */
         protected $_error = 'error.inc.php';
 
         /**
          * _path
          *
-         * @var    string
-         * @access protected
+         * @var     string
+         * @access  protected
          */
         protected $_path;
 
         /**
          * _response
          *
-         * @var    string
-         * @access protected
+         * @var     string
+         * @access  protected
          */
         protected $_response;
 
         /**
          * _route
          *
-         * @var    array
-         * @access protected
+         * @var     array
+         * @access  protected
          */
         protected $_route;
 
         /**
          * _uri
          *
-         * @var    string
-         * @access protected
+         * @var     string
+         * @access  protected
          */
         protected $_uri;
 
         /**
          * __construct
          *
-         * @note   <false> check below done since some urls with :12345 can
-         *         fail. For example https://i.imgur.com/kPsgsmE.png
-         * @access public
-         * @param  string $uri
-         * @return void
+         * @note    <false> check below done since some urls with :12345 can
+         *          fail. For example https://i.imgur.com/kPsgsmE.png
+         * @access  public
+         * @param   string $uri
+         * @return  void
          */
         public function __construct($uri)
         {
@@ -87,15 +88,15 @@
                 $parsed = preg_replace('/\?.*/', '', $uri);
             }
             $this->_path = $parsed;
-            \Turtle\Application::addRequest($this);
+            Application::addRequest($this);
         }
 
         /**
          * addCallback
          *
-         * @access public
-         * @param  Closure $callback
-         * @return void
+         * @access  public
+         * @param   Closure $callback
+         * @return  void
          */
         public function addCallback(\Closure $callback)
         {
@@ -108,13 +109,13 @@
          * This helper is designed to accept specific data, to make including
          * other content/partials a cleaner experience (from PHPs perspective).
          *
-         * @note   This method does *not* receive any variables that were set
-         *         by the request-level controller. This was done to prevent
-         *         variable-collisions in booted files.
-         * @access public
-         * @param  string $path
-         * @param  array $data
-         * @return void
+         * @note    This method does *not* receive any variables that were set
+         *          by the request-level controller. This was done to prevent
+         *          variable-collisions in booted files.
+         * @access  public
+         * @param   string $path
+         * @param   array $data (default: array())
+         * @return  void
          */
         public function boot($path, array $data = array())
         {
@@ -146,13 +147,13 @@
          * Generates the markup for this <Request> instance by routing it
          * through the respective controller.
          *
-         * @access public
-         * @return void
+         * @access  public
+         * @return  void
          */
         public function generate()
         {
             // if it's a redirection, then let's do it
-            if (isset($this->_route['redirect'])) {
+            if (isset($this->_route['redirect']) === true) {
 
                 // Insert variables, if any
                 $destination = $this->_route['redirect'];
@@ -164,7 +165,7 @@
                 }
 
                 // Pass along any relevant headers (eg. satus code)
-                if (isset($this->_route['code'])) {
+                if (isset($this->_route['code']) === true) {
                     $code = $this->_route['code'];
                     header('HTTP/1.1 ' . ($code) . ' Moved Permanently');
                 }
@@ -174,7 +175,7 @@
 
             // routing details (excluding the view)
             $action = $this->_route['action'];
-            if (is_array($action)) {
+            if (is_array($action) === true) {
                 $method = $_SERVER['REQUEST_METHOD'];
                 $method = strtolower($method);
                 if (isset($action[$method]) === false) {
@@ -188,7 +189,7 @@
 
             // if it's *not* a module
             if (
-                !isset($this->_route['module'])
+                isset($this->_route['module']) === false
                 || $this->_route['module'] === false
             ) {
                 // load controller (if not yet loaded)
@@ -255,7 +256,7 @@
             $view = $this->_route['view'];
 
             // if a view was set by a route, or by the controller
-            if (isset($view)) {
+            if (isset($view) === true) {
 
                 // controller-set variables
                 $variables = $reference->getVariables();
@@ -266,10 +267,10 @@
                  * Created as a wrapper to prevent global namespace from being
                  * polluted.
                  *
-                 * @access public
-                 * @param  string $__path
-                 * @param  array $__variables
-                 * @return string
+                 * @access  public
+                 * @param   string $__path
+                 * @param   array $__variables
+                 * @return  string
                  */
                 $process = function($__path, array $__variables)
                 {
@@ -293,7 +294,7 @@
 
             // run response through buffer callbacks
             $callbacks = &$this->getCallbacks();
-            if (!empty($callbacks)) {
+            if (empty($callbacks) === false) {
                 foreach ($callbacks as $callback) {
                     $response = call_user_func($callback, $response);
                 }
@@ -309,11 +310,12 @@
          * Returns a reference to the array of callbacks set up by the
          * application and/or plugins.
          *
-         * @notes  a reference is returned rather than the native array to allow
-         *         for the possibility of a callback adding another response
-         *         callback. For an example, see the <Performance> plugin.
-         * @access public
-         * @return array
+         * @note    a reference is returned rather than the native array to
+         *          allow for the possibility of a callback adding another
+         *          response callback. For an example, see the <Performance>
+         *          plugin.
+         * @access  public
+         * @return  array
          */
         public function &getCallbacks()
         {
@@ -326,8 +328,8 @@
          * Returns a reference to the controller that this request has been
          * routed to.
          *
-         * @access public
-         * @return Controller
+         * @access  public
+         * @return  Controller
          */
         public function getController()
         {
@@ -337,8 +339,8 @@
         /**
          * getErrorPath
          *
-         * @access public
-         * @return string
+         * @access  public
+         * @return  string
          */
         public function getErrorPath()
         {
@@ -348,8 +350,8 @@
         /**
          * getResponse
          *
-         * @access public
-         * @return string
+         * @access  public
+         * @return  string
          */
         public function getResponse()
         {
@@ -361,8 +363,8 @@
          *
          * Returns the route that the application has matched for the request.
          *
-         * @access public
-         * @return array
+         * @access  public
+         * @return  array
          */
         public function getRoute()
         {
@@ -372,8 +374,8 @@
         /**
          * getUri
          *
-         * @access public
-         * @return string
+         * @access  public
+         * @return  string
          */
         public function getUri()
         {
@@ -389,13 +391,13 @@
          * Useful for securing requests that should only be accessible from
          * within the application logic.
          *
-         * @access public
-         * @return Boolean
+         * @access  public
+         * @return  Boolean
          */
         public function isSubRequest()
         {
             // compare to application-request
-            $application = \Turtle\Application::getRequest();
+            $application = Application::getRequest();
             return $application !== $this;
         }
 
@@ -404,13 +406,13 @@
          *
          * Matches the instance to the appropraite route.
          *
-         * @access public
-         * @return void
+         * @access  public
+         * @return  void
          */
         public function route()
         {
             // route retrieval/default
-            $routes = \Turtle\Application::getRoutes();
+            $routes = Application::getRoutes();
 
             // route determination
             $matches = array();
@@ -430,7 +432,7 @@
                         $resource = $_SERVER['REQUEST_URI'];
                     } else {
 
-                        // Presumably CLI, so grab uri frmo there
+                        // Presumably CLI, so grab uri from there
                         $resource = getArgv('uri');
                         if ($resource === false) {
                             $resource = $this->_path;
@@ -451,10 +453,10 @@
 
                     // route parameter query
                     $params = array();
-                    if (isset($route['params'])) {
+                    if (isset($route['params']) === true) {
 
                         // require params to be an array
-                        if (!is_array($route['params'])) {
+                        if (is_array($route['params']) === false) {
                             throw new \Exception(
                                 'Route parameters are required to be an ' .
                                 'array of values.'
@@ -480,7 +482,7 @@
             }
 
             // if no matching route found
-            if (!isset($route)) {
+            if (isset($route) === false) {
                 throw new \Exception('Matching route could not be found.');
             }
 
@@ -491,9 +493,9 @@
         /**
          * setErrorPath
          *
-         * @access public
-         * @param  string $path
-         * @return void
+         * @access  public
+         * @param   string $path
+         * @return  void
          */
         public function setErrorPath($path)
         {
@@ -505,9 +507,9 @@
          *
          * Sets the rendered response for the request.
          *
-         * @access public
-         * @param  string $response
-         * @return void
+         * @access  public
+         * @param   string $response
+         * @return  void
          */
         public function setResponse($response)
         {
@@ -519,9 +521,9 @@
          *
          * Sets the route that the request matches.
          *
-         * @access public
-         * @param  array $route
-         * @return void
+         * @access  public
+         * @param   array $route
+         * @return  void
          */
         public function setRoute(array $route)
         {
