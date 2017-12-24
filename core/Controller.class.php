@@ -34,9 +34,7 @@
         /**
          * _variables
          *
-         * (default value: array())
-         *
-         * @var     array
+         * @var     array (default: array())
          * @access  protected
          */
         protected $_variables = array();
