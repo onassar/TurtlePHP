@@ -51,9 +51,9 @@
             $merged = $array1;
             foreach ($array2 as $key => &$value) {
                 if (
-                    is_array($value)
-                    && isset($merged[$key])
-                    && is_array($merged[$key])
+                    is_array($value) === true
+                    && isset($merged[$key]) === true
+                    && is_array($merged[$key]) === true
                 ) {
                     $merged[$key] = $this->_deepMerge($merged[$key], $value);
                 } else {
