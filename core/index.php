@@ -41,7 +41,8 @@
     // Document root
     $root = $_SERVER['DOCUMENT_ROOT'];
     if ($root === '') {
-        $root = str_replace('/application/includes', '', getcwd());
+        $root = $_SERVER['PWD'];
+        $root = ($root) . '/TurtlePHP';
     }
 
     // URI
@@ -208,8 +209,7 @@
     /**
      * closure
      *
-     * Acts as a wrapper to prevent the global namespace from becoming
-     * polluted.
+     * Acts as a wrapper to prevent the global namespace from becoming polluted.
      *
      * @access  public
      * @return  void
@@ -219,7 +219,8 @@
         /**
          * checks
          *
-         * Acts as a wrapper to prevent the global namespace from becoming polluted.
+         * Acts as a wrapper to prevent the global namespace from becoming
+         * polluted.
          *
          * @throws  Exception
          * @access  protected
