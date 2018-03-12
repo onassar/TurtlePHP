@@ -20,8 +20,9 @@
      *          importing system to allow this functionality be added through
      *          plugins (or whatever mechanism/naming convention [eg.
      *          extension]).
+     * @extends Base
      */
-    class Controller
+    class Controller extends Base
     {
         /**
          * _request
@@ -61,18 +62,6 @@
                 }
             }
             return $merged;
-        }
-
-        /**
-         * _getModel
-         *
-         * @access  protected
-         * @param   string $name
-         * @return  Model
-         */
-        protected function _getModel($name)
-        {
-            return Application::getModel($name);
         }
 
         /**
