@@ -173,6 +173,7 @@
 
     // dependencies
     require_once CORE . '/Application.class.php';
+    require_once CORE . '/Base.class.php';
     require_once CORE . '/Controller.class.php';
     require_once CORE . '/Model.class.php';
     require_once CORE . '/Request.class.php';
