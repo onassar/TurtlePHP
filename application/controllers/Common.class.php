@@ -5,10 +5,10 @@
      * 
      * Common requests that most applications ought to facilitate.
      * 
-     * @extends Controller
+     * @extends Turtle\Controller
      * @final
      */
-    final class CommonController extends \Turtle\Controller
+    final class CommonController extends Turtle\Controller
     {
         /**
          * actionIndex
