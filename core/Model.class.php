@@ -6,18 +6,8 @@
     /**
      * Model
      * 
+     * @extends Base
      */
-    class Model
+    class Model extends Base
     {
-        /**
-         * _getModel
-         *
-         * @access  protected
-         * @param   string $name
-         * @return  Model
-         */
-        protected function _getModel($name)
-        {
-            return Application::getModel($name);
-        }
     }
