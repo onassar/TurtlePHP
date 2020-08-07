@@ -99,8 +99,8 @@ sample of such a case would be as follows:
         /**
          * prepare
          * 
-         * @access public
-         * @return void
+         * @access  public
+         * @return  void
          */
         public function prepare()
         {
@@ -157,7 +157,7 @@ following format:
 <?php
 
     // grab new response
-    $subrequest = (new \Turtle\Request('/path/?including=params'));
+    $subrequest = new Turtle\Request('/path/?including=params');
     $subrequest->route();
     $subrequest->generate();
     $response = $subrequest->getResponse();
@@ -172,8 +172,8 @@ Want to have this sub-request run through the
 <?php
 
     // grab new response
-    $subrequest = (new \Turtle\Request('/path/?including=params'));
-    (new \Plugin\Template($subrequest));
+    $subrequest = new Turtle\Request('/path/?including=params');
+    new Plugin\Template($subrequest);
     $subrequest->route();
     $subrequest->generate();
     $response = $subrequest->getResponse();
@@ -219,7 +219,7 @@ Hooks can be added to the `Application`
 By adding a hook (by passing a `name` and valid callback array to `addHook`), you are registering it with the application to be used application-wide
 
 One example that is in use immediately is an error hook  
-Any error hooks added will be run after an error has occured through the fundamental `proxy` function that is part of this framework
+Any error hooks added will be run after an error has occurred through the fundamental `proxy` function that is part of this framework
 
 The goal with hooks is to give framework-level access to non-core pieces of code (eg. controllers, plugins, modules, etc.)
 
@@ -229,19 +229,8 @@ WordPress Integration
 
 To have a WordPress install live at eg. `/blog/`, here's what's needed:
 
-1) From within `webroot` directory, install it from source ([instructions](https://codex.wordpress.org/Installing_WordPress)):
-
-    wget http://wordpress.org/latest.tar.gz
-    tar -xzvf latest.tar.gz
-    rm latest.tar.gz
-    mv wordpress/ blog/
-
-2) Create .htaccess file:
-
-    bash -c "cat >> blog/.htaccess" <<EOF
-    DirectoryIndex index.php
-    EOF
-
+1) `wget` the zip to `.../webroot/blog/`  
+2) Add a `.htaccess` file to `.../webroot/blog` with `DirectoryIndex index.php`  
 3) Add the following to the `VirtualHost` entry for the site, before the Turtle routing (eg. http://i.imgur.com/pUlnjzU.png):
 
     # blog
@@ -249,35 +238,4 @@ To have a WordPress install live at eg. `/blog/`, here's what's needed:
     RewriteCond %{DOCUMENT_ROOT}/application/webroot%{REQUEST_URI} !-d
     RewriteRule ^/blog/.* %{DOCUMENT_ROOT}/application/webroot/blog/index.php [L]
 
-4) Head over to domain.com/blog/ and go through install process. This will include copy/pasting config file
-
-5) If being served via https, add the following to `wp-config.php` before the `require_once` call against `wp-settings.php`
-
-    # ssl
-    define('FORCE_SSL_ADMIN', true);
-    define('FORCE_SSL_LOGIN', true);
-    if ($_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
-        $_SERVER['HTTPS'] = 'on';
-    }
-
-6) If being served via https, ensure WordPress General Settings have protocol set to https: https://i.imgur.com/5RkCRAo.png  
-7) If being served via https, ensure ssl traffic is forwarded (eg. https://i.imgur.com/euahgGo.png)
-
-    # ssl force
-    RewriteCond %{HTTP:X-Forwarded-Proto} !https
-    RewriteRule ^.*$ https://%{SERVER_NAME}%{REQUEST_URI} [L]
-
-8) If updates ought to be done via ssh, install [SSH SFTP Updater Support](https://wordpress.org/plugins/ssh-sftp-updater-support/) with:
-
-    cd ./webroot/blog/wp-content/plugins/
-    wget https://downloads.wordpress.org/plugin/ssh-sftp-updater-support.0.7.1.zip
-    unzip ssh-sftp-updater-support.0.7.1.zip
-    rm ssh-sftp-updater-support.0.7.1.zip
-
-Then header over to `domain.com/blog/wp-admin/plugins.php` and activate the plugin  
-9) Ensure proper global `wp-content` permissions (only do if you own the server):
-
-    cd ./webroot/blog
-    sudo chmod -R 777 wp-content/
-
-Done
+That should do it!
