@@ -5,75 +5,79 @@
 
     /**
      * Request
-     *
-     * @note    in PHP 5.4.x, $this will be able to be passed into closures
-     *          (useful for the <addCallback> method). For now, setting a
-     *          variable such as <$self> to <$this> should work (JavaScript
-     *          styles)
+     * 
      */
     class Request
     {
         /**
          * _callbacks
-         *
-         * @var     array
+         * 
          * @access  protected
+         * @var     array (default: array())
          */
         protected $_callbacks = array();
 
         /**
          * _controller
-         *
+         * 
          * Reference to the Controller that this Request has been routed to.
-         *
-         * @var     Controller
+         * 
          * @access  protected
+         * @var     Controller
          */
         protected $_controller;
 
         /**
-         * _error
-         *
-         * @var     string (default: 'error.inc.php')
+         * _createdTimestamp
+         * 
          * @access  protected
+         * @var     null|float (default: null)
          */
-        protected $_error = 'error.inc.php';
+        protected $_createdTimestamp = null;
+
+        /**
+         * _errorViewPath
+         * 
+         * @access  protected
+         * @var     string (default: 'error.inc.php')
+         */
+        protected $_errorViewPath = 'error.inc.php';
 
         /**
          * _path
-         *
-         * @var     string
+         * 
          * @access  protected
+         * @var     string
          */
         protected $_path;
 
         /**
          * _response
-         *
-         * @var     string
+         * 
          * @access  protected
+         * @var     string
          */
         protected $_response;
 
         /**
          * _route
-         *
-         * @var     array
+         * 
          * @access  protected
+         * @var     array
          */
         protected $_route;
 
         /**
          * _uri
-         *
-         * @var     string
+         * 
          * @access  protected
+         * @var     string
          */
         protected $_uri;
 
         /**
          * __construct
-         *
+         * 
          * @note    <false> check below done since some urls with :12345 can
          *          fail. For example https://i.imgur.com/kPsgsmE.png
          * @access  public
@@ -82,6 +86,7 @@
          */
         public function __construct($uri)
         {
+            $this->_createdTimestamp = microtime(true);
             $this->_uri = $uri;
             $parsed = parse_url($this->_uri, PHP_URL_PATH);
             if ($parsed === false) {
@@ -93,22 +98,22 @@
 
         /**
          * addCallback
-         *
+         * 
          * @access  public
          * @param   Closure $callback
          * @return  void
          */
-        public function addCallback(\Closure $callback)
+        public function addCallback(\Closure $callback): void
         {
             array_push($this->_callbacks, $callback);
         }
 
         /**
          * boot
-         *
+         * 
          * This helper is designed to accept specific data, to make including
          * other content/partials a cleaner experience (from PHPs perspective).
-         *
+         * 
          * @note    This method does *not* receive any variables that were set
          *          by the request-level controller. This was done to prevent
          *          variable-collisions in booted files.
@@ -117,7 +122,7 @@
          * @param   array $data (default: array())
          * @return  void
          */
-        public function boot($path, array $data = array())
+        public function boot($path, array $data = array()): void
         {
             /**
              * Make call to $this->_controller->setDefaultControllerVariables()
@@ -143,10 +148,10 @@
 
         /**
          * generate
-         *
+         * 
          * Generates the markup for this <Request> instance by routing it
          * through the respective controller.
-         *
+         * 
          * @access  public
          * @return  void
          */
@@ -172,6 +177,9 @@
                 if (isset($this->_route['code']) === true) {
                     $code = $this->_route['code'];
                     header('HTTP/1.1 ' . ($code) . ' Moved Permanently');
+                }
+                if ($destination === '') {
+                    $destination = '/';
                 }
                 header('Location: ' . ($destination));
                 exit(0);
@@ -215,15 +223,17 @@
              * <prepare> method calling got a little tricky. Namely, if a
              * subrequest was being made, it was naturally getting called twice.
              * The problem with this is that it caused preparation-level code to
-             * be executed twice (eg. defining session details, make db calls,
-             * etc.). This caused not only flow-problems, but is also not ideal
-             * since this data should *already* be available to the controller
-             * (since it's already been calculated/retrieved, or what-have-you).
+             * be executed twice (eg. defining session details, make database
+             * calls, etc.). This caused not only flow-problems, but is also not
+             * ideal since this data should *already* be available to the
+             * controller (since it's already been calculated/retrieved, or
+             * what-have-you).
              */
 
             // if it's not a sub-request
             if ($this->isSubRequest() === false) {
-                call_user_func_array(array($reference, 'prepare'), array());
+                $callback = array($reference, 'prepare');
+                call_user_func_array($callback, array());
             }
             /**
              * Otherwise if it is, ensure it has the variables made available
@@ -238,7 +248,8 @@
             }
 
             // trigger action
-            call_user_func_array(array($reference, $action), $params);
+            $callback = array($reference, $action);
+            call_user_func_array($callback, $params);
 
             /**
              * Bail if no view is defined; if logic got here, one should be
@@ -267,10 +278,10 @@
 
                 /**
                  * process
-                 *
+                 * 
                  * Created as a wrapper to prevent global namespace from being
                  * polluted.
-                 *
+                 * 
                  * @access  public
                  * @param   string $__path
                  * @param   array $__variables
@@ -298,10 +309,8 @@
 
             // run response through buffer callbacks
             $callbacks = &$this->getCallbacks();
-            if (empty($callbacks) === false) {
-                foreach ($callbacks as $callback) {
-                    $response = call_user_func($callback, $response);
-                }
+            foreach ($callbacks as $callback) {
+                $response = call_user_func($callback, $response);
             }
 
             // store response
@@ -310,10 +319,10 @@
 
         /**
          * getCallbacks
-         *
+         * 
          * Returns a reference to the array of callbacks set up by the
          * application and/or plugins.
-         *
+         * 
          * @note    a reference is returned rather than the native array to
          *          allow for the possibility of a callback adding another
          *          response callback. For an example, see the <Performance>
@@ -321,99 +330,236 @@
          * @access  public
          * @return  array
          */
-        public function &getCallbacks()
+        public function &getCallbacks(): array
         {
-            return $this->_callbacks;
+            $callbacks = $this->_callbacks;
+            return $callbacks;
         }
 
         /**
          * getController
-         *
+         * 
          * Returns a reference to the controller that this request has been
          * routed to.
-         *
+         * 
          * @access  public
          * @return  Controller
          */
         public function getController()
         {
-            return $this->_controller;
+            $controller = $this->_controller;
+            return $controller;
+        }
+
+        /**
+         * getCreatedTimestamp
+         * 
+         * @access  public
+         * @return  float
+         */
+        public function getCreatedTimestamp(): float
+        {
+            $createdTimestamp = $this->_createdTimestamp;
+            return $createdTimestamp;
         }
 
         /**
          * getErrorPath
-         *
+         * 
          * @access  public
          * @return  string
          */
-        public function getErrorPath()
+        public function getErrorPath(): string
         {
-            return $this->_error;
+            $errorViewPath = $this->_errorViewPath;
+            return $errorViewPath;
+        }
+
+        /**
+         * getFour04LogMessage
+         * 
+         * @access  public
+         * @param   null|mixed $stamp (default: null)
+         * @param   array $lines (default: array())
+         * @return  string
+         */
+        public function getFour04LogMessage($stamp = null, array $lines = array())
+        {
+            // User agent
+            $agent = '(undefined)';
+            if (isset($_SERVER['HTTP_USER_AGENT']) === true) {
+                $agent = $_SERVER['HTTP_USER_AGENT'];
+            }
+            $line = array('Agent', $agent);
+            array_unshift($lines, $line);
+
+            // Actual (single) IP
+            $ip = IP;
+            if (strstr($ip, ',') !== false) {
+                $ip = strstr($ip, ',', true);
+            }
+            $line = array('IP', $ip);
+            array_unshift($lines, $line);
+
+            // IP
+            $ip = IP;
+            $line = array('IP Set', $ip);
+            array_unshift($lines, $line);
+
+            // Referrer
+            $referrer = '(unknown)';
+            if (isset($_SERVER['HTTP_REFERER']) === true) {
+                $referrer = $_SERVER['HTTP_REFERER'];
+            }
+            $line = array('Referrer', $referrer);
+            array_unshift($lines, $line);
+
+            // Stamp
+            $stampValue = '(none)';
+            if (is_null($stamp) === false) {
+                if (is_string($stamp) === true) {
+                    $stampValue = $stamp;
+                } elseif (is_array($stamp) === true) {
+                    $stampValue = print_r($stamp, true);
+                }
+            }
+            $line = array('Stamp', $stampValue);
+            array_unshift($lines, $line);
+
+            // Path
+            $path = $_SERVER['REQUEST_URI'];
+            $line = array('Path', $path);
+            array_unshift($lines, $line);
+
+            // Host
+            $host = '(unknown)';
+            if (isset($_SERVER['HTTP_HOST']) === true) {
+                $host = $_SERVER['HTTP_HOST'];
+            }
+            $line = array('Host', $host);
+            array_unshift($lines, $line);
+
+            // Header
+            $header = 'Invalid Request';
+            $line = array($header);
+            array_unshift($lines, $line);
+
+            // Logging
+            $message = "\n";
+            $keyMinLength = 20;
+            foreach ($lines as $line) {
+                if (isset($line[1]) === false) {
+                    $message .= '*' . ($line[0]) . '*';
+                    $message .= "\n";
+                    continue;
+                }
+                $message .= str_pad('*' . ($line[0]) . '*', $keyMinLength);
+                $message .= str_pad(':', 2);
+                $message .= $line[1];
+                $message .= "\n";
+            }
+
+            // Done
+            return $message;
+        }
+
+        /**
+         * getRoutePath
+         * 
+         * @access  public
+         * @return  null|string
+         */
+        public function getRoutePath(): ?string
+        {
+            $route = $this->_route ?? null;
+            $path = $route['path'] ?? null;
+            return $path;
+        }
+
+        /**
+         * getRoutePathHash
+         * 
+         * @access  public
+         * @return  null|string
+         */
+        public function getRoutePathHash(): ?string
+        {
+            $routePath = $this->getRoutePath();
+            if ($routePath === null) {
+                return null;
+            }
+            $md5 = md5($routePath);
+            $routePathHash = substr($md5, 0, 8);
+            return $routePathHash;
         }
 
         /**
          * getResponse
-         *
+         * 
          * @access  public
-         * @return  string
+         * @return  null|string
          */
-        public function getResponse()
+        public function getResponse(): ?string
         {
-            return $this->_response;
+            $response = $this->_response;
+            return $response;
         }
 
         /**
          * getRoute
-         *
+         * 
          * Returns the route that the application has matched for the request.
-         *
+         * 
          * @access  public
-         * @return  array
+         * @return  null|array
          */
-        public function getRoute()
+        public function getRoute(): ?array
         {
-            return $this->_route;
+            $route = $this->_route;
+            return $route;
         }
 
         /**
-         * getUri
-         *
+         * getURI
+         * 
          * @access  public
-         * @return  string
+         * @return  null|string
          */
-        public function getUri()
+        public function getURI(): ?string
         {
-            return $this->_uri;
+            $uri = $this->_uri;
+            return $uri;
         }
 
         /**
          * isSubRequest
-         *
+         * 
          * Returns whether or not <$this> is a subrequest off of a parent
          * <Request> instance/object.
-         *
+         * 
          * Useful for securing requests that should only be accessible from
          * within the application logic.
-         *
+         * 
          * @access  public
-         * @return  Boolean
+         * @return  bool
          */
-        public function isSubRequest()
+        public function isSubRequest(): bool
         {
-            // compare to application-request
             $application = Application::getRequest();
-            return $application !== $this;
+            $isSubRequest = $application !== $this;
+            return $isSubRequest;
         }
 
         /**
          * route
-         *
+         * 
          * Matches the instance to the appropraite route.
-         *
+         * 
+         * @throws  \Exception
          * @access  public
          * @return  void
          */
-        public function route()
+        public function route(): void
         {
             // route retrieval/default
             $routes = Application::getRoutes();
@@ -437,7 +583,7 @@
                     } else {
 
                         // Presumably CLI, so grab uri from there
-                        $resource = getArgv('uri');
+                        $resource = \Turtle\Loader::getCLIArgument('uri');
                         if ($resource === false) {
                             $resource = $this->_path;
                         }
@@ -475,7 +621,7 @@
                      * Prepend the *route-defined* parameters to the params
                      * array, to allow for boolean pattern matches in the
                      * routes.
-                     *
+                     * 
                      * If the route pattern-matches were passed to the
                      * controller-actions first, there could be issues with
                      * routes such as ^/([a-z]?)/path/$
@@ -496,40 +642,40 @@
 
         /**
          * setErrorPath
-         *
+         * 
          * @access  public
-         * @param   string $path
+         * @param   string $errorViewPath
          * @return  void
          */
-        public function setErrorPath($path)
+        public function setErrorPath($errorViewPath): void
         {
-            $this->_error = $path;
+            $this->_errorViewPath = $errorViewPath;
         }
 
         /**
          * setResponse
-         *
+         * 
          * Sets the rendered response for the request.
-         *
+         * 
          * @access  public
          * @param   string $response
          * @return  void
          */
-        public function setResponse($response)
+        public function setResponse($response): void
         {
             $this->_response = $response;
         }
 
         /**
          * setRoute
-         *
+         * 
          * Sets the route that the request matches.
-         *
+         * 
          * @access  public
          * @param   array $route
          * @return  void
          */
-        public function setRoute(array $route)
+        public function setRoute(array $route): void
         {
             $this->_route = $route;
         }
