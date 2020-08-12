@@ -1,7 +1,7 @@
 <?php
 
     // framework namespace
-    namespace Turtle;
+    namespace TurtlePHP;
 
     /**
      * Application
@@ -10,6 +10,15 @@
      */
     abstract class Application
     {
+        /**
+         * _errorViewPath
+         * 
+         * @access  protected
+         * @var     string (default: 'error.inc.php')
+         * @static
+         */
+        protected static $_errorViewPath = 'error.inc.php';
+
         /**
          * _hooks
          * 
@@ -25,7 +34,7 @@
          * Tracks the primary, initiating request, for the application.
          * 
          * @access  protected
-         * @var     null|\Turtle\Request (default: null)
+         * @var     null|\TurtlePHP\Request (default: null)
          * @static
          */
         protected static $_request = null;
@@ -49,24 +58,6 @@
         protected static $_routes;
 
         /**
-         * activeRecordAutoloader
-         * 
-         * @access  public
-         * @static
-         * @param   string $className
-         * @return  void
-         */
-        public static function activeRecordAutoloader(string $className)
-        {
-            if (preg_match('/^ActiveRecord\\\/', $className) === 1) {
-                $basename = preg_replace('/^ActiveRecord\\\/', '', $className);
-                $basename = ($basename) . '.class.php';
-                $path = APP . '/activeRecords/' . ($basename);
-                require_once $path;
-            }
-        }
-
-        /**
          * addAutoloadClosure
          * 
          * @access  public
@@ -74,7 +65,7 @@
          * @param   callable $callback
          * @return  void
          */
-        public static function addAutoloadClosure(callable $callback)
+        public static function addAutoloadClosure(callable $callback): void
         {
             spl_autoload_register($callback);
         }
@@ -85,10 +76,10 @@
          * @access  public
          * @static
          * @param   string $hookKey
-         * @param   mixed $callback Callback array or closure
+         * @param   callable $callback
          * @return  void
          */
-        public static function addHook(string $hookKey, $callback)
+        public static function addHook(string $hookKey, callable $callback): void
         {
             self::$_hooks[$hookKey] = self::$_hooks[$hookKey] ?? array();
             array_push(self::$_hooks[$hookKey], $callback);
@@ -99,10 +90,10 @@
          * 
          * @access  public
          * @static
-         * @param   Request $request
+         * @param   \TurtlePHP\Request $request
          * @return  void
          */
-        public static function addRequest(Request $request): void
+        public static function addRequest(\TurtlePHP\Request $request): void
         {
             array_push(self::$_requests, $request);
         }
@@ -121,7 +112,7 @@
          * @param   array $route
          * @return  void
          */
-        public static function addRoute($path, array $route)
+        public static function addRoute(string $path, array $route): void
         {
             $route = array_merge($route, array(
                 'path' => $path
@@ -145,7 +136,7 @@
          * @param   array $routes
          * @return  void
          */
-        public static function addRoutes(array $routes)
+        public static function addRoutes(array $routes): void
         {
             // normalize path-key
             foreach ($routes as $path => &$route) {
@@ -164,12 +155,12 @@
          * 
          * @access  public
          * @static
-         * @param   string $name
+         * @param   string $hookKey
          * @return  void
          */
-        public static function clearHooks($name)
+        public static function clearHooks(string $hookKey): void
         {
-            self::$_hooks[$name] = array();
+            self::$_hooks[$hookKey] = array();
         }
 
         /**
@@ -181,9 +172,22 @@
          * @static
          * @return  void
          */
-        public static function clearRoutes()
+        public static function clearRoutes(): void
         {
             self::$_routes = array();
+        }
+
+        /**
+         * getErrorViewPath
+         * 
+         * @access  public
+         * @static
+         * @return  string
+         */
+        public static function getErrorViewPath(): string
+        {
+            $errorViewPath = self::$_errorViewPath;
+            return $errorViewPath;
         }
 
         /**
@@ -194,7 +198,7 @@
          * @param   string $hookKey
          * @return  array
          */
-        public static function getHooks($hookKey): array
+        public static function getHooks(string $hookKey): array
         {
             $hooks = self::$_hooks[$hookKey] ?? array();
             return $hooks;
@@ -208,9 +212,9 @@
          * @param   string $path
          * @return  string
          */
-        public static function getPath($path)
+        public static function getPath(string $path): string
         {
-            $request = new Request($path);
+            $request = new \TurtlePHP\Request($path);
             $request->route();
             $request->generate();
             $response = $request->getResponse();
@@ -222,9 +226,9 @@
          * 
          * @access  public
          * @static
-         * @return  null|\Turtle\Request
+         * @return  null|\TurtlePHP\Request
          */
-        public static function getRequest(): ?\Turtle\Request
+        public static function getRequest(): ?\TurtlePHP\Request
         {
             $request = self::$_request;
             return $request;
@@ -260,14 +264,32 @@
         }
 
         /**
-         * modelAutoloader
+         * handleActiveRecordAutoload
          * 
          * @access  public
          * @static
          * @param   string $className
          * @return  void
          */
-        public static function modelAutoloader(string $className)
+        public static function handleActiveRecordAutoload(string $className): void
+        {
+            if (preg_match('/^ActiveRecord\\\/', $className) === 1) {
+                $basename = preg_replace('/^ActiveRecord\\\/', '', $className);
+                $basename = ($basename) . '.class.php';
+                $path = APP . '/activeRecords/' . ($basename);
+                require_once $path;
+            }
+        }
+
+        /**
+         * handleModelAutoload
+         * 
+         * @access  public
+         * @static
+         * @param   string $className
+         * @return  void
+         */
+        public static function handleModelAutoload(string $className): void
         {
             if (preg_match('/^Model\\\/', $className) === 1) {
                 $basename = preg_replace('/^Model\\\/', '', $className);
@@ -278,14 +300,65 @@
         }
 
         /**
+         * loadPath
+         * 
+         * @access  public
+         * @static
+         * @param   string $_path
+         * @param   array $_vars (default: array())
+         * @return  void
+         */
+        public static function loadPath(string $_path, array $_vars = array()): void
+        {
+            foreach ($_vars as $_name => $_value) {
+                $$_name = $_value;
+            }
+            include $_path;
+        }
+
+        /**
+         * renderPath
+         * 
+         * @access  public
+         * @static
+         * @param   string $_path
+         * @param   array $_vars (default: array())
+         * @return  string
+         */
+        public static function renderPath(string $_path, array $_vars = array()): string
+        {
+            foreach ($_vars as $_name => $_value) {
+                $$_name = $_value;
+            }
+            ob_start();
+            include $_path;
+            $_response = ob_get_contents();
+            ob_end_clean();
+            return $_response;
+        }
+
+        /**
+         * setErrorViewPath
+         * 
+         * @access  public
+         * @static
+         * @param   string $errorViewPath
+         * @return  void
+         */
+        public static function setErrorViewPath(string $errorViewPath): void
+        {
+            self::$_errorViewPath = $errorViewPath;
+        }
+
+        /**
          * setRequest
          * 
          * @access  public
          * @static
-         * @param   Request $request
+         * @param   \TurtlePHP\Request $request
          * @return  void
          */
-        public static function setRequest(Request $request)
+        public static function setRequest(\TurtlePHP\Request $request): void
         {
             self::$_request = $request;
         }

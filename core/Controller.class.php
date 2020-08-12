@@ -1,7 +1,7 @@
 <?php
 
     // framework namespace
-    namespace Turtle;
+    namespace TurtlePHP;
 
     /**
      * Controller
@@ -263,9 +263,9 @@
          * getRequest
          * 
          * @access  public
-         * @return  null|\Turtle\Request
+         * @return  null|\TurtlePHP\Request
          */
-        public function getRequest(): ?\Turtle\Request
+        public function getRequest(): ?\TurtlePHP\Request
         {
             $request = $this->_request;
             return $request;
@@ -322,10 +322,10 @@
          * setRequest
          * 
          * @access  public
-         * @param   \Turtle\Request $request
+         * @param   \TurtlePHP\Request $request
          * @return  void
          */
-        public function setRequest(\Turtle\Request $request): void
+        public function setRequest(\TurtlePHP\Request $request): void
         {
             $this->_request = $request;
         }

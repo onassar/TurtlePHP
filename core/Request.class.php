@@ -1,7 +1,7 @@
 <?php
 
     // framework namespace
-    namespace Turtle;
+    namespace TurtlePHP;
 
     /**
      * Request
@@ -34,14 +34,6 @@
          * @var     null|float (default: null)
          */
         protected $_createdTimestamp = null;
-
-        /**
-         * _errorViewPath
-         * 
-         * @access  protected
-         * @var     string (default: 'error.inc.php')
-         */
-        protected $_errorViewPath = 'error.inc.php';
 
         /**
          * _path
@@ -84,7 +76,7 @@
          * @param   string $uri
          * @return  void
          */
-        public function __construct($uri)
+        public function __construct(string $uri)
         {
             $this->_createdTimestamp = microtime(true);
             $this->_uri = $uri;
@@ -93,7 +85,7 @@
                 $parsed = preg_replace('/\?.*/', '', $uri);
             }
             $this->_path = $parsed;
-            Application::addRequest($this);
+            \TurtlePHP\Application::addRequest($this);
         }
 
         /**
@@ -111,39 +103,17 @@
         /**
          * boot
          * 
-         * This helper is designed to accept specific data, to make including
-         * other content/partials a cleaner experience (from PHPs perspective).
-         * 
          * @note    This method does *not* receive any variables that were set
          *          by the request-level controller. This was done to prevent
          *          variable-collisions in booted files.
          * @access  public
          * @param   string $path
-         * @param   array $data (default: array())
+         * @param   array $vars (default: array())
          * @return  void
          */
-        public function boot($path, array $data = array()): void
+        public function boot(string $path, array $vars = array()): void
         {
-            /**
-             * Make call to $this->_controller->setDefaultControllerVariables()
-             * to have $controller and $request included by default?
-             */
-
-            // closure to clean it up after
-            $process = function($__path, array $__variables)
-            {
-                // bring variables forward
-                foreach ($__variables as $__name => $__value) {
-                    $$__name = $__value;
-                }
-
-                // boot it in
-                include $__path;
-            };
-
-            // process request; remove closure (memory)
-            $response = $process($path, $data);
-            unset($process);
+            \TurtlePHP\Application::loadPath($path, $vars);
         }
 
         /**
@@ -240,7 +210,7 @@
              * through the application-request Controller
              */
             else {
-                $request = Application::getRequest();
+                $request = \TurtlePHP\Application::getRequest();
                 $origin = $request->getController();
                 $variables = $origin->getVariables();
                 $reference->setVariables($variables);
@@ -361,18 +331,6 @@
         {
             $createdTimestamp = $this->_createdTimestamp;
             return $createdTimestamp;
-        }
-
-        /**
-         * getErrorPath
-         * 
-         * @access  public
-         * @return  string
-         */
-        public function getErrorPath(): string
-        {
-            $errorViewPath = $this->_errorViewPath;
-            return $errorViewPath;
         }
 
         /**
@@ -545,7 +503,7 @@
          */
         public function isSubRequest(): bool
         {
-            $application = Application::getRequest();
+            $application = \TurtlePHP\Application::getRequest();
             $isSubRequest = $application !== $this;
             return $isSubRequest;
         }
@@ -562,7 +520,7 @@
         public function route(): void
         {
             // route retrieval/default
-            $routes = Application::getRoutes();
+            $routes = \TurtlePHP\Application::getRoutes();
 
             // route determination
             $matches = array();
@@ -583,8 +541,8 @@
                     } else {
 
                         // Presumably CLI, so grab uri from there
-                        $resource = \Turtle\Loader::getCLIArgument('uri');
-                        if ($resource === false) {
+                        $resource = \TurtlePHP\Loader::getCLIArgument('uri');
+                        if ($resource === null) {
                             $resource = $this->_path;
                         }
                     }
@@ -638,18 +596,6 @@
 
             // set matching route
             $this->setRoute($route);
-        }
-
-        /**
-         * setErrorPath
-         * 
-         * @access  public
-         * @param   string $errorViewPath
-         * @return  void
-         */
-        public function setErrorPath($errorViewPath): void
-        {
-            $this->_errorViewPath = $errorViewPath;
         }
 
         /**

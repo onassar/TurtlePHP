@@ -1,7 +1,7 @@
 <?php
 
     // framework namespace
-    namespace Turtle;
+    namespace TurtlePHP;
 
     /**
      * Loader
@@ -12,7 +12,7 @@
     {
         /**
          * _initiated
-         *
+         * 
          * @access  protected
          * @var     bool (default: false)
          * @static
@@ -95,39 +95,20 @@
          * 
          * @access  protected
          * @static
-         * @return  string
+         * @return  null|string
          */
-        protected static function _getRequestURI(): string
+        protected static function _getRequestURI(): ?string
         {
-            $uri = $_SERVER['REQUEST_URI'] ?? static::getCLIArgument('uri');
+            $uri = $_SERVER['REQUEST_URI'] ?? static::getCLIArgument('uri') ?? null;
             return $uri;
-        }
-
-        /**
-         * _getThrowableMetadata
-         * 
-         * @access  protected
-         * @static
-         * @param   \Throwable $throwable
-         * @return  array
-         */
-        protected static function _getThrowableMetadata(\Throwable $throwable): array
-        {
-            $errno = $throwable->getCode();
-            $errstr = $throwable->getMessage();
-            $errfile = $throwable->getFile();
-            $errline = $throwable->getLine();
-            $errcontext = array();
-            $metadata = array($errno, $errstr, $errfile, $errline, $errcontext);
-            return $metadata;
         }
 
         /**
          * _getThrowableTrace
          * 
          * @note    a trace frame is not added to \ErrorException objects since
-         *          those are proxies for errors, and doing so causes the
-         *          to reference the error handler incorrectly:
+         *          those are proxies for errors, and doing so causes it to
+         *          reference the incorrect method/function name:
          *          - https://i.imgur.com/9LhwFPb.png
          * @access  protected
          * @static
@@ -156,7 +137,7 @@
          */
         protected static function _handleRequest(): void
         {
-            $request = \Turtle\Application::getRequest();
+            $request = \TurtlePHP\Application::getRequest();
             $request->route();
             $request->generate();
         }
@@ -192,29 +173,31 @@
         }
 
         /**
-         * _setActiveRecordAutoLoader
+         * _setActiveRecordAutoloader
          * 
          * @access  protected
          * @static
          * @return  void
          */
-        protected static function _setActiveRecordAutoLoader(): void
+        protected static function _setActiveRecordAutoloader(): void
         {
-            $callback = array('Turtle\\Application', 'activeRecordAutoloader');
-            \Turtle\Application::addAutoloadClosure($callback);
+            $className = 'TurtlePHP\\Application';
+            $methodName = 'handleActiveRecordAutoload';
+            $callback = array($className, $methodName);
+            \TurtlePHP\Application::addAutoloadClosure($callback);
         }
 
         /**
-         * _setAutoLoaders
+         * _setAutoloaders
          * 
          * @access  protected
          * @static
          * @return  void
          */
-        protected static function _setAutoLoaders(): void
+        protected static function _setAutoloaders(): void
         {
-            static::_setActiveRecordAutoLoader();
-            static::_setModelAutoLoader();
+            static::_setActiveRecordAutoloader();
+            static::_setModelAutoloader();
         }
 
         /**
@@ -227,7 +210,7 @@
         protected static function _setCLI(): void
         {
             $cli = false;
-            if (static::getCLIArgument('CLI') !== false) {
+            if (static::getCLIArgument('CLI') !== null) {
                 $cli = true;
             }
             define('CLI', $cli);
@@ -242,7 +225,7 @@
          */
         protected static function _setErrorHandler(): void
         {
-            $callback = array('\\Turtle\\Loader', 'handleError');
+            $callback = array('\\TurtlePHP\\Loader', 'handleError');
             set_error_handler($callback);
         }
 
@@ -256,8 +239,8 @@
         protected static function _setErrorHook(): void
         {
             $hookKey = 'error';
-            $callback = array('\\Turtle\\Loader', 'handleErrorHook');
-            \Turtle\Application::addHook($hookKey, $callback);
+            $callback = array('\\TurtlePHP\\Loader', 'handleErrorHook');
+            \TurtlePHP\Application::addHook($hookKey, $callback);
         }
 
         /**
@@ -269,7 +252,7 @@
          */
         protected static function _setExceptionHandler(): void
         {
-            $callback = array('\\Turtle\\Loader', 'handleException');
+            $callback = array('\\TurtlePHP\\Loader', 'handleException');
             set_exception_handler($callback);
         }
 
@@ -305,16 +288,18 @@
         }
 
         /**
-         * _setModelAutoLoader
+         * _setModelAutoloader
          * 
          * @access  protected
          * @static
          * @return  void
          */
-        protected static function _setModelAutoLoader(): void
+        protected static function _setModelAutoloader(): void
         {
-            $callback = array('Turtle\\Application', 'modelAutoloader');
-            \Turtle\Application::addAutoloadClosure($callback);
+            $className = 'TurtlePHP\\Application';
+            $methodName = 'handleModelAutoload';
+            $callback = array($className, $methodName);
+            \TurtlePHP\Application::addAutoloadClosure($callback);
         }
 
         /**
@@ -359,7 +344,7 @@
          */
         protected static function _setShutdownHandler(): void
         {
-            $callback = array('\\Turtle\\Loader', 'handleShutdown');
+            $callback = array('\\TurtlePHP\\Loader', 'handleShutdown');
             register_shutdown_function($callback);
         }
 
@@ -373,8 +358,8 @@
         protected static function _setupRequest(): void
         {
             $uri = static::_getRequestURI();
-            $request = new \Turtle\Request($uri);
-            \Turtle\Application::setRequest($request);
+            $request = new \TurtlePHP\Request($uri);
+            \TurtlePHP\Application::setRequest($request);
         }
 
         /**
@@ -383,23 +368,21 @@
          * @access  public
          * @static
          * @param   string $key
-         * @return  mixed
+         * @return  null|string
          */
-        public static function getCLIArgument(string $key)
+        public static function getCLIArgument(string $key): ?string
         {
-            $hash = array();
-            if (isset($_SERVER['argv']) === true) {
-                foreach ($_SERVER['argv'] as $value) {
-                    if (strstr($value, '=') !== false) {
-                        $pieces = explode('=', $value);
-                        $hash[$pieces[0]] = $pieces[1];
-                    }
+            $argv = $_SERVER['argv'] ?? array();
+            foreach ($argv as $value) {
+                if (strstr($value, '=') === false) {
+                    continue;
+                }
+                $pieces = explode('=', $value);
+                if ($key === $pieces[0]) {
+                    return $pieces[1];
                 }
             }
-            if (isset($hash[$key]) === true) {
-                return $hash[$key];
-            }
-            return false;
+            return null;
         }
 
         /**
@@ -427,23 +410,23 @@
          * 
          * @access  public
          * @static
-         * @param   \Turtle\Request $request
-         * @param   array $metadata
+         * @param   \TurtlePHP\Request $request
+         * @param   \Throwable $throwable
          * @param   array $trace
          * @return  void
          */
-        public static function handleErrorHook(\Turtle\Request $request, array $metadata, array $trace): void
+        public static function handleErrorHook(\TurtlePHP\Request $request, \Throwable $throwable, array $trace): void
         {
-            $errstr = $metadata[1];
-            $errfile = $metadata[2];
-            $errline = $metadata[3];
+            $errstr = $throwable->getMessage();
+            $errfile = $throwable->getFile();
+            $errline = $throwable->getLine();
             $msg = ($errstr) . ' in ' . ($errfile) . ': ' . ($errline);
             error_log($msg);
-            $errorPath = $request->getErrorPath();
-            $closure = function() use ($errorPath): void {
-                require_once $errorPath;
-            };
-            call_user_func($closure);
+            $errorViewPath = \TurtlePHP\Application::getErrorViewPath();
+            $vars = compact('request', 'throwable', 'trace');
+            $response = \TurtlePHP\Application::renderPath($errorViewPath, $vars);
+            $request->setResponse($response);
+            exit(0);
         }
 
         /**
@@ -457,12 +440,11 @@
          */
         public static function handleException(\Throwable $throwable): void
         {
-            $metadata = static::_getThrowableMetadata($throwable);
             $trace = static::_getThrowableTrace($throwable);
             static::_clearPossibleOutputBuffer();
-            $request = \Turtle\Application::getRequest();
-            $args = array($request, $metadata, $trace);
-            \Turtle\Application::triggerHooks('error', $args);
+            $request = \TurtlePHP\Application::getRequest();
+            $args = array($request, $throwable, $trace);
+            \TurtlePHP\Application::triggerHooks('error', $args);
             exit(0);
         }
 
@@ -475,10 +457,10 @@
          */
         public static function handleShutdown(): void
         {
-            $request = \Turtle\Application::getRequest();
+            $request = \TurtlePHP\Application::getRequest();
             $response = $request->getResponse();
             $args = array($response);
-            \Turtle\Application::triggerHooks('flush', $args);
+            \TurtlePHP\Application::triggerHooks('shutdown', $args);
             $response = $request->getResponse();
             echo $response;
             exit(0);
@@ -507,7 +489,7 @@
             static::_setExceptionHandler();
             static::_setShutdownHandler();
             static::_setErrorHook();
-            static::_setAutoLoaders();
+            static::_setAutoloaders();
             static::_setupRequest();
             static::_loadConfigFiles();
             static::_handleRequest();

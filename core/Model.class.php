@@ -1,7 +1,7 @@
 <?php
 
     // framework namespace
-    namespace Turtle;
+    namespace TurtlePHP;
 
     /**
      * Model
