@@ -2,7 +2,7 @@ Header unset ETag
 Header set X-UA-Compatible "IE=edge"
 FileETag None
 <FilesMatch "\.(?i:css|flv|gif|ico|jpeg|jpg|js|pdf|png|swf|txt|eot|woff|ttf|svg)$">
-    Header set Expires "Wed, 15 Apr 2020 20:00:00 GMT"
+    Header set Expires "Wed, 15 Apr 2030 20:00:00 GMT"
 </FilesMatch>
 <FilesMatch "\.(ttf|otf|eot)$">
     <IfModule mod_headers.c>
