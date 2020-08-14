@@ -91,6 +91,22 @@
         }
 
         /**
+         * _getErrorLogMessage
+         * 
+         * @access  protected
+         * @static
+         * @param   \Throwable $throwable
+         * @return  string
+         */
+        protected static function _getErrorLogMessage(\Throwable $throwable): string
+        {
+            $logPath = \TurtlePHP\Application::getErrorLogPath();
+            $vars = compact('throwable');
+            $msg = \TurtlePHP\Application::renderPath($logPath, $vars);
+            return $msg;
+        }
+
+        /**
          * _getRequestURI
          * 
          * @access  protected
@@ -139,7 +155,7 @@
         {
             $request = \TurtlePHP\Application::getRequest();
             $request->route();
-            $request->generate();
+            $request->process();
         }
 
         /**
@@ -197,6 +213,7 @@
         protected static function _setAutoloaders(): void
         {
             static::_setActiveRecordAutoloader();
+            static::_setControllerAutoloader();
             static::_setModelAutoloader();
         }
 
@@ -217,6 +234,35 @@
         }
 
         /**
+         * _setControllerAutoloader
+         * 
+         * @access  protected
+         * @static
+         * @return  void
+         */
+        protected static function _setControllerAutoloader(): void
+        {
+            $className = 'TurtlePHP\\Application';
+            $methodName = 'handleControllerAutoload';
+            $callback = array($className, $methodName);
+            \TurtlePHP\Application::addAutoloadClosure($callback);
+        }
+
+        /**
+         * _setErrorDrawHook
+         * 
+         * @access  protected
+         * @static
+         * @return  void
+         */
+        protected static function _setErrorDrawHook(): void
+        {
+            $hookKey = 'error/draw';
+            $callback = array('\\TurtlePHP\\Loader', 'handleErrorDrawHook');
+            \TurtlePHP\Application::addHook($hookKey, $callback);
+        }
+
+        /**
          * _setErrorHandler
          * 
          * @access  protected
@@ -230,16 +276,29 @@
         }
 
         /**
-         * _setErrorHook
+         * _setErrorHooks
          * 
          * @access  protected
          * @static
          * @return  void
          */
-        protected static function _setErrorHook(): void
+        protected static function _setErrorHooks(): void
         {
-            $hookKey = 'error';
-            $callback = array('\\TurtlePHP\\Loader', 'handleErrorHook');
+            static::_setErrorDrawHook();
+            static::_setErrorLogHook();
+        }
+
+        /**
+         * _setErrorLogHook
+         * 
+         * @access  protected
+         * @static
+         * @return  void
+         */
+        protected static function _setErrorLogHook(): void
+        {
+            $hookKey = 'error/log';
+            $callback = array('\\TurtlePHP\\Loader', 'handleErrorLogHook');
             \TurtlePHP\Application::addHook($hookKey, $callback);
         }
 
@@ -406,7 +465,7 @@
         }
 
         /**
-         * handleErrorHook
+         * handleErrorDrawHook
          * 
          * @access  public
          * @static
@@ -415,18 +474,29 @@
          * @param   array $trace
          * @return  void
          */
-        public static function handleErrorHook(\TurtlePHP\Request $request, \Throwable $throwable, array $trace): void
+        public static function handleErrorDrawHook(\TurtlePHP\Request $request, \Throwable $throwable, array $trace): void
         {
-            $errstr = $throwable->getMessage();
-            $errfile = $throwable->getFile();
-            $errline = $throwable->getLine();
-            $msg = ($errstr) . ' in ' . ($errfile) . ': ' . ($errline);
-            error_log($msg);
             $errorViewPath = \TurtlePHP\Application::getErrorViewPath();
             $vars = compact('request', 'throwable', 'trace');
-            $response = \TurtlePHP\Application::renderPath($errorViewPath, $vars);
+            $args = array($errorViewPath, $vars);
+            $response = \TurtlePHP\Application::renderPath(... $args);
             $request->setResponse($response);
-            exit(0);
+        }
+
+        /**
+         * handleErrorLogHook
+         * 
+         * @access  public
+         * @static
+         * @param   \TurtlePHP\Request $request
+         * @param   \Throwable $throwable
+         * @param   array $trace
+         * @return  void
+         */
+        public static function handleErrorLogHook(\TurtlePHP\Request $request, \Throwable $throwable, array $trace): void
+        {
+            $msg = static::_getErrorLogMessage($throwable);
+            error_log($msg);
         }
 
         /**
@@ -444,7 +514,9 @@
             static::_clearPossibleOutputBuffer();
             $request = \TurtlePHP\Application::getRequest();
             $args = array($request, $throwable, $trace);
-            \TurtlePHP\Application::triggerHooks('error', $args);
+            \TurtlePHP\Application::triggerHooks('error/custom', $args);
+            \TurtlePHP\Application::triggerHooks('error/draw', $args);
+            \TurtlePHP\Application::triggerHooks('error/log', $args);
             exit(0);
         }
 
@@ -488,7 +560,7 @@
             static::_setErrorHandler();
             static::_setExceptionHandler();
             static::_setShutdownHandler();
-            static::_setErrorHook();
+            static::_setErrorHooks();
             static::_setAutoloaders();
             static::_setupRequest();
             static::_loadConfigFiles();

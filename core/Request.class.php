@@ -10,94 +10,478 @@
     class Request
     {
         /**
-         * _callbacks
-         * 
-         * @access  protected
-         * @var     array (default: array())
-         */
-        protected $_callbacks = array();
-
-        /**
          * _controller
          * 
          * Reference to the Controller that this Request has been routed to.
          * 
          * @access  protected
-         * @var     Controller
+         * @var     null|\TurtlePHP\Controller (default: null)
          */
-        protected $_controller;
+        protected $_controller = null;
 
         /**
-         * _createdTimestamp
+         * _hooks
          * 
          * @access  protected
-         * @var     null|float (default: null)
+         * @var     array (default: array())
          */
-        protected $_createdTimestamp = null;
+        protected $_hooks = array();
 
         /**
          * _path
          * 
+         * The path that's being requested.
+         * 
          * @access  protected
-         * @var     string
+         * @var     null|string (default: null)
          */
-        protected $_path;
+        protected $_path = null;
 
         /**
          * _response
          * 
          * @access  protected
-         * @var     string
+         * @var     null|string (default: null)
          */
-        protected $_response;
+        protected $_response = null;
 
         /**
          * _route
          * 
          * @access  protected
-         * @var     array
+         * @var     null|array (default: null)
          */
-        protected $_route;
+        protected $_route = null;
+
+        /**
+         * _timestamps
+         * 
+         * @access  protected
+         * @var     array (default: array())
+         */
+        protected $_timestamps = array();
 
         /**
          * _uri
          * 
          * @access  protected
-         * @var     string
+         * @var     null|string (default: null)
          */
-        protected $_uri;
+        protected $_uri = null;
 
         /**
          * __construct
          * 
-         * @note    <false> check below done since some urls with :12345 can
-         *          fail. For example https://i.imgur.com/kPsgsmE.png
          * @access  public
          * @param   string $uri
          * @return  void
          */
         public function __construct(string $uri)
         {
-            $this->_createdTimestamp = microtime(true);
+            $this->_timestamps['created'] = microtime(true);
             $this->_uri = $uri;
-            $parsed = parse_url($this->_uri, PHP_URL_PATH);
-            if ($parsed === false) {
-                $parsed = preg_replace('/\?.*/', '', $uri);
+            $this->_setPath();
+            $this->_trackRequest();
+        }
+
+        /**
+         * _callControllerPrepare
+         * 
+         * Calls the prepare method for requests that are not sub-requests.
+         * 
+         * This is to deal with the following case:
+         * If a subrequest was made, it was naturally having a prepare call made
+         * twice. The problem with that is that it caused preparation-level code
+         * to be executed twice (eg. defining session details, make database
+         * calls, etc.). This caused not only flow-problems, but was also not
+         * ideal since this data should *already* be available to the controller
+         * (since it's already been calculated/retrieved, or
+         * what-have-you).
+         * 
+         * @access  protected
+         * @return  bool
+         */
+        protected function _callControllerPrepare(): bool
+        {
+            if ($this->isSubRequest() === true) {
+                return false;
             }
-            $this->_path = $parsed;
+            $controller = $this->_controller;
+            $callback = array($controller, 'prepare');
+            $args = array();
+            call_user_func_array($callback, $args);
+            return true;
+        }
+
+        /**
+         * _generateResponse
+         * 
+         * @throws  \Exception
+         * @access  protected
+         * @return  void
+         */
+        protected function _generateResponse(): void
+        {
+            $route = $this->_route;
+            $viewPath = $route['view'] ?? null;
+            if ($viewPath === null) {
+                $path = $route['path'];
+                $msg = 'View not set for route: ' . ($path);
+                throw new \Exception($msg);
+            }
+            $controller = $this->_controller;
+            $vars = $controller->getVariables();
+            $response = \TurtlePHP\Application::renderPath($viewPath, $vars);
+            $this->setResponse($response);
+        }
+
+        /**
+         * _getRouteActionName
+         * 
+         * @throws  \Exception
+         * @access  protected
+         * @return  string
+         */
+        protected function _getRouteActionName(): string
+        {
+            // Single action
+            $action = $this->_route['action'];
+            if (is_array($action) === false) {
+                return $action;
+            }
+
+            // Multiple actions (defined by their respective request methods)
+            $actions = $action;
+            $method = $_SERVER['REQUEST_METHOD'];
+            $method = strtolower($method);
+            $action = $actions[$method] ?? null;
+            if ($action === null) {
+                $msg = 'Invalid action method type';
+                throw new \Exception($msg);
+            }
+            return $action;
+        }
+
+        /**
+         * _getRouteBasedMatchPattern
+         * 
+         * @access  protected
+         * @param   array $route
+         * @return  string
+         */
+        protected function _getRouteBasedMatchPattern(array $route): string
+        {
+            $path = $route['path'];
+            $path = str_replace('/', '\/', $path);
+            $pattern = '/' . ($path) . '/';
+            $pattern .= 'i';
+            return $pattern;
+        }
+
+        /**
+         * _getRouteBasedRequestPath
+         * 
+         * @access  protected
+         * @param   array $route
+         * @return  string
+         */
+        protected function _getRouteBasedRequestPath(array $route): string
+        {
+            // Bail if the route doesn't say anything about what resource to use
+            $requestPath = $this->_path;
+            $routeResource = $route['resource'] ?? null;
+            if ($routeResource !== 'uri') {
+                return $requestPath;
+            }
+
+            // Attempt to use the HTTP REQUEST URI path
+            $httpRequestURI = $_SERVER['REQUEST_URI'] ?? null;
+            if ($httpRequestURI !== null) {
+                return $httpRequestURI;
+            }
+
+            // Attempt to use the CLI request path
+            $cliURI = \TurtlePHP\Loader::getCLIArgument('uri');
+            if ($cliURI !== null) {
+                return $cliURI;
+            }
+            return $requestPath;
+        }
+
+        /**
+         * _getRouteParams
+         * 
+         * Returns an array of params for this request's matching route to be
+         * passed to it's associated controller and action.
+         * 
+         * @note    Route-defined params are prepended to the array to allo for
+         *          boolean pattern matches in the routes.
+         *          If the route-pattern based params were passed to the
+         *          controller-actions first, there could be issues with routes
+         *          such as ^/([a-z]?)/path/$
+         * @access  protected
+         * @return  array
+         */
+        protected function _getRouteParams(): array
+        {
+            $route = $this->_route;
+            $routeParams = $route['params'] ?? array();
+            $pattern = $this->_getRouteBasedMatchPattern($route);
+            $requestPath = $this->_getRouteBasedRequestPath($route);
+            preg_match($pattern, $requestPath, $matches);
+            array_shift($matches);
+            $pathParams = $matches;
+            if (is_array($routeParams) === false) {
+                $msg = 'Route params must be an array of values';
+                throw new \Exception($msg);
+            }
+            $params = array_merge($routeParams, $pathParams);
+            return $params;
+        }
+
+        /**
+         * _getRouteRedirectDestination
+         * 
+         * @access  protected
+         * @return  null|string
+         */
+        protected function _getRouteRedirectDestination(): ?string
+        {
+            // No redirect property found in route
+            $route = $this->_route;
+            $redirectDestination = $route['redirect'] ?? false;
+            if ($redirectDestination === false) {
+                return null;
+            }
+
+            // Redirect destination does not contain any variables to replace
+            if (strstr($redirectDestination, '$') === false) {
+                return $redirectDestination;
+            }
+
+            // Replace params
+            $params = $route['params'];
+            $pattern = '/\$([0-9]+)/';
+            $redirectDestination = preg_replace_callback(
+                $pattern,
+                function(array $matches) use ($params) {
+                    $match = $params[$matches[1] - 1];
+                    return $match;
+                },
+                $redirectDestination
+            );
+            return $redirectDestination;
+        }
+
+        /**
+         * _handleSubRequestSetup
+         * 
+         * Setup a sub-request's variables to come from the initial application
+         * request-controller.
+         * 
+         * @access  protected
+         * @return  bool
+         */
+        protected function _handleSubRequestSetup(): bool
+        {
+            if ($this->isSubRequest() === false) {
+                return false;
+            }
+            $controller = $this->_controller;
+            $request = \TurtlePHP\Application::getRequest();
+            $initialController = $request->getController();
+            $variables = $initialController->getVariables();
+            $controller->setVariables($variables);
+            $controller->setDefaultControllerVariables();
+            return true;
+        }
+
+        /**
+         * _processControllerAction
+         * 
+         * @access  protected
+         * @return  void
+         */
+        protected function _processControllerAction(): void
+        {
+            $controller = $this->_controller;
+            $actionName = $this->_getRouteActionName();
+            $callback = array($controller, $actionName);
+            $params = $this->_getRouteParams();
+            $args = $params;
+            call_user_func_array($callback, $args);
+        }
+
+        /**
+         * _processRedirect
+         * 
+         * @access  protected
+         * @return  bool
+         */
+        protected function _processRedirect(): bool
+        {
+            $redirectDestination = $this->_getRouteRedirectDestination();
+            if ($redirectDestination === null) {
+                return false;
+            }
+            $permanent = $this->_routeRedirectIsPermanent();
+            $this->_setRedirectHeaders($redirectDestination, $permanent);
+            exit(0);
+        }
+
+        /**
+         * _processRoute
+         * 
+         * @access  protected
+         * @return  bool
+         */
+        protected function _processRoute(): bool
+        {
+            $this->_setController();
+            $this->_callControllerPrepare();
+            $this->_handleSubRequestSetup();
+            $this->_processControllerAction();
+            $this->_generateResponse();
+            $this->triggerHooks('process/complete');
+            return true;
+        }
+
+        /**
+         * _routeMatchesRequest
+         * 
+         * @access  protected
+         * @param   array $route
+         * @return  bool
+         */
+        protected function _routeMatchesRequest(array $route): bool
+        {
+            $pattern = $this->_getRouteBasedMatchPattern($route);
+            $requestPath = $this->_getRouteBasedRequestPath($route);
+            if (preg_match($pattern, $requestPath) === 1) {
+                return true;
+            }
+            return false;
+        }
+
+        /**
+         * _routeRedirectIsPermanent
+         * 
+         * @access  protected
+         * @return  bool
+         */
+        protected function _routeRedirectIsPermanent(): bool
+        {
+            $route = $this->_route;
+            $code = $route['code'] ?? null;
+            if ($code === 301) {
+                return true;
+            }
+            return false;
+        }
+
+        /**
+         * _setController
+         * 
+         * @access  protected
+         * @return  void
+         */
+        protected function _setController(): void
+        {
+            $route = $this->_route;
+            $controllerName = $route['controller'];
+            $controllerClassName = ($controllerName) . 'Controller';
+            $controller = new $controllerClassName;
+            $controller->setRequest($this);
+            $this->_controller = $controller;
+        }
+
+        /**
+         * _setPath
+         * 
+         * Attempts to extract the path from the set URI by running it through
+         * the parse_url function. That being said, the parse_url fails when the
+         * path being passed in looks like:
+         * - /app/icons/search/love:123/sub
+         * 
+         * Specifically, it's the trailing integer after the colon that seems to
+         * throw it off. It's likely that it thinks it's a port.
+         * 
+         * So to deal with this, in cases where parse_url returns false, I
+         * simply strip any trailing query string, and assume the path is
+         * exactly what's passed in (without attempting to parse it).
+         * 
+         * @see     https://i.imgur.com/kPsgsmE.png
+         * @access  protected
+         * @return  void
+         */
+        protected function _setPath(): void
+        {
+            $uri = $this->_uri;
+            $parsedPath = parse_url($uri, PHP_URL_PATH);
+            if ($parsedPath === false) {
+                $pattern = '/\?.*/';
+                $replacement = '';
+                $parsedPath = preg_replace($pattern, $replacement, $uri);
+            }
+            $this->_path = $parsedPath;
+        }
+
+        /**
+         * _setRedirectHeaders
+         * 
+         * @access  protected
+         * @param   string $destination
+         * @param   bool $permanent (default: false)
+         * @return  void
+         */
+        protected function _setRedirectHeaders(string $destination, bool $permanent = false): void
+        {
+            if ($permanent === true) {
+                $value = 'HTTP/1.1 301 Moved Permanently';
+                header($value);
+            }
+            // if ($destination === '') {
+            //     $destination = '/';
+            // }
+            $value = 'Location: ' . ($destination);
+            header($value);
+        }
+
+        /**
+         * _trackRequest
+         * 
+         * @access  protected
+         * @return  void
+         */
+        protected function _trackRequest(): void
+        {
             \TurtlePHP\Application::addRequest($this);
         }
 
         /**
-         * addCallback
+         * addHook
          * 
          * @access  public
-         * @param   Closure $callback
+         * @param   string $hookKey
+         * @param   callable $callback
          * @return  void
          */
-        public function addCallback(\Closure $callback): void
+        public function addHook(string $hookKey, callable $callback): void
         {
-            array_push($this->_callbacks, $callback);
+            $this->_hooks[$hookKey] = $this->_hooks[$hookKey] ?? array();
+            array_push($this->_hooks[$hookKey], $callback);
+        }
+
+        /**
+         * clearHooks
+         * 
+         * @access  public
+         * @param   string $hookKey
+         * @return  void
+         */
+        public function clearHooks(string $hookKey): void
+        {
+            $this->_hooks[$hookKey] = array();
         }
 
         /**
@@ -117,193 +501,29 @@
         }
 
         /**
-         * generate
-         * 
-         * Generates the markup for this <Request> instance by routing it
-         * through the respective controller.
+         * get404LogMessage
          * 
          * @access  public
-         * @return  void
+         * @return  string
          */
-        public function generate()
+        public function get404LogMessage(): string
         {
-            // if it's a redirection, then let's do it
-            if (isset($this->_route['redirect']) === true) {
-
-                // Insert variables, if any
-                $destination = $this->_route['redirect'];
-                if (strstr($destination, '$') !== false) {
-                    $params = $this->_route['params'];
-                    $destination = preg_replace_callback(
-                        '/\$([0-9]+)/',
-                        function($matches) use ($params) {
-                            return $params[$matches[1] - 1];
-                        },
-                        $destination
-                    );
-                }
-
-                // Pass along any relevant headers (eg. satus code)
-                if (isset($this->_route['code']) === true) {
-                    $code = $this->_route['code'];
-                    header('HTTP/1.1 ' . ($code) . ' Moved Permanently');
-                }
-                if ($destination === '') {
-                    $destination = '/';
-                }
-                header('Location: ' . ($destination));
-                exit(0);
-            }
-
-            // routing details (excluding the view)
-            $action = $this->_route['action'];
-            if (is_array($action) === true) {
-                $method = $_SERVER['REQUEST_METHOD'];
-                $method = strtolower($method);
-                if (isset($action[$method]) === false) {
-                    echo 'Invalid request method';
-                    exit(0);
-                }
-                $action = $action[$method];
-            }
-            $controller = $this->_route['controller'];
-            $params = $this->_route['params'];
-
-            // if it's *not* a module
-            if (
-                isset($this->_route['module']) === false
-                || $this->_route['module'] === false
-            ) {
-                // load controller (if not yet loaded)
-                if (class_exists(($controller) . 'Controller') === false) {
-                    require_once APP . '/controllers/' . ($controller) .
-                        '.class.php';
-                }
-            }
-
-            // new controller reference
-            $name = ($controller) . 'Controller';
-            $reference = (new $name);
-            $reference->setRequest($this);
-
-            // set the controller in this request object
-            $this->_controller = $reference;
-
-            /**
-             * <prepare> method calling got a little tricky. Namely, if a
-             * subrequest was being made, it was naturally getting called twice.
-             * The problem with this is that it caused preparation-level code to
-             * be executed twice (eg. defining session details, make database
-             * calls, etc.). This caused not only flow-problems, but is also not
-             * ideal since this data should *already* be available to the
-             * controller (since it's already been calculated/retrieved, or
-             * what-have-you).
-             */
-
-            // if it's not a sub-request
-            if ($this->isSubRequest() === false) {
-                $callback = array($reference, 'prepare');
-                call_user_func_array($callback, array());
-            }
-            /**
-             * Otherwise if it is, ensure it has the variables made available
-             * through the application-request Controller
-             */
-            else {
-                $request = \TurtlePHP\Application::getRequest();
-                $origin = $request->getController();
-                $variables = $origin->getVariables();
-                $reference->setVariables($variables);
-                $this->getController()->setDefaultControllerVariables();
-            }
-
-            // trigger action
-            $callback = array($reference, $action);
-            call_user_func_array($callback, $params);
-
-            /**
-             * Bail if no view is defined; if logic got here, one should be
-             * defined. The reason some routes can have just a controller and
-             * action defined and not cause an error, is because they redirect
-             * in the <call_user_func_array> call.
-             * 
-             * In the case where they don't, a view is naturally required.
-             * 
-             * A check could be done here, and a null case <$response> value of
-             * an empty string defined, but I don't think there's a point to
-             * that.
-             */
-
-            /**
-             * Grab view (here, instead of above, incase view was changed by
-             * controller action)
-             */
-            $view = $this->_route['view'];
-
-            // if a view was set by a route, or by the controller
-            if (isset($view) === true) {
-
-                // controller-set variables
-                $variables = $reference->getVariables();
-
-                /**
-                 * process
-                 * 
-                 * Created as a wrapper to prevent global namespace from being
-                 * polluted.
-                 * 
-                 * @access  public
-                 * @param   string $__path
-                 * @param   array $__variables
-                 * @return  string
-                 */
-                $process = function($__path, array $__variables)
-                {
-                    // bring variables forward
-                    foreach ($__variables as $__name => $__value) {
-                        $$__name = $__value;
-                    }
-
-                    // buffer handling
-                    ob_start();
-                    include $__path;
-                    $__response = ob_get_contents();
-                    ob_end_clean();
-                    return $__response;
-                };
-
-                // process request; remove closure (memory)
-                $response = $process($view, $variables);
-                unset($process);
-            }
-
-            // run response through buffer callbacks
-            $callbacks = &$this->getCallbacks();
-            foreach ($callbacks as $callback) {
-                $response = call_user_func($callback, $response);
-            }
-
-            // store response
-            $this->setResponse($response);
+            $logPath = \TurtlePHP\Application::get404LogPath();
+            $msg = \TurtlePHP\Application::renderPath($logPath);
+            return $msg;
         }
 
         /**
-         * getCallbacks
+         * getHooks
          * 
-         * Returns a reference to the array of callbacks set up by the
-         * application and/or plugins.
-         * 
-         * @note    a reference is returned rather than the native array to
-         *          allow for the possibility of a callback adding another
-         *          response callback. For an example, see the <Performance>
-         *          plugin.
          * @access  public
+         * @param   string $hookKey
          * @return  array
          */
-        public function &getCallbacks(): array
+        public function getHooks(string $hookKey): array
         {
-            $callbacks = $this->_callbacks;
-            return $callbacks;
+            $hooks = $this->_hooks[$hookKey] ?? array();
+            return $hooks;
         }
 
         /**
@@ -313,9 +533,9 @@
          * routed to.
          * 
          * @access  public
-         * @return  Controller
+         * @return  \TurtlePHP\Controller
          */
-        public function getController()
+        public function getController(): \TurtlePHP\Controller
         {
             $controller = $this->_controller;
             return $controller;
@@ -329,96 +549,20 @@
          */
         public function getCreatedTimestamp(): float
         {
-            $createdTimestamp = $this->_createdTimestamp;
+            $createdTimestamp = $this->_timestamps['created'];
             return $createdTimestamp;
         }
 
         /**
-         * getFour04LogMessage
+         * getPath
          * 
          * @access  public
-         * @param   null|mixed $stamp (default: null)
-         * @param   array $lines (default: array())
-         * @return  string
+         * @return  null|string
          */
-        public function getFour04LogMessage($stamp = null, array $lines = array())
+        public function getPath(): ?string
         {
-            // User agent
-            $agent = '(undefined)';
-            if (isset($_SERVER['HTTP_USER_AGENT']) === true) {
-                $agent = $_SERVER['HTTP_USER_AGENT'];
-            }
-            $line = array('Agent', $agent);
-            array_unshift($lines, $line);
-
-            // Actual (single) IP
-            $ip = IP;
-            if (strstr($ip, ',') !== false) {
-                $ip = strstr($ip, ',', true);
-            }
-            $line = array('IP', $ip);
-            array_unshift($lines, $line);
-
-            // IP
-            $ip = IP;
-            $line = array('IP Set', $ip);
-            array_unshift($lines, $line);
-
-            // Referrer
-            $referrer = '(unknown)';
-            if (isset($_SERVER['HTTP_REFERER']) === true) {
-                $referrer = $_SERVER['HTTP_REFERER'];
-            }
-            $line = array('Referrer', $referrer);
-            array_unshift($lines, $line);
-
-            // Stamp
-            $stampValue = '(none)';
-            if (is_null($stamp) === false) {
-                if (is_string($stamp) === true) {
-                    $stampValue = $stamp;
-                } elseif (is_array($stamp) === true) {
-                    $stampValue = print_r($stamp, true);
-                }
-            }
-            $line = array('Stamp', $stampValue);
-            array_unshift($lines, $line);
-
-            // Path
-            $path = $_SERVER['REQUEST_URI'];
-            $line = array('Path', $path);
-            array_unshift($lines, $line);
-
-            // Host
-            $host = '(unknown)';
-            if (isset($_SERVER['HTTP_HOST']) === true) {
-                $host = $_SERVER['HTTP_HOST'];
-            }
-            $line = array('Host', $host);
-            array_unshift($lines, $line);
-
-            // Header
-            $header = 'Invalid Request';
-            $line = array($header);
-            array_unshift($lines, $line);
-
-            // Logging
-            $message = "\n";
-            $keyMinLength = 20;
-            foreach ($lines as $line) {
-                if (isset($line[1]) === false) {
-                    $message .= '*' . ($line[0]) . '*';
-                    $message .= "\n";
-                    continue;
-                }
-                $message .= str_pad('*' . ($line[0]) . '*', $keyMinLength);
-                $message .= str_pad(':', 2);
-                $message .= $line[1];
-                $message .= "\n";
-            }
-
-            // Done
-            return $message;
+            $path = $this->_path;
+            return $path;
         }
 
         /**
@@ -436,6 +580,10 @@
 
         /**
          * getRoutePathHash
+         * 
+         * Returns an md5 hash of the current matching route, which can be
+         * useful in distinguishing different routes in an ambiguous/obfuscated
+         * way.
          * 
          * @access  public
          * @return  null|string
@@ -503,9 +651,24 @@
          */
         public function isSubRequest(): bool
         {
-            $application = \TurtlePHP\Application::getRequest();
-            $isSubRequest = $application !== $this;
+            $request = \TurtlePHP\Application::getRequest();
+            $isSubRequest = $request !== $this;
             return $isSubRequest;
+        }
+
+        /**
+         * process
+         * 
+         * Attempts to process a redirect first, and if that isn't relevant,
+         * interprets the request as a route to be processed.
+         * 
+         * @access  public
+         * @return  void
+         */
+        public function process(): void
+        {
+            $this->_processRedirect();
+            $this->_processRoute();
         }
 
         /**
@@ -515,87 +678,21 @@
          * 
          * @throws  \Exception
          * @access  public
-         * @return  void
+         * @return  bool
          */
-        public function route(): void
+        public function route(): bool
         {
-            // route retrieval/default
             $routes = \TurtlePHP\Application::getRoutes();
-
-            // route determination
-            $matches = array();
-            foreach ($routes as $details) {
-
-                // Set the default path to look for
-                $path = str_replace('/', '\/', $details['path']);
-                $resource = $this->_path;
-
-                // If URI matching is to be used
-                if (
-                    isset($details['resource']) === true
-                    && $details['resource'] === 'uri'
-                ) {
-                    // Ensure it exists (it won't in CLI requests)
-                    if (isset($_SERVER['REQUEST_URI']) === true) {
-                        $resource = $_SERVER['REQUEST_URI'];
-                    } else {
-
-                        // Presumably CLI, so grab uri from there
-                        $resource = \TurtlePHP\Loader::getCLIArgument('uri');
-                        if ($resource === null) {
-                            $resource = $this->_path;
-                        }
-                    }
+            foreach ($routes as $route) {
+                $matches = $this->_routeMatchesRequest($route);
+                if ($matches === false) {
+                    continue;
                 }
-
-                // Case insensitive matching
-                $pattern = '/' . ($path) . '/';
-                if (true) {
-                    $pattern .= 'i';
-                }
-
-                // Let's do this!
-                if (preg_match($pattern, $resource, $matches)) {
-                    $route = $details;
-                    array_shift($matches);
-
-                    // route parameter query
-                    $params = array();
-                    if (isset($route['params']) === true) {
-
-                        // require params to be an array
-                        if (is_array($route['params']) === false) {
-                            throw new \Exception(
-                                'Route parameters are required to be an ' .
-                                'array of values.'
-                            );
-                        }
-
-                        // set them
-                        $params = $route['params'];
-                    }
-
-                    /**
-                     * Prepend the *route-defined* parameters to the params
-                     * array, to allow for boolean pattern matches in the
-                     * routes.
-                     * 
-                     * If the route pattern-matches were passed to the
-                     * controller-actions first, there could be issues with
-                     * routes such as ^/([a-z]?)/path/$
-                     */
-                    $route['params'] = array_merge($params, $matches);
-                    break;
-                }
+                $this->setRoute($route);
+                return true;
             }
-
-            // if no matching route found
-            if (isset($route) === false) {
-                throw new \Exception('Matching route could not be found.');
-            }
-
-            // set matching route
-            $this->setRoute($route);
+            $msg = 'Matching route could not be found.';
+            throw new \Exception($msg);
         }
 
         /**
@@ -607,7 +704,7 @@
          * @param   string $response
          * @return  void
          */
-        public function setResponse($response): void
+        public function setResponse(string $response): void
         {
             $this->_response = $response;
         }
@@ -624,5 +721,22 @@
         public function setRoute(array $route): void
         {
             $this->_route = $route;
+        }
+
+        /**
+         * triggerHooks
+         * 
+         * @access  public
+         * @param   string $hookKey
+         * @param   array $args (default: array())
+         * @return  void
+         */
+        public function triggerHooks(string $hookKey, array $args = array()): void
+        {
+            $args['request'] = $this;
+            $hooks = $this->getHooks($hookKey);
+            foreach ($hooks as $callback) {
+                call_user_func_array($callback, $args);
+            }
         }
     }

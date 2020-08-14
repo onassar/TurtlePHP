@@ -11,13 +11,31 @@
     abstract class Application
     {
         /**
+         * _404LogPath
+         * 
+         * @access  protected
+         * @var     string (default: './logs/404.inc.php')
+         * @static
+         */
+        protected static $_404LogPath = './logs/404.inc.php';
+
+        /**
+         * _errorLogPath
+         * 
+         * @access  protected
+         * @var     string (default: './logs/error.inc.php')
+         * @static
+         */
+        protected static $_errorLogPath = './logs/error.inc.php';
+
+        /**
          * _errorViewPath
          * 
          * @access  protected
-         * @var     string (default: 'error.inc.php')
+         * @var     string (default: './views/error.inc.php')
          * @static
          */
-        protected static $_errorViewPath = 'error.inc.php';
+        protected static $_errorViewPath = './views/error.inc.php';
 
         /**
          * _hooks
@@ -52,10 +70,27 @@
          * _routes
          * 
          * @access  protected
-         * @var     array
+         * @var     array (default: array())
          * @static
          */
-        protected static $_routes;
+        protected static $_routes = array();
+
+        /**
+         * _getNormalizedRoutes
+         * 
+         * @access  protected
+         * @static
+         * @param   array $routes
+         * @return  array
+         */
+        protected static function _getNormalizedRoutes(array $routes): array
+        {
+            foreach ($routes as $path => &$route) {
+                $route['path'] = $path;
+            }
+            $routes = array_values($routes);
+            return $routes;
+        }
 
         /**
          * addAutoloadClosure
@@ -81,8 +116,8 @@
          */
         public static function addHook(string $hookKey, callable $callback): void
         {
-            self::$_hooks[$hookKey] = self::$_hooks[$hookKey] ?? array();
-            array_push(self::$_hooks[$hookKey], $callback);
+            static::$_hooks[$hookKey] = static::$_hooks[$hookKey] ?? array();
+            array_push(static::$_hooks[$hookKey], $callback);
         }
 
         /**
@@ -95,7 +130,7 @@
          */
         public static function addRequest(\TurtlePHP\Request $request): void
         {
-            array_push(self::$_requests, $request);
+            array_push(static::$_requests, $request);
         }
 
         /**
@@ -114,10 +149,8 @@
          */
         public static function addRoute(string $path, array $route): void
         {
-            $route = array_merge($route, array(
-                'path' => $path
-            ));
-            array_unshift(self::$_routes, $route);
+            $route['path'] = $path;
+            array_unshift(static::$_routes, $route);
         }
 
         /**
@@ -138,16 +171,8 @@
          */
         public static function addRoutes(array $routes): void
         {
-            // normalize path-key
-            foreach ($routes as $path => &$route) {
-                $route['path'] = $path;
-            }
-
-            // reindex it (to remove the <path> value as the route's key)
-            $routes = array_values($routes);
-
-            // prepend array of routes to possible ones
-            self::$_routes = array_merge($routes, self::$_routes);
+            $normalizedRoutes = static::_getNormalizedRoutes($routes);
+            static::$_routes = array_merge($normalizedRoutes, static::$_routes);
         }
 
         /**
@@ -160,7 +185,7 @@
          */
         public static function clearHooks(string $hookKey): void
         {
-            self::$_hooks[$hookKey] = array();
+            static::$_hooks[$hookKey] = array();
         }
 
         /**
@@ -174,7 +199,33 @@
          */
         public static function clearRoutes(): void
         {
-            self::$_routes = array();
+            static::$_routes = array();
+        }
+
+        /**
+         * get404LogPath
+         * 
+         * @access  public
+         * @static
+         * @return  string
+         */
+        public static function get404LogPath(): string
+        {
+            $path = static::$_404LogPath;
+            return $path;
+        }
+
+        /**
+         * getErrorLogPath
+         * 
+         * @access  public
+         * @static
+         * @return  string
+         */
+        public static function getErrorLogPath(): string
+        {
+            $errorLogPath = static::$_errorLogPath;
+            return $errorLogPath;
         }
 
         /**
@@ -186,7 +237,7 @@
          */
         public static function getErrorViewPath(): string
         {
-            $errorViewPath = self::$_errorViewPath;
+            $errorViewPath = static::$_errorViewPath;
             return $errorViewPath;
         }
 
@@ -200,7 +251,7 @@
          */
         public static function getHooks(string $hookKey): array
         {
-            $hooks = self::$_hooks[$hookKey] ?? array();
+            $hooks = static::$_hooks[$hookKey] ?? array();
             return $hooks;
         }
 
@@ -216,7 +267,7 @@
         {
             $request = new \TurtlePHP\Request($path);
             $request->route();
-            $request->generate();
+            $request->process();
             $response = $request->getResponse();
             return $response;
         }
@@ -230,7 +281,7 @@
          */
         public static function getRequest(): ?\TurtlePHP\Request
         {
-            $request = self::$_request;
+            $request = static::$_request;
             return $request;
         }
 
@@ -243,7 +294,7 @@
          */
         public static function getRequests(): array
         {
-            $requests = self::$_requests;
+            $requests = static::$_requests;
             return $requests;
         }
 
@@ -257,9 +308,9 @@
          * @static
          * @return  array
          */
-        public static function getRoutes()
+        public static function getRoutes(): array
         {
-            $routes = self::$_routes;
+            $routes = static::$_routes;
             return $routes;
         }
 
@@ -277,6 +328,24 @@
                 $basename = preg_replace('/^ActiveRecord\\\/', '', $className);
                 $basename = ($basename) . '.class.php';
                 $path = APP . '/activeRecords/' . ($basename);
+                require_once $path;
+            }
+        }
+
+        /**
+         * handleControllerAutoload
+         * 
+         * @access  public
+         * @static
+         * @param   string $className
+         * @return  void
+         */
+        public static function handleControllerAutoload(string $className): void
+        {
+            if (preg_match('/Controller$/', $className) === 1) {
+                $basename = preg_replace('/Controller$/', '', $className);
+                $basename = ($basename) . '.class.php';
+                $path = APP . '/controllers/' . ($basename);
                 require_once $path;
             }
         }
@@ -338,6 +407,32 @@
         }
 
         /**
+         * set404LogPath
+         * 
+         * @access  public
+         * @static
+         * @param   string $path
+         * @return  void
+         */
+        public static function set404LogPath(string $path): void
+        {
+            static::$_404LogPath = $path;
+        }
+
+        /**
+         * setErrorLogPath
+         * 
+         * @access  public
+         * @static
+         * @param   string $errorLogPath
+         * @return  void
+         */
+        public static function setErrorLogPath(string $errorLogPath): void
+        {
+            static::$_errorLogPath = $errorLogPath;
+        }
+
+        /**
          * setErrorViewPath
          * 
          * @access  public
@@ -347,7 +442,7 @@
          */
         public static function setErrorViewPath(string $errorViewPath): void
         {
-            self::$_errorViewPath = $errorViewPath;
+            static::$_errorViewPath = $errorViewPath;
         }
 
         /**
@@ -360,7 +455,7 @@
          */
         public static function setRequest(\TurtlePHP\Request $request): void
         {
-            self::$_request = $request;
+            static::$_request = $request;
         }
 
         /**
@@ -375,14 +470,8 @@
          */
         public static function setRoutes(array $routes): void
         {
-            // reindex array with path (key) set as attribute
-            foreach ($routes as $path => &$route) {
-                $route['path'] = $path;
-            }
-            $routes = array_values($routes);
-
-            // store
-            self::$_routes = $routes;
+            $normalizedRoutes = static::_getNormalizedRoutes($routes);
+            static::$_routes = $normalizedRoutes;
         }
 
         /**
@@ -397,8 +486,8 @@
         public static function triggerHooks(string $hookKey, array $args = array()): void
         {
             $hooks = static::getHooks($hookKey);
-            foreach ($hooks as $hook) {
-                call_user_func_array($hook, $args);
+            foreach ($hooks as $callback) {
+                call_user_func_array($callback, $args);
             }
         }
     }

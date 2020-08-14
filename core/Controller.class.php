@@ -41,46 +41,23 @@
         protected $_variables = array();
 
         /**
-         * _deepMerge
+         * _getIndexedKeys
          * 
-         * @see     http://www.php.net/manual/en/function.array-merge-recursive.php#92195
+         * Returns an array of keys that is numerically-indexed to ensure a
+         * consistent approach to working with the keys passed in.
+         * 
          * @access  protected
-         * @param   array $array1
-         * @param   array $array2
+         * @param   array $keys
          * @return  array
          */
-        protected function _deepMerge(array &$array1, array &$array2): array
+        protected function _getIndexedKeys(array $keys): array
         {
-            $merged = $array1;
-            foreach ($array2 as $key => &$value) {
-                if (
-                    is_array($value) === true
-                    && isset($merged[$key]) === true
-                    && is_array($merged[$key]) === true
-                ) {
-                    $merged[$key] = $this->_deepMerge($merged[$key], $value);
-                } else {
-                    $merged[$key] = $value;
-                }
+            if (count($keys) === 0) {
+                return $keys;
             }
-            return $merged;
-        }
-
-        /**
-         * _getViewPath
-         * 
-         * @access  protected
-         * @return  null|string
-         */
-        protected function _getViewPath(): ?string
-        {
-            $request = $this->_request;
-            if ($request === null) {
-                return null;
-            }
-            $route = $request->getRoute();
-            $viewPath = $route['view'] ?? null;
-            return $viewPath;
+            $keys = implode('.', $keys);
+            $keys = explode('.', $keys);
+            return $keys;
         }
 
         /**
@@ -90,87 +67,42 @@
          * the following syntax:
          * 
          * $this->_pass('title', 'Hello World!');
+         * $this->_pass('meta.author', 'Oliver Nassar');
          * $this->_pass('meta.description', 'Sample description');
-         * $this->_pass('meta', array('author' => 'Oliver Nassar'));
          * 
          * Based on the above syntax, the following variables are available to
          * the view:
          * 
          * $title = 'Hello World!';
          * $meta = array(
-         *     'description' => 'Sample description',
-         *     'author' => 'Oliver Nassar'
-         * );
-         * 
-         * To overwrite an entire variable, pass in the third optional boolean:
-         * 
-         * $this->_pass('title', 'Hello World!');
-         * $this->_pass('meta.description', 'Sample description');
-         * $this->_pass('meta', array('author' => 'Oliver Nassar'), true);
-         * 
-         * Producing:
-         * 
-         * $title = 'Hello World!';
-         * $meta = array(
-         *     'author' => 'Oliver Nassar'
+         *     'author' => 'Oliver Nassar',
+         *     'description' => 'Sample description'
          * );
          * 
          * @throws  \Exception
          * @access  protected
-         * @param   string $key
-         * @param   mixed $mixed
-         * @param   bool $hardSet (default: false)
+         * @param   mixed $keys
+         * @param   mixed $incomingValue
          * @return  void
          */
-        protected function _pass($key, $mixed, $hardSet = false): void
+        protected function _pass($keys, $incomingValue): void
         {
-            if ($key === 'controller' || $key === 'request') {
-                throw new \Exception('Invalid variable key');
-            }
-
-            // value should cascade through to a sub-child
-            if (strstr($key, '.') !== false) {
-                $keys = explode('.', $key);
-                $numberOfKeys = count($keys);
-                $variablesDuplicate = $this->_variables;
-                $placeholder = &$variablesDuplicate;
-                foreach ($keys as $index => $key) {
-                    $isLastKey = $index === ($numberOfKeys - 1);
-                    if (isset($placeholder[$key]) === false) {
-                        if ($isLastKey === false) {
-                            $placeholder[$key] = array();
-                        }
+            $keys = (array) $keys;
+            $indexedKeys = $this->_getIndexedKeys($keys);
+            $value = &$this->_variables;
+            foreach ($indexedKeys as $key) {
+                if (isset($value[$key]) === false) {
+                    if ($this->_validVariableKey($key) === false) {
+                        $msg = 'Invalid variable key: controller';
+                        throw new \Exception($msg);
                     }
-                    if ($isLastKey === false) {
-                        $placeholder = &$placeholder[$key];
-                    }
+                    $value[$key] = array();
+                    $value = &$value[$key];
+                    continue;
                 }
-                $placeholder[$key] = $mixed;
-
-                // any subling values should be overwritten
-                if ($hardSet === true) {
-                    $this->_variables = $variablesDuplicate;
-                } else {
-                    $this->_variables = $this->_deepMerge(
-                        $this->_variables,
-                        $variablesDuplicate
-                    );
-                }
-                unset($variablesDuplicate);
-
-            } else {
-                if ($hardSet === true) {
-                    $this->_variables[$key] = $mixed;
-                } else {
-                    $variablesDuplicate = $this->_variables;
-                    $variablesDuplicate[$key] = $mixed;
-                    $this->_variables = $this->_deepMerge(
-                        $this->_variables,
-                        $variablesDuplicate
-                    );
-                    unset($variablesDuplicate);
-                }
+                $value = &$value[$key];
             }
+            $value = $incomingValue;
         }
 
         /**
@@ -193,21 +125,35 @@
         }
 
         /**
-         * actionFour04
+         * _validVariableKey
          * 
-         * 404 requests that come in.
+         * @access  protected
+         * @param   string $key
+         * @return  bool
+         */
+        protected function _validVariableKey(string $key): bool
+        {
+            if ($key === 'controller') {
+                return false;
+            }
+            if ($key === 'request') {
+                return false;
+            }
+            return true;
+        }
+
+        /**
+         * action404
          * 
-         * @note    An action that ought to be available to all controllers
-         * @param   mixed $stamp variable that is passed along to the error log
-         * @param   array $lines (default: array())
          * @access  public
+         * @param   string $requestPath
          * @return  void
          */
-        public function actionFour04($stamp = null, array $lines = array()): void
+        public function action404(string $requestPath): void
         {
             $request = $this->_request;
-            $message = $request->getFour04LogMessage($stamp, $lines);
-            error_log($message);
+            $msg = $request->get404LogMessage();
+            error_log($msg);
         }
 
         /**
@@ -220,31 +166,26 @@
          * @access  public
          * @return  array
          */
-        public function getGET()
+        public function getGET(): array
         {
             $request = $this->getRequest();
-            if ($request->isSubRequest() === true) {
-                $uri = $request->getURI();
-                $parsed = parse_url($uri);
-                if (isset($parsed['query'])) {
-                    parse_str($parsed['query'], $params);
-                    return $params;
-                }
-                $get = array();
+            if ($request->isSubRequest() === false) {
+                $get = $_GET;
                 return $get;
             }
-            $get = $_GET;
+            $uri = $request->getURI();
+            $parsed = parse_url($uri);
+            if (isset($parsed['query']) === true) {
+                parse_str($parsed['query'], $params);
+                return $params;
+            }
+            $get = array();
             return $get;
         }
 
         /**
          * getPOST
          * 
-         * Returns the _POST array if the request is *not* a subrequest. If it
-         * is a subrequest
-         * 
-         * @todo    Update so that data can be posted through a Request object,
-         *          and returned from here
          * @access  public
          * @return  array
          */
