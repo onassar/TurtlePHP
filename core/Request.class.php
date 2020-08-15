@@ -260,7 +260,7 @@
             }
 
             // Replace params
-            $params = $route['params'];
+            $params = $this->_getRouteParams();
             $pattern = '/\$([0-9]+)/';
             $redirectDestination = preg_replace_callback(
                 $pattern,
