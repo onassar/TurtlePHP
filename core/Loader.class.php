@@ -47,7 +47,7 @@
             array_push($dependentDirectories, APP . '/webroot');
             foreach ($dependentDirectories as $dependentDirectory) {
                 if (is_dir($dependentDirectory) === false) {
-                    $msg = '*' . ($dependentDirectory) . '* is required.';
+                    $msg = '*' . ($dependentDirectory) . '* is required';
                     throw new \Exception($msg);
                 }
             }
@@ -68,7 +68,7 @@
             array_push($dependentFiles, APP . '/routes.inc.php');
             foreach ($dependentFiles as $dependentFile) {
                 if (file_exists($dependentFile) === false) {
-                    $msg = '*' . ($dependentFile) . '* is required.';
+                    $msg = '*' . ($dependentFile) . '* is required';
                     throw new \Exception($msg);
                 }
             }

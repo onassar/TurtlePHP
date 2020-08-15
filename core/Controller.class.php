@@ -91,11 +91,11 @@
             $indexedKeys = $this->_getIndexedKeys($keys);
             $value = &$this->_variables;
             foreach ($indexedKeys as $key) {
+                if ($this->_validVariableKey($key) === false) {
+                    $msg = 'Invalid variable key name: ' . ($key);
+                    throw new \Exception($msg);
+                }
                 if (isset($value[$key]) === false) {
-                    if ($this->_validVariableKey($key) === false) {
-                        $msg = 'Invalid variable key: controller';
-                        throw new \Exception($msg);
-                    }
                     $value[$key] = array();
                     $value = &$value[$key];
                     continue;

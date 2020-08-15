@@ -214,7 +214,7 @@
          * Returns an array of params for this request's matching route to be
          * passed to it's associated controller and action.
          * 
-         * @note    Route-defined params are prepended to the array to allo for
+         * @note    Route-defined params are prepended to the array to allow for
          *          boolean pattern matches in the routes.
          *          If the route-pattern based params were passed to the
          *          controller-actions first, there could be issues with routes
@@ -242,6 +242,14 @@
         /**
          * _getRouteRedirectDestination
          * 
+         * @note    The empty redirect destination check is to deal with
+         *          redirect patterns that use catch all and replacement params
+         *          to redirect, but which can then result in no replacement.
+         *          An example would be a redirect route like this:
+         *          - https://i.imgur.com/m1LDiMj.png
+         *          In that case, a URL like the following would result in an
+         *          empty redirect destination:
+         *          - https://local.getstencil.com/https://getstencil.com
          * @access  protected
          * @return  null|string
          */
@@ -270,6 +278,9 @@
                 },
                 $redirectDestination
             );
+            if ($redirectDestination === '') {
+                $redirectDestination = '/';
+            }
             return $redirectDestination;
         }
 
@@ -440,9 +451,6 @@
                 $value = 'HTTP/1.1 301 Moved Permanently';
                 header($value);
             }
-            // if ($destination === '') {
-            //     $destination = '/';
-            // }
             $value = 'Location: ' . ($destination);
             header($value);
         }
@@ -691,7 +699,7 @@
                 $this->setRoute($route);
                 return true;
             }
-            $msg = 'Matching route could not be found.';
+            $msg = 'Matching route could not be found';
             throw new \Exception($msg);
         }
 
