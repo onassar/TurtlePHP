@@ -13,10 +13,10 @@
         // error handling
         '(.*)' => array(
             'controller' => 'Common',
-            'action' => 'actionFour04',
+            'action' => 'action404',
             'view' => APP . '/views/common/four04.inc.php'
         )
     );
 
     // route storage
-    \Turtle\Application::setRoutes($routes);
+    TurtlePHP\Application::setRoutes($routes);
