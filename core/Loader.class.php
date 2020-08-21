@@ -1,6 +1,6 @@
 <?php
 
-    // framework namespace
+    // Namespace overhead
     namespace TurtlePHP;
 
     /**
@@ -481,6 +481,7 @@
             $args = array($errorViewPath, $vars);
             $response = \TurtlePHP\Application::renderPath(... $args);
             $request->setResponse($response);
+            $request->setServiceUnavailableHeaders();
         }
 
         /**

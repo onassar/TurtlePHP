@@ -1,6 +1,6 @@
 <?php
 
-    // framework namespace
+    // Namespace overhead
     namespace TurtlePHP;
 
     /**
@@ -95,6 +95,7 @@
         /**
          * addAutoloadClosure
          * 
+         * @link    https://www.php.net/manual/en/function.spl-autoload-register.php
          * @access  public
          * @static
          * @param   callable $callback
@@ -342,8 +343,8 @@
          */
         public static function handleControllerAutoload(string $className): void
         {
-            if (preg_match('/Controller$/', $className) === 1) {
-                $basename = preg_replace('/Controller$/', '', $className);
+            if (preg_match('/^Controller\\\/', $className) === 1) {
+                $basename = preg_replace('/^Controller\\\/', '', $className);
                 $basename = ($basename) . '.class.php';
                 $path = APP . '/controllers/' . ($basename);
                 require_once $path;
@@ -388,6 +389,7 @@
         /**
          * renderPath
          * 
+         * @link    https://www.php.net/manual/en/function.ob-get-clean.php
          * @access  public
          * @static
          * @param   string $_path
@@ -401,9 +403,8 @@
             }
             ob_start();
             include $_path;
-            $_response = ob_get_contents();
-            ob_end_clean();
-            return $_response;
+            $response = ob_get_clean();
+            return $response;
         }
 
         /**

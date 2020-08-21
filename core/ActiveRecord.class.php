@@ -1,6 +1,6 @@
 <?php
 
-    // framework namespace
+    // Namespace overhead
     namespace TurtlePHP;
 
     /**

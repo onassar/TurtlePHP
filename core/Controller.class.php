@@ -1,6 +1,6 @@
 <?php
 
-    // framework namespace
+    // Namespace overhead
     namespace TurtlePHP;
 
     /**
@@ -154,6 +154,7 @@
             $request = $this->_request;
             $msg = $request->get404LogMessage();
             error_log($msg);
+            $request->setNotFoundHeaders();
         }
 
         /**
@@ -233,7 +234,7 @@
          * Called before a controller action is, sets up logic that may be
          * needed by the time the action is triggered.
          * 
-         * Can be useful if defined by an <AppController> child, to perform
+         * Can be useful if defined by an <Controller\App> child, to perform
          * checks against authenticated users/sessions, load global data from
          * a database and send it to the view, etc.
          * 

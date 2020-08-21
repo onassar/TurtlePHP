@@ -1,6 +1,6 @@
 <?php
 
-    // framework namespace
+    // Namespace overhead
     namespace TurtlePHP;
 
     /**
@@ -157,7 +157,8 @@
             $action = $actions[$method] ?? null;
             if ($action === null) {
                 $msg = 'Invalid action method type';
-                throw new \Exception($msg);
+                exit($msg);
+                // throw new \Exception($msg);
             }
             return $action;
         }
@@ -400,7 +401,7 @@
         {
             $route = $this->_route;
             $controllerName = $route['controller'];
-            $controllerClassName = ($controllerName) . 'Controller';
+            $controllerClassName = '\\Controller\\' . ($controllerName);
             $controller = new $controllerClassName;
             $controller->setRequest($this);
             $this->_controller = $controller;
@@ -704,6 +705,20 @@
         }
 
         /**
+         * setNotFoundHeaders
+         * 
+         * @access  public
+         * @return  void
+         */
+        public function setNotFoundHeaders(): void
+        {
+            $protocol = $_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.1';
+            header(($protocol) . ' 404 Not Found');
+            header('Status: 404 Not Found');
+            header('Content-Type: text/html; charset=utf-8');
+        }
+
+        /**
          * setResponse
          * 
          * Sets the rendered response for the request.
@@ -729,6 +744,24 @@
         public function setRoute(array $route): void
         {
             $this->_route = $route;
+        }
+
+        /**
+         * setServiceUnavailableHeaders
+         * 
+         * @link    https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503
+         * @link    https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
+         * @access  public
+         * @param   int $retryAfter (default: 7200)
+         * @return  void
+         */
+        public function setServiceUnavailableHeaders(int $retryAfter = 7200): void
+        {
+            $protocol = $_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.1';
+            header(($protocol) . ' 503 Service Temporarily Unavailable');
+            header('Status: 503 Service Temporarily Unavailable');
+            header('Retry-After: ' . ($retryAfter));
+            header('Content-Type: text/html; charset=utf-8');
         }
 
         /**
