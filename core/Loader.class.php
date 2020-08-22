@@ -258,7 +258,9 @@
         protected static function _setErrorDrawHook(): void
         {
             $hookKey = 'error/draw';
-            $callback = array('\\TurtlePHP\\Loader', 'handleErrorDrawHook');
+            $className = '\\TurtlePHP\\Loader';
+            $methodName = 'handleErrorDrawHook';
+            $callback = array($className, $methodName);
             \TurtlePHP\Application::addHook($hookKey, $callback);
         }
 
@@ -271,7 +273,9 @@
          */
         protected static function _setErrorHandler(): void
         {
-            $callback = array('\\TurtlePHP\\Loader', 'handleError');
+            $className = '\\TurtlePHP\\Loader';
+            $methodName = 'handleError';
+            $callback = array($className, $methodName);
             set_error_handler($callback);
         }
 
@@ -298,7 +302,9 @@
         protected static function _setErrorLogHook(): void
         {
             $hookKey = 'error/log';
-            $callback = array('\\TurtlePHP\\Loader', 'handleErrorLogHook');
+            $className = '\\TurtlePHP\\Loader';
+            $methodName = 'handleErrorLogHook';
+            $callback = array($className, $methodName);
             \TurtlePHP\Application::addHook($hookKey, $callback);
         }
 
@@ -311,7 +317,9 @@
          */
         protected static function _setExceptionHandler(): void
         {
-            $callback = array('\\TurtlePHP\\Loader', 'handleException');
+            $className = '\\TurtlePHP\\Loader';
+            $methodName = 'handleException';
+            $callback = array($className, $methodName);
             set_exception_handler($callback);
         }
 
@@ -403,7 +411,9 @@
          */
         protected static function _setShutdownHandler(): void
         {
-            $callback = array('\\TurtlePHP\\Loader', 'handleShutdown');
+            $className = '\\TurtlePHP\\Loader';
+            $methodName = 'handleShutdown';
+            $callback = array($className, $methodName);
             register_shutdown_function($callback);
         }
 
