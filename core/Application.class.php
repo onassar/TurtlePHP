@@ -383,7 +383,7 @@
             foreach ($_vars as $_name => $_value) {
                 $$_name = $_value;
             }
-            include $_path;
+            require $_path;
         }
 
         /**
@@ -398,11 +398,8 @@
          */
         public static function renderPath(string $_path, array $_vars = array()): string
         {
-            foreach ($_vars as $_name => $_value) {
-                $$_name = $_value;
-            }
             ob_start();
-            include $_path;
+            static::loadPath($_path, $_vars);
             $response = ob_get_clean();
             return $response;
         }
