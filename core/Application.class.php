@@ -67,6 +67,15 @@
         protected static $_requests = array();
 
         /**
+         * _routeEvaluator
+         * 
+         * @access  protected
+         * @var     null|callable (default: null)
+         * @static
+         */
+        protected static $_routeEvaluator = null;
+
+        /**
          * _routes
          * 
          * @access  protected
@@ -74,6 +83,20 @@
          * @static
          */
         protected static $_routes = array();
+
+        /**
+         * _getDirectories
+         * 
+         * @access  protected
+         * @static
+         * @param   string $path
+         * @return  array
+         */
+        protected static function _getDirectories(string $path): array
+        {
+            $directories = glob($path . '/*' , GLOB_ONLYDIR);
+            return $directories;
+        }
 
         /**
          * _getNormalizedRoutes
@@ -300,6 +323,22 @@
         }
 
         /**
+         * getRouteEvaluator
+         * 
+         * Returns the callable, if any, that ought to be used when determining
+         * whether a route can be matched.
+         * 
+         * @access  public
+         * @static
+         * @return  null|callable
+         */
+        public static function getRouteEvaluator(): ?callable
+        {
+            $evaluator = static::$_routeEvaluator;
+            return $evaluator;
+        }
+
+        /**
          * getRoutes
          * 
          * Returns the array of all routes the application may accept for a
@@ -326,9 +365,15 @@
         public static function handleActiveRecordAutoload(string $className): void
         {
             if (preg_match('/^ActiveRecord\\\/', $className) === 1) {
-                $basename = preg_replace('/^ActiveRecord\\\/', '', $className);
-                $basename = ($basename) . '.class.php';
+                list(, $filename) = explode('\\', $className);
+                $basename = ($filename) . '.class.php';
                 $path = APP . '/activeRecords/' . ($basename);
+                if (substr_count($className, '\\') === 2) {
+                    list(, $directory, $filename) = explode('\\', $className);
+                    $directory = strtolower($directory);
+                    $basename = ($filename) . '.class.php';
+                    $path = APP . '/activeRecords/' . ($directory) . '/' . ($basename);
+                }
                 require_once $path;
             }
         }
@@ -344,9 +389,15 @@
         public static function handleControllerAutoload(string $className): void
         {
             if (preg_match('/^Controller\\\/', $className) === 1) {
-                $basename = preg_replace('/^Controller\\\/', '', $className);
-                $basename = ($basename) . '.class.php';
+                list(, $filename) = explode('\\', $className);
+                $basename = ($filename) . '.class.php';
                 $path = APP . '/controllers/' . ($basename);
+                if (substr_count($className, '\\') === 2) {
+                    list(, $directory, $filename) = explode('\\', $className);
+                    $directory = strtolower($directory);
+                    $basename = ($filename) . '.class.php';
+                    $path = APP . '/controllers/' . ($directory) . '/' . ($basename);
+                }
                 require_once $path;
             }
         }
@@ -362,9 +413,15 @@
         public static function handleModelAutoload(string $className): void
         {
             if (preg_match('/^Model\\\/', $className) === 1) {
-                $basename = preg_replace('/^Model\\\/', '', $className);
-                $basename = ($basename) . '.class.php';
+                list(, $filename) = explode('\\', $className);
+                $basename = ($filename) . '.class.php';
                 $path = APP . '/models/' . ($basename);
+                if (substr_count($className, '\\') === 2) {
+                    list(, $directory, $filename) = explode('\\', $className);
+                    $directory = strtolower($directory);
+                    $basename = ($filename) . '.class.php';
+                    $path = APP . '/models/' . ($directory) . '/' . ($basename);
+                }
                 require_once $path;
             }
         }
@@ -454,6 +511,23 @@
         public static function setRequest(\TurtlePHP\Request $request): void
         {
             static::$_request = $request;
+        }
+
+        /**
+         * setRouteEvaluator
+         * 
+         * Sets the callable evaluator that should be used during route
+         * matching. This can be helpful for running more than one domain within
+         * the codebase.
+         * 
+         * @access  public
+         * @static
+         * @param   callable $evaluator
+         * @return  void
+         */
+        public static function setRouteEvaluator(callable $evaluator): void
+        {
+            static::$_routeEvaluator = $evaluator;
         }
 
         /**
