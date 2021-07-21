@@ -2,6 +2,7 @@
 
     // Namespace overhead
     namespace TurtlePHP;
+    use Controller;
 
     /**
      * Request
@@ -124,6 +125,10 @@
         {
             $route = $this->_route;
             $viewPath = $route['view'] ?? null;
+            if (is_callable($viewPath) === true) {
+                $args = array();
+                $viewPath = call_user_func_array($viewPath, $args);
+            }
             if ($viewPath === null) {
                 $path = $route['path'];
                 $msg = 'View not set for route: ' . ($path);
@@ -370,7 +375,16 @@
             $pattern = $this->_getRouteBasedMatchPattern($route);
             $requestPath = $this->_getRouteBasedRequestPath($route);
             if (preg_match($pattern, $requestPath) === 1) {
-                return true;
+                $evaluator = $route['evaluator'] ?? \TurtlePHP\Application::getRouteEvaluator() ?? null;
+                if ($evaluator === null) {
+                    return true;
+                }
+                if (is_bool($evaluator) === true) {
+                    return $evaluator;
+                }
+                $args = array();
+                $response = call_user_func_array($evaluator, $args);
+                return $response;
             }
             return false;
         }
@@ -400,8 +414,7 @@
         protected function _setController(): void
         {
             $route = $this->_route;
-            $controllerName = $route['controller'];
-            $controllerClassName = '\\Controller\\' . ($controllerName);
+            $controllerClassName = $route['controller'];
             $controller = new $controllerClassName;
             $controller->setRequest($this);
             $this->_controller = $controller;
@@ -422,14 +435,20 @@
          * simply strip any trailing query string, and assume the path is
          * exactly what's passed in (without attempting to parse it).
          * 
+         * So, in summary, the following two paths fail, but have different
+         * return values:
+         * - /app/icons/search/love:123/sub (return value: false)
+         * - //nSerpStat: (return value: null)
+         * 
          * @see     https://i.imgur.com/kPsgsmE.png
+         * @see     https://i.imgur.com/FaKBsDA.png
          * @access  protected
          * @return  void
          */
         protected function _setPath(): void
         {
             $uri = $this->_uri;
-            $parsedPath = parse_url($uri, PHP_URL_PATH);
+            $parsedPath = parse_url($uri, PHP_URL_PATH) ?? false;
             if ($parsedPath === false) {
                 $pattern = '/\?.*/';
                 $replacement = '';
