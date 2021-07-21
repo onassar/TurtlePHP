@@ -234,9 +234,9 @@
          * Called before a controller action is, sets up logic that may be
          * needed by the time the action is triggered.
          * 
-         * Can be useful if defined by an <Controller\App> child, to perform
-         * checks against authenticated users/sessions, load global data from
-         * a database and send it to the view, etc.
+         * Can be useful if defined by a <Controller> child, to perform checks
+         * against authenticated users/sessions, load global data from a
+         * database and send it to the view, etc.
          * 
          * @access  public
          * @return  void
