@@ -91,6 +91,30 @@
         }
 
         /**
+         * _getDocumentRoot
+         * 
+         * Returns the document root for the request. The current working
+         * directory lookup is performed to deal with CLI requests (which for
+         * whatever reason does not have the document root defined in the
+         * server variables).
+         * 
+         * @see     https://stackoverflow.com/questions/564539/undefined-index-pwd-in-server
+         * @link    https://www.php.net/getcwd
+         * @access  protected
+         * @static
+         * @return  string
+         */
+        protected static function _getDocumentRoot(): string
+        {
+            $root = $_SERVER['DOCUMENT_ROOT'] ?? null;
+            if ($root === null || $root === '') {
+                $cwd = getcwd();
+                $root = ($cwd) . '/TurtlePHP';
+            }
+            return $root;
+        }
+
+        /**
          * _getErrorLogMessage
          * 
          * @access  protected
@@ -378,11 +402,7 @@
          */
         protected static function _setPathConstants(): void
         {
-            $root = $_SERVER['DOCUMENT_ROOT'] ?? '';
-            if ($root === '') {
-                $root = $_SERVER['PWD'];
-                $root = ($root) . '/TurtlePHP';
-            }
+            $root = static::_getDocumentRoot();
             define('ROOT', $root);
             define('APP', ($root) . '/application');
             define('WEBROOT', (APP) . '/webroot');
