@@ -123,15 +123,10 @@
          */
         protected function _generateResponse(): void
         {
-            $route = $this->_route;
-            $viewPath = $route['view'] ?? null;
-            if (is_callable($viewPath) === true) {
-                $args = array();
-                $viewPath = call_user_func_array($viewPath, $args);
-            }
+            $viewPath = $this->getViewPath();
             if ($viewPath === null) {
-                $path = $route['path'];
-                $msg = 'View not set for route: ' . ($path);
+                $routePath = $this->getRoutePath();
+                $msg = 'View not set for route: ' . ($routePath);
                 throw new \Exception($msg);
             }
             $controller = $this->_controller;
@@ -663,6 +658,28 @@
         {
             $uri = $this->_uri;
             return $uri;
+        }
+
+        /**
+         * getViewPath
+         * 
+         * @access  public
+         * @return  null|string
+         */
+        public function getViewPath(): ?string
+        {
+            $route = $this->_route;
+            $viewPath = $route['view'] ?? null;
+            if (is_array($viewPath) === true) {
+                $method = $_SERVER['REQUEST_METHOD'];
+                $method = strtolower($method);
+                $viewPath = $route['view'][$method] ?? null;
+            }
+            if (is_callable($viewPath) === true) {
+                $args = array();
+                $viewPath = call_user_func_array($viewPath, $args);
+            }
+            return $viewPath;
         }
 
         /**
