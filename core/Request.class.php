@@ -144,8 +144,17 @@
          */
         protected function _getRouteActionName(): string
         {
-            // Single action
+            // Callable
             $action = $this->_route['action'];
+            if (is_callable($action) === true) {
+                $route = $this->getRoute();
+                $routeParams = $this->getRouteParams();
+                $args = array($route, $routeParams);
+                $action = call_user_func_array($action, $args);
+                return $action;
+            }
+
+            // Single action
             if (is_array($action) === false) {
                 return $action;
             }
@@ -210,37 +219,6 @@
         }
 
         /**
-         * _getRouteParams
-         * 
-         * Returns an array of params for this request's matching route to be
-         * passed to it's associated controller and action.
-         * 
-         * @note    Route-defined params are prepended to the array to allow for
-         *          boolean pattern matches in the routes.
-         *          If the route-pattern based params were passed to the
-         *          controller-actions first, there could be issues with routes
-         *          such as ^/([a-z]?)/path/$
-         * @access  protected
-         * @return  array
-         */
-        protected function _getRouteParams(): array
-        {
-            $route = $this->_route;
-            $routeParams = $route['params'] ?? array();
-            $pattern = $this->_getRouteBasedMatchPattern($route);
-            $requestPath = $this->_getRouteBasedRequestPath($route);
-            preg_match($pattern, $requestPath, $matches);
-            array_shift($matches);
-            $pathParams = $matches;
-            if (is_array($routeParams) === false) {
-                $msg = 'Route params must be an array of values';
-                throw new \Exception($msg);
-            }
-            $params = array_merge($routeParams, $pathParams);
-            return $params;
-        }
-
-        /**
          * _getRouteRedirectDestination
          * 
          * @note    The empty redirect destination check is to deal with
@@ -263,13 +241,21 @@
                 return null;
             }
 
+            // Closure
+            if (is_callable($redirectDestination) === true) {
+                $args = $this->getRouteParams();
+                // $args = array();
+                $redirectDestination = call_user_func_array($redirectDestination, $args);
+                return $redirectDestination;
+            }
+
             // Redirect destination does not contain any variables to replace
             if (strstr($redirectDestination, '$') === false) {
                 return $redirectDestination;
             }
 
             // Replace params
-            $params = $this->_getRouteParams();
+            $params = $this->getRouteParams();
             $pattern = '/\$([0-9]+)/';
             $redirectDestination = preg_replace_callback(
                 $pattern,
@@ -319,7 +305,7 @@
             $controller = $this->_controller;
             $actionName = $this->_getRouteActionName();
             $callback = array($controller, $actionName);
-            $params = $this->_getRouteParams();
+            $params = $this->getRouteParams();
             $args = $params;
             call_user_func_array($callback, $args);
         }
@@ -332,12 +318,23 @@
          */
         protected function _processRedirect(): bool
         {
+            // Bail if no redirect
             $redirectDestination = $this->_getRouteRedirectDestination();
             if ($redirectDestination === null) {
                 return false;
             }
-            $permanent = $this->_routeRedirectIsPermanent();
-            $this->_setRedirectHeaders($redirectDestination, $permanent);
+
+            // Process any headers defined
+            $route = $this->_route;
+            $headers = $route['headers'] ?? array();
+            foreach ($headers as $header) {
+                header($header);
+            }
+
+            // Do the actual redirect (301 permanent redirect is fallback)
+            $responseCode = $route['code'] ?? 301;
+            $responseCode = (int) $responseCode;
+            $this->_setRedirectHeader($redirectDestination, $responseCode);
             exit(0);
         }
 
@@ -380,22 +377,6 @@
                 $args = array();
                 $response = call_user_func_array($evaluator, $args);
                 return $response;
-            }
-            return false;
-        }
-
-        /**
-         * _routeRedirectIsPermanent
-         * 
-         * @access  protected
-         * @return  bool
-         */
-        protected function _routeRedirectIsPermanent(): bool
-        {
-            $route = $this->_route;
-            $code = $route['code'] ?? null;
-            if ($code === 301) {
-                return true;
             }
             return false;
         }
@@ -453,21 +434,19 @@
         }
 
         /**
-         * _setRedirectHeaders
+         * _setRedirectHeader
          * 
+         * @see     https://www.php.net/manual/en/function.header.php
          * @access  protected
          * @param   string $destination
-         * @param   bool $permanent (default: false)
+         * @param   int $responseCode
          * @return  void
          */
-        protected function _setRedirectHeaders(string $destination, bool $permanent = false): void
+        protected function _setRedirectHeader(string $destination, int $responseCode): void
         {
-            if ($permanent === true) {
-                $value = 'HTTP/1.1 301 Moved Permanently';
-                header($value);
-            }
-            $value = 'Location: ' . ($destination);
-            header($value);
+            $header = 'Location: ' . ($destination);
+            $replace = true;
+            header($header, $replace, $responseCode);
         }
 
         /**
@@ -649,6 +628,40 @@
         }
 
         /**
+         * getRouteParams
+         * 
+         * Returns an array of params for this request's matching route to be
+         * passed to it's associated controller and action.
+         * 
+         * @note    Route-defined params are prepended to the array to allow for
+         *          boolean pattern matches in the routes.
+         *          If the route-pattern based params were passed to the
+         *          controller-actions first, there could be issues with routes
+         *          such as ^/([a-z]?)/path/$
+         * @access  public
+         * @return  array
+         */
+        public function getRouteParams(): array
+        {
+            $route = $this->_route;
+            $routeParams = $route['params'] ?? array();
+            $pattern = $this->_getRouteBasedMatchPattern($route);
+            $requestPath = $this->_getRouteBasedRequestPath($route);
+            preg_match($pattern, $requestPath, $matches);
+            array_shift($matches);
+            $pathParams = $matches;
+            if (is_callable($routeParams) === true) {
+                $routeParams = call_user_func_array($routeParams, $pathParams);
+            }
+            if (is_array($routeParams) === false) {
+                $msg = 'Route params must be an array of values';
+                throw new \Exception($msg);
+            }
+            $params = array_merge($routeParams, $pathParams);
+            return $params;
+        }
+
+        /**
          * getURI
          * 
          * @access  public
@@ -676,7 +689,9 @@
                 $viewPath = $route['view'][$method] ?? null;
             }
             if (is_callable($viewPath) === true) {
-                $args = array();
+                $route = $this->getRoute();
+                $routeParams = $this->getRouteParams();
+                $args = array($route, $routeParams);
                 $viewPath = call_user_func_array($viewPath, $args);
             }
             return $viewPath;
@@ -707,6 +722,7 @@
          * Attempts to process a redirect first, and if that isn't relevant,
          * interprets the request as a route to be processed.
          * 
+         * @note    Ordered
          * @access  public
          * @return  void
          */
