@@ -212,7 +212,7 @@
          *          redirect patterns that use catch all and replacement params
          *          to redirect, but which can then result in no replacement.
          *          An example would be a redirect route like this:
-         *          - https://i.imgur.com/m1LDiMj.png
+         *          - https://416.io/ss/x7o7dz
          *          In that case, a URL like the following would result in an
          *          empty redirect destination:
          *          - https://local.getstencil.com/https://getstencil.com
@@ -316,7 +316,7 @@
                 return false;
             }
 
-            // Process any headers defined
+            // Process any headers defined (useful for POST forwarding)
             $route = $this->_route;
             $headers = $route['headers'] ?? array();
             foreach ($headers as $header) {
@@ -408,8 +408,8 @@
          * - /app/icons/search/love:123/sub (return value: false)
          * - //nSerpStat: (return value: null)
          * 
-         * @see     https://i.imgur.com/kPsgsmE.png
-         * @see     https://i.imgur.com/FaKBsDA.png
+         * @see     https://416.io/ss/pukmji
+         * @see     https://416.io/ss/0tpkve
          * @access  protected
          * @return  void
          */
@@ -630,6 +630,7 @@
          *          If the route-pattern based params were passed to the
          *          controller-actions first, there could be issues with routes
          *          such as ^/([a-z]?)/path/$
+         * @throws  \Exception
          * @access  public
          * @return  array
          */
