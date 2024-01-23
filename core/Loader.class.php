@@ -149,7 +149,7 @@
          * @note    a trace frame is not added to \ErrorException objects since
          *          those are proxies for errors, and doing so causes it to
          *          reference the incorrect method/function name:
-         *          - https://i.imgur.com/9LhwFPb.png
+         *          - https://416.io/ss/79ui43
          * @access  protected
          * @static
          * @param   \Throwable $throwable
