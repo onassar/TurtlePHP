@@ -109,9 +109,43 @@
         protected static function _getNormalizedRoutes(array $routes): array
         {
             foreach ($routes as $path => &$route) {
+
+                // Redirect matching
+                if (is_string($route) === true) {
+                    $route = array(
+                        'redirect' => $route
+                    );
+                }
+
+                // Path normalization
                 $route['path'] = $path;
             }
             $routes = array_values($routes);
+            return $routes;
+        }
+
+        /**
+         * _includeAlternativeRoutes
+         * 
+         * @access  protected
+         * @static
+         * @param   array $routes
+         * @return  array
+         */
+        protected static function _includeAlternativeRoutes(array $routes): array
+        {
+            foreach ($routes as $path => $route) {
+                $alternatives = $route['alternatives'] ?? array();
+                $alternatives = (array) $alternatives;
+                if (empty($alternatives) === true) {
+                    continue;
+                }
+                foreach ($alternatives as $alternative) {
+                    $alternativeRoute = $route;
+                    unset($alternativeRoute['alternatives']);
+                    $routes[$alternative] = $alternativeRoute;
+                }
+            }
             return $routes;
         }
 
@@ -195,6 +229,7 @@
          */
         public static function addRoutes(array $routes): void
         {
+            $routes = static::_includeAlternativeRoutes($routes);
             $normalizedRoutes = static::_getNormalizedRoutes($routes);
             static::$_routes = array_merge($normalizedRoutes, static::$_routes);
         }
@@ -370,9 +405,35 @@
                 $path = APP . '/activeRecords/' . ($basename);
                 if (substr_count($className, '\\') === 2) {
                     list(, $directory, $filename) = explode('\\', $className);
-                    $directory = strtolower($directory);
+                    // $directory = strtolower($directory);
+                    $directory = lcfirst($directory);
                     $basename = ($filename) . '.class.php';
                     $path = APP . '/activeRecords/' . ($directory) . '/' . ($basename);
+                }
+                require_once $path;
+            }
+        }
+
+        /**
+         * handleCollectionAutoload
+         * 
+         * @access  public
+         * @static
+         * @param   string $className
+         * @return  void
+         */
+        public static function handleCollectionAutoload(string $className): void
+        {
+            if (preg_match('/^Collection\\\/', $className) === 1) {
+                list(, $filename) = explode('\\', $className);
+                $basename = ($filename) . '.class.php';
+                $path = APP . '/collections/' . ($basename);
+                if (substr_count($className, '\\') === 2) {
+                    list(, $directory, $filename) = explode('\\', $className);
+                    // $directory = strtolower($directory);
+                    $directory = lcfirst($directory);
+                    $basename = ($filename) . '.class.php';
+                    $path = APP . '/collections/' . ($directory) . '/' . ($basename);
                 }
                 require_once $path;
             }
@@ -394,9 +455,35 @@
                 $path = APP . '/controllers/' . ($basename);
                 if (substr_count($className, '\\') === 2) {
                     list(, $directory, $filename) = explode('\\', $className);
-                    $directory = strtolower($directory);
+                    // $directory = strtolower($directory);
+                    $directory = lcfirst($directory);
                     $basename = ($filename) . '.class.php';
                     $path = APP . '/controllers/' . ($directory) . '/' . ($basename);
+                }
+                require_once $path;
+            }
+        }
+
+        /**
+         * handleHelperAutoload
+         * 
+         * @access  public
+         * @static
+         * @param   string $className
+         * @return  void
+         */
+        public static function handleHelperAutoload(string $className): void
+        {
+            if (preg_match('/^Helper\\\/', $className) === 1) {
+                list(, $filename) = explode('\\', $className);
+                $basename = ($filename) . '.class.php';
+                $path = APP . '/helpers/' . ($basename);
+                if (substr_count($className, '\\') === 2) {
+                    list(, $directory, $filename) = explode('\\', $className);
+                    // $directory = strtolower($directory);
+                    $directory = lcfirst($directory);
+                    $basename = ($filename) . '.class.php';
+                    $path = APP . '/helpers/' . ($directory) . '/' . ($basename);
                 }
                 require_once $path;
             }
@@ -418,7 +505,8 @@
                 $path = APP . '/models/' . ($basename);
                 if (substr_count($className, '\\') === 2) {
                     list(, $directory, $filename) = explode('\\', $className);
-                    $directory = strtolower($directory);
+                    // $directory = strtolower($directory);
+                    $directory = lcfirst($directory);
                     $basename = ($filename) . '.class.php';
                     $path = APP . '/models/' . ($directory) . '/' . ($basename);
                 }
