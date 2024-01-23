@@ -239,11 +239,12 @@
          * database and send it to the view, etc.
          * 
          * @access  public
-         * @return  void
+         * @return  bool
          */
-        public function prepare(): void
+        public function prepare(): bool
         {
             $this->setDefaultControllerVariables();
+            return true;
         }
 
         /**
