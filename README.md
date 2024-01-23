@@ -101,9 +101,9 @@ sample of such a case would be as follows:
          * prepare
          * 
          * @access public
-         * @return void
+         * @return bool
          */
-        public function prepare()
+        public function prepare(): bool
         {
             $authenticated = false;
             if (
@@ -113,7 +113,8 @@ sample of such a case would be as follows:
                 $authenticated = true;
             }
             $this->_pass('authenticated', $authenticated);
-            parent::prepare();
+            $response = parent::prepare();
+            return $response;
         }
     }
 
