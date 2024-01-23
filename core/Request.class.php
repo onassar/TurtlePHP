@@ -138,36 +138,23 @@
         /**
          * _getRouteActionName
          * 
-         * @throws  \Exception
          * @access  protected
-         * @return  string
+         * @return  null|string
          */
-        protected function _getRouteActionName(): string
+        protected function _getRouteActionName(): ?string
         {
-            // Callable
-            $action = $this->_route['action'];
+            $route = $this->_route;
+            $action = $route['action'] ?? null;
+            if (is_array($action) === true) {
+                $actions = $action;
+                $method = $_SERVER['REQUEST_METHOD'];
+                $method = strtolower($method);
+                $action = $actions[$method] ?? null;
+            }
             if (is_callable($action) === true) {
-                $route = $this->getRoute();
                 $routeParams = $this->getRouteParams();
                 $args = array($route, $routeParams);
                 $action = call_user_func_array($action, $args);
-                return $action;
-            }
-
-            // Single action
-            if (is_array($action) === false) {
-                return $action;
-            }
-
-            // Multiple actions (defined by their respective request methods)
-            $actions = $action;
-            $method = $_SERVER['REQUEST_METHOD'];
-            $method = strtolower($method);
-            $action = $actions[$method] ?? null;
-            if ($action === null) {
-                $msg = 'Invalid action method type';
-                exit($msg);
-                // throw new \Exception($msg);
             }
             return $action;
         }
@@ -297,6 +284,7 @@
         /**
          * _processControllerAction
          * 
+         * @throws  \Exception
          * @access  protected
          * @return  void
          */
@@ -304,6 +292,10 @@
         {
             $controller = $this->_controller;
             $actionName = $this->_getRouteActionName();
+            if ($actionName === null) {
+                $msg = 'routeActionName value cannot be null';
+                throw new \Exception($msg);
+            }
             $callback = array($controller, $actionName);
             $params = $this->getRouteParams();
             $args = $params;
@@ -689,7 +681,6 @@
                 $viewPath = $route['view'][$method] ?? null;
             }
             if (is_callable($viewPath) === true) {
-                $route = $this->getRoute();
                 $routeParams = $this->getRouteParams();
                 $args = array($route, $routeParams);
                 $viewPath = call_user_func_array($viewPath, $args);
