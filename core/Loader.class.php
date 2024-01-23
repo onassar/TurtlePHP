@@ -207,6 +207,7 @@
             require_once 'Application.class.php';
             require_once 'Base.class.php';
             require_once 'ActiveRecord.class.php';
+            require_once 'Collection.class.php';
             require_once 'Controller.class.php';
             require_once 'Model.class.php';
             require_once 'Request.class.php';
@@ -237,7 +238,9 @@
         protected static function _setAutoloaders(): void
         {
             static::_setActiveRecordAutoloader();
+            static::_setCollectionAutoloader();
             static::_setControllerAutoloader();
+            static::_setHelperAutoloader();
             static::_setModelAutoloader();
         }
 
@@ -255,6 +258,21 @@
                 $cli = true;
             }
             define('CLI', $cli);
+        }
+
+        /**
+         * _setCollectionAutoloader
+         * 
+         * @access  protected
+         * @static
+         * @return  void
+         */
+        protected static function _setCollectionAutoloader(): void
+        {
+            $className = 'TurtlePHP\\Application';
+            $methodName = 'handleCollectionAutoload';
+            $callback = array($className, $methodName);
+            \TurtlePHP\Application::addAutoloadClosure($callback);
         }
 
         /**
@@ -348,6 +366,21 @@
         }
 
         /**
+         * _setHelperAutoloader
+         * 
+         * @access  protected
+         * @static
+         * @return  void
+         */
+        protected static function _setHelperAutoloader(): void
+        {
+            $className = 'TurtlePHP\\Application';
+            $methodName = 'handleHelperAutoload';
+            $callback = array($className, $methodName);
+            \TurtlePHP\Application::addAutoloadClosure($callback);
+        }
+
+        /**
          * _setHTTPS
          * 
          * @access  protected
@@ -418,7 +451,7 @@
          */
         protected static function _setRequestIPAddress(): void
         {
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? false;
+            $ip = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? null;
             define('IP', $ip);
         }
 
