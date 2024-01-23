@@ -159,7 +159,7 @@ following format:
 <?php
 
     // grab new response
-    $subrequest = (new \Turtle\Request('/path/?including=params'));
+    $subrequest = new \Turtle\Request('/path/?including=params');
     $subrequest->route();
     $subrequest->generate();
     $response = $subrequest->getResponse();
@@ -174,8 +174,8 @@ Want to have this sub-request run through the
 <?php
 
     // grab new response
-    $subrequest = (new \Turtle\Request('/path/?including=params'));
-    (new \Plugin\Template($subrequest));
+    $subrequest = new \Turtle\Request('/path/?including=params');
+    new \Plugin\Template($subrequest);
     $subrequest->route();
     $subrequest->generate();
     $response = $subrequest->getResponse();
