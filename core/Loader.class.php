@@ -447,12 +447,18 @@
          * 
          * @access  protected
          * @static
-         * @return  void
+         * @return  bool
          */
-        protected static function _setRequestIPAddress(): void
+        protected static function _setRequestIPAddress(): bool
         {
             $ip = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? null;
+            if ($ip === null) {
+                return false;
+            }
+            $ip = trim($ip);
+            $ip = strtolower($ip);
             define('IP', $ip);
+            return true;
         }
 
         /**
